@@ -1,0 +1,157 @@
+﻿<Window x:Class="QTO_Tool.QTOUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:QTO_Tool"
+             mc:Ignorable="d" 
+             Title="QUANTITY TAKE-OFF" Width="1000" Height="800" MinHeight="600" MinWidth="1000">
+
+    <Border x:Name="Container" Padding="10">
+
+        <TabControl>
+            <TabItem Header="Setup" Width="100" Height="45" Padding="5"
+                     FontSize="20">
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel Orientation="Vertical" Margin="0 10 0 0">
+
+                        <TextBlock Text="MODEL CHECKUP" FontSize="42" Margin="5 10 0 20"
+                   Foreground="#036fad" FontWeight="DemiBold"/>
+
+                        <Grid Name="MethodGrid" Margin="10 0 10 10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80*"/>
+                                <ColumnDefinition Width="393*"/>
+                                <ColumnDefinition Width="473*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Content="CONCRETE" FontSize="32" Margin="0 0 0 10"
+                   FontWeight="Normal" Grid.Column="0" Grid.Row="0"
+                       VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+
+                            <CheckBox Content="ACTIVE" Grid.Column="2" Grid.Row="0"
+                          VerticalAlignment="Center" HorizontalAlignment="Center"
+                          IsChecked="True" Margin="180,18,210,19">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
+
+                            <Label Content="EXTERIOR" FontSize="32" Margin="0 10 0 0"
+                   FontWeight="Normal" Grid.Column="0" Grid.Row="1"
+                       VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+
+                            <CheckBox Content="ACTIVE" Grid.Column="2" Grid.Row="1"
+                          VerticalAlignment="Center" HorizontalAlignment="Center"
+                          IsChecked="True" Margin="180,23,210,14">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
+                        </Grid>
+
+                        <Button Name="StartCheckup" Content="Start Checkup" Grid.Column="0"
+                        Grid.Row="1" HorizontalAlignment="Center" 
+                        Margin="0 20 10 0" Width="250" Height="60"
+                        FontSize="26" Click="StartCheckup_Clicked"/>
+
+                        <GroupBox Name="CheckupResults" Header="Results"
+                                  Margin="10" Visibility="Hidden"
+                                  BorderThickness="3" BorderBrush="Gray">
+
+                            <!-- Content here -->
+
+                        </GroupBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Concrete" Width="110" Height="45" Padding="5"
+                     FontSize="20">
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                      VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel Orientation="Vertical" Margin="0 10 0 0">
+
+                        <TextBlock Text="PRESETS" FontSize="42" Margin="5 0 0 20"
+                   Foreground="#036fad" FontWeight="DemiBold"/>
+
+                        <Grid Name="ConcreteLoadSaveGrid" Margin="10 0 10 10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60"/>
+                            </Grid.RowDefinitions>
+
+                            <Button Name="ConcreteSaveButton" Content="SAVE" Grid.Column="0"
+                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
+                        Margin="0 0 10 0" FontSize="26" Click="Save_Clicked"/>
+                            <Button Name="ConcreteLoadButton" Content="LOAD" Grid.Column="1" 
+                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
+                        Margin="10 0 0 0" FontSize="26" Click="Load_Clicked"/>
+                        </Grid>
+
+                        <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"
+                   Margin="0 10 0 20"/>
+
+                        <TextBlock Text="TAKE-OFF TEMPLATE" FontSize="42" Margin="5 0 0 20"
+                   Foreground="#036fad" FontWeight="DemiBold"/>
+
+                        <Grid Name="ConcreteTemplateGrid" Margin="10 0 10 10" 
+                              HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+
+                        <!--<Grid Name="ConcreteLayerTable" Margin="10 0 10 10">
+
+                    </Grid>-->
+
+
+
+                    </StackPanel>
+                </ScrollViewer>
+
+
+            </TabItem>
+
+            <TabItem Header="Exterior" Width="110" Height="45" Padding="5"
+                     FontSize="20">
+
+                <Grid Name="ExteriorLoadSaveGrid" Margin="10 20 10 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Name="ExteriorSaveButton" Content="SAVE" Grid.Column="0"
+                        Grid.Row="1" HorizontalAlignment="Stretch" 
+                        Margin="0 0 10 0" Click="Save_Clicked"/>
+                    <Button Name="ExteriorLoadButton" Content="LOAD" Grid.Column="1" 
+                        Grid.Row="1" HorizontalAlignment="Stretch" 
+                        Margin="10 0 0 0" Click="Load_Clicked"/>
+                </Grid>
+
+            </TabItem>
+        </TabControl>
+    </Border>
+</Window>

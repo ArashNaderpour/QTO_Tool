@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using Rhino;
+using Rhino.Commands;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace QTO_Tool
+{
+    class UIMethods
+    {
+        public static void GenerateLayerTemplate(Grid grid)
+        {
+            List<string> concreteTemplateNames = new List<string>() { "", "Footing", "Continous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
+
+            for (int i = 0; i < RunQTO.doc.Layers.Count; i++)
+            {
+                //Dynamically adding Rows to the Grid
+                RowDefinition rowDef = new RowDefinition();
+                rowDef.Height = new GridLength(60, GridUnitType.Pixel);
+                grid.RowDefinitions.Add(rowDef);
+
+                // Layer Name
+                Label layerName = new Label();
+                layerName.Name = "Layer_" + i.ToString();
+                layerName.Content = RunQTO.doc.Layers[i].Name;
+                layerName.HorizontalAlignment = HorizontalAlignment.Left;
+                layerName.HorizontalContentAlignment = HorizontalAlignment.Center;
+                layerName.VerticalAlignment = VerticalAlignment.Center;
+                layerName.Margin = new Thickness(0, 5, 10, 0);
+
+                DockPanel panel = new DockPanel();
+                panel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                panel.VerticalAlignment = VerticalAlignment.Center;
+
+                Rectangle rect = new Rectangle();
+                rect.Fill = Brushes.Gray;
+                rect.Height = 1;
+                rect.HorizontalAlignment = HorizontalAlignment.Stretch;
+                rect.Margin = new Thickness(10, 5, 10, 0);
+
+                panel.Children.Add(layerName);
+                panel.Children.Add(rect);
+
+                grid.Children.Add(panel);
+                Grid.SetColumn(panel, 0);
+                Grid.SetRow(panel, i);
+
+                ComboBox concreteTemplatesSelector = new ComboBox();
+                concreteTemplatesSelector.Name = "ConcreteTemplates_" + i.ToString();
+
+                foreach (string templateName in concreteTemplateNames)
+                {
+                    ComboBoxItem item = new ComboBoxItem();
+                    item.Content = templateName;
+                    concreteTemplatesSelector.Items.Add(item);
+                }
+                concreteTemplatesSelector.SelectedIndex = 0;
+                concreteTemplatesSelector.HorizontalAlignment = HorizontalAlignment.Stretch;
+                concreteTemplatesSelector.VerticalAlignment = VerticalAlignment.Center;
+                concreteTemplatesSelector.Margin = new Thickness(10, 5, 0, 0);
+                //concreteTemplatesSelector.SelectionChanged += ComboBox_SelectionChanged;
+
+                grid.Children.Add(concreteTemplatesSelector);
+                Grid.SetColumn(concreteTemplatesSelector, 1);
+                Grid.SetRow(concreteTemplatesSelector, i);
+            }
+        }
+    }
+}
