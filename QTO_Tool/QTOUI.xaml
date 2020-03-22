@@ -37,7 +37,7 @@
                    FontWeight="Normal" Grid.Column="0" Grid.Row="0"
                        VerticalAlignment="Center" Grid.ColumnSpan="2"/>
 
-                            <CheckBox Content="ACTIVE" Grid.Column="2" Grid.Row="0"
+                            <CheckBox Name="ConcreteIsIncluded" Content="ACTIVE" Grid.Column="2" Grid.Row="0"
                           VerticalAlignment="Center" HorizontalAlignment="Center"
                           IsChecked="True" Margin="180,18,210,19">
                                 <CheckBox.LayoutTransform>
@@ -49,7 +49,7 @@
                    FontWeight="Normal" Grid.Column="0" Grid.Row="1"
                        VerticalAlignment="Center" Grid.ColumnSpan="2"/>
 
-                            <CheckBox Content="ACTIVE" Grid.Column="2" Grid.Row="1"
+                            <CheckBox Name="ExteriorIsIncluded" Content="ACTIVE" Grid.Column="2" Grid.Row="1"
                           VerticalAlignment="Center" HorizontalAlignment="Center"
                           IsChecked="True" Margin="180,23,210,14">
                                 <CheckBox.LayoutTransform>
@@ -65,9 +65,10 @@
 
                         <GroupBox Name="CheckupResults" Header="Results"
                                   Margin="10" Visibility="Hidden"
-                                  BorderThickness="3" BorderBrush="Gray">
+                                  BorderThickness="3" BorderBrush="Gray"
+                                  Padding="20" FontSize="20">
 
-                            <!-- Content here -->
+                            <!--Content-->
 
                         </GroupBox>
 

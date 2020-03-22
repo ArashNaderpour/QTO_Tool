@@ -40,7 +40,29 @@ namespace QTO_Tool
 
         private void StartCheckup_Clicked(object sender, RoutedEventArgs e)
         {
-            UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+            if (this.ConcreteIsIncluded.IsChecked == true) {
+
+                Methods.ConcreteModelExamination();
+
+                if (this.ConcreteTemplateGrid.Children.Count == 0) {
+                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+                }
+                else
+                {
+                    this.ConcreteTemplateGrid.Children.Clear();
+                    this.ConcreteTemplateGrid.RowDefinitions.Clear();
+                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+                }
+            }
+            if (this.ExteriorIsIncluded.IsChecked == true)
+            {
+
+            }
+
+            if (this.ConcreteIsIncluded.IsChecked == false && this.ExteriorIsIncluded.IsChecked == false)
+            {
+                MessageBox.Show("Please select atleast one of the methods.");
+            }
         }
     }
 }

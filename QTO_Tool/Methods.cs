@@ -43,26 +43,25 @@ namespace QTO_Tool
             helper.Owner = ownerPtr;
         }
 
-        /* ------------------------ Method For Generating Expander ------------------------ */
-        //public static ComboBox ConcreteTemplateGenerator(int index)
-        //{
-        //    ComboBox template = new ComboBox();
-        //    template.Name = department.Name + "ComboBox" + i.ToString();
-        //    foreach (string functionName in functions.Keys)
-        //    {
-        //        if (functions[functionName]["DGSFMax"] != 0 && functions[functionName]["keyMax"] != 0)
-        //        {
-        //            ComboBoxItem item = new ComboBoxItem();
-        //            item.Content = functionName;
-        //            program.Items.Add(item);
-        //        }
-        //    }
-        //    program.SelectedIndex = 0;
-        //    program.HorizontalAlignment = HorizontalAlignment.Stretch;
-        //    program.Margin = new Thickness(0, 5, 2, 0);
-        //    program.SelectionChanged += ComboBox_SelectionChanged;
+        //Concrete model preparations
+        public static void ConcreteModelExamination()
+        {
+            foreach (Rhino.DocObjects.RhinoObject obj in RunQTO.doc.Objects)
+            {
+                MessageBox.Show(obj.GetType().ToString());
+            }
+        }
 
-        //    return template;
-        //}
+        //Concrete model preparations
+        static void ExteriorModelExamination()
+        {
+
+        }
+
+        //Concrete model preparations
+        static void ConcreteModelArrangements()
+        {
+
+        }
     }
 }
