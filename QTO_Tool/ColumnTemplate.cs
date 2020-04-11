@@ -8,6 +8,7 @@ namespace QTO_Tool
 {
     class ColumnTemplate
     {
+        public string name { get; set; }
         public double voulme { get; set; }
         public double height { get; set; }
         public double sideArea { get; set; }

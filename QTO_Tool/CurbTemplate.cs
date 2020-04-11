@@ -8,6 +8,7 @@ namespace QTO_Tool
 {
     class CurbTemplate
     {
+        public string name { get; set; }
         public double volume { get; set; }
         public double topArea { get; set; }
         public double sideArea { get; set; }

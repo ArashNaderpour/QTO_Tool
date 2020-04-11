@@ -8,6 +8,7 @@ namespace QTO_Tool
 {
     class BeamTemplate
     {
+        public string name { get; set; }
         public double volume { get; set; }
         public double length { get; set; }
         public double bottomArea { get; set; }

@@ -42,7 +42,7 @@ namespace QTO_Tool
         {
             if (this.ConcreteIsIncluded.IsChecked == true) {
 
-                Methods.ConcreteModelExamination();
+                Methods.ConcreteModelSetup();
 
                 if (this.ConcreteTemplateGrid.Children.Count == 0) {
                     UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);

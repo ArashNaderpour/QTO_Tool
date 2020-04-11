@@ -8,6 +8,7 @@ namespace QTO_Tool
 {
     class ContinousFootingTemplate
     {
+        public string name { get; set; }
         public double voulme { get; set; }
         public double length { get; set; }
         public double topArea { get; set; }

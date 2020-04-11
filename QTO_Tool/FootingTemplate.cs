@@ -8,6 +8,7 @@ namespace QTO_Tool
 {
     class FootingTemplate
     {
+        public string name { get; set; }
         public double voulme { get; set; }
         public double topArea { get; set; }
         public double bottomArea { get; set; }
