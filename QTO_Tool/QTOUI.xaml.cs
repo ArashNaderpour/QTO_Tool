@@ -42,10 +42,14 @@ namespace QTO_Tool
         {
             if (this.ConcreteIsIncluded.IsChecked == true) {
 
-                Methods.ConcreteModelSetup();
+                this.CheckupResults.Content = Methods.ConcreteModelSetup();
+
+                this.CheckupResults.Visibility = Visibility.Visible;
 
                 if (this.ConcreteTemplateGrid.Children.Count == 0) {
+
                     UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+
                 }
                 else
                 {

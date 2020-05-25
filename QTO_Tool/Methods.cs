@@ -46,12 +46,16 @@ namespace QTO_Tool
         }
 
         //Concrete model preparations
-        public static void ConcreteModelSetup()
+        public static string ConcreteModelSetup()
         {
             string objType = "";
             string examinationResult = "";
             int objCount = new int();
             int invalidObjCount = 0;
+            int badGeometryCount = 0;
+
+            List<Mesh> meshList = new List<Mesh>();
+            List<Brep> surfaceList = new List<Brep>();
 
             foreach (Rhino.DocObjects.RhinoObject obj in RunQTO.doc.Objects)
             {
@@ -61,17 +65,46 @@ namespace QTO_Tool
 
                     if (objType == "InstanceObject")
                     {
-                        PrepareBlockInstance(obj, invalidObjCount);
+                        PrepareBlockInstance(obj, surfaceList, invalidObjCount);
                     }
 
-                    if (objType == "BrepObject" || objType == "ExtrusionObject")
+                    else if (objType == "ExtrusionObject")
                     {
+                        Brep tempBrep = Brep.TryConvertBrep(obj.Geometry);
 
+                        if (tempBrep.IsSolid)
+                        {
+                            tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+
+                            RunQTO.doc.Objects.Add(tempBrep, obj.Attributes);
+                        }
+
+                        else
+                        {
+                            surfaceList.Add(tempBrep);
+                        }
                     }
 
-                    if (objType == "MeshObject")
+                    else if (objType == "BrepObject")
                     {
-                        PrepareMesh(obj, objType, invalidObjCount);
+                        Brep tempBrep = (Brep)obj.Geometry;
+
+                        if (tempBrep.IsSolid)
+                        {
+                            tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+
+                            RunQTO.doc.Objects.Add(tempBrep, obj.Attributes);
+                        }
+
+                        else
+                        {
+                            surfaceList.Add(tempBrep);
+                        }
+                    }
+
+                    else if (objType == "MeshObject")
+                    {
+                        PrepareMesh(obj, surfaceList, invalidObjCount);
                     }
                 }
 
@@ -79,7 +112,28 @@ namespace QTO_Tool
                 {
                     invalidObjCount++;
                 }
+
+                RunQTO.doc.Objects.Delete(obj);
             }
+           
+            Brep[] newBreps = Brep.JoinBreps(surfaceList, 0.01);
+
+            if (newBreps != null)
+            {
+                foreach (Brep newBrep in newBreps)
+                {
+                    newBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+
+                    RunQTO.doc.Objects.AddBrep(newBrep);
+                }
+            }
+
+            RunQTO.doc.Views.Redraw();
+
+            examinationResult = invalidObjCount.ToString() + " invalid objects exist in the model. \n";
+            examinationResult += badGeometryCount.ToString() + " bad geometry objects exist in the model.";
+
+            return examinationResult;
         }
 
         //Concrete model preparations
@@ -95,7 +149,7 @@ namespace QTO_Tool
         }
 
         //Prepare BlockInstance
-        static void PrepareBlockInstance(Rhino.DocObjects.RhinoObject inputObj, int _invalidObjCount)
+        static void PrepareBlockInstance(Rhino.DocObjects.RhinoObject inputObj, List<Brep> _surfaceList, int _invalidObjCount)
         {
             Rhino.DocObjects.InstanceObject instanceObj = (Rhino.DocObjects.InstanceObject)inputObj;
 
@@ -106,55 +160,54 @@ namespace QTO_Tool
             List<Mesh> meshList = new List<Mesh>();
             List<Brep> surfaceList = new List<Brep>();
 
+            Rhino.DocObjects.RhinoObject[] subObjs = instanceObj.GetSubObjects();
 
             instanceObj.Explode(true, out geometryPieces, out objAtts, out objTransform);
 
-            string inputObjType = "";
-
-            for (int i = 0; i < geometryPieces.Length; i++)
+            foreach (Rhino.DocObjects.RhinoObject subObj in subObjs)
             {
-                if (geometryPieces[i].IsValid)
+                string objType = subObj.GetType().ToString().Split('.').Last<string>();
+
+                if (objType == "BrepObject")
                 {
+                    Brep tempBrep = (Brep)subObj.Geometry;
 
-                    inputObjType = geometryPieces[i].GetType().ToString().Split('.').Last<string>();
-
-                    if (inputObjType == "BrepObject")
+                    if (tempBrep.IsSolid)
                     {
-                        //PrepareBrepOrExtrusion(geometryPieces[i], objTransform[i], objAtts[i], inputObjType, surfaceList, _invalidObjCount);
-                        Brep tempBrep = (Brep)geometryPieces[i].Geometry;
-
-                        if (tempBrep.IsSolid)
-                        {
-                            tempBrep.Transform(objTransform[i]);
-                            RunQTO.doc.Objects.Add(tempBrep, objAtts[i]);
-                        }
-
-                        if (tempBrep.IsSurface)
-                        {
-                            surfaceList.Add(tempBrep);
-                        }
+                        tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+                        RunQTO.doc.Objects.Add(tempBrep, subObj.Attributes);
                     }
 
-                    if (inputObjType == "ExtrusionObject")
+                    else
                     {
-                        Brep tempBrep = Brep.TryConvertBrep(geometryPieces[i].Geometry);
+                        surfaceList.Add(tempBrep);
+                    }
+                }
 
-                        if (tempBrep.IsSolid)
-                        {
-                            tempBrep.Transform(objTransform[i]);
-                            RunQTO.doc.Objects.Add(tempBrep, objAtts[i]);
-                        }
+                else if (objType == "ExtrusionObject")
+                {
+                    Brep tempBrep = Brep.TryConvertBrep(subObj.Geometry);
 
-                        if (tempBrep.IsSurface)
-                        {
-                            _invalidObjCount++;
-                        }
+                    if (tempBrep.IsSolid)
+                    {
+                        tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+                        RunQTO.doc.Objects.Add(tempBrep, subObj.Attributes);
                     }
 
-                    if (inputObjType == "MeshObject")
+                    else
                     {
-                        PrepareMesh(geometryPieces[i], inputObjType, _invalidObjCount);
+                        surfaceList.Add(tempBrep);
                     }
+                }
+
+                else if (objType == "MeshObject")
+                {
+                    Methods.PrepareMesh(subObj, _surfaceList, _invalidObjCount);
+                }
+
+                else if (objType == "InstanceObject")
+                {
+                    PrepareBlockInstance(subObj, _surfaceList, _invalidObjCount);
                 }
 
                 else
@@ -167,21 +220,31 @@ namespace QTO_Tool
 
             if (newBreps != null)
             {
-                foreach (Brep b in newBreps) {
-                    Rhino.Geometry.Transform t = instanceObj.InstanceXform;
-                    b.Transform(t);
-                    RunQTO.doc.Objects.AddBrep(b);
+                foreach (Brep newBrep in newBreps)
+                {
+                    newBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+
+                    RunQTO.doc.Objects.AddBrep(newBrep);
                 }
             }
-            
-            RunQTO.doc.Objects.Delete(inputObj);
-            RunQTO.doc.Views.Redraw();
         }
 
         //Prepare Brep or extrusion
-        static void PrepareMesh(Rhino.DocObjects.RhinoObject inputObj, string inputObjType, int _invalidObjCount)
+        static void PrepareMesh(Rhino.DocObjects.RhinoObject inputObj, List<Brep> _surfaceList, int _invalidObjCount)
         {
-            MessageBox.Show(inputObjType);
+            Brep tempBrep = Brep.CreateFromMesh(((Mesh)inputObj.Geometry), true);
+
+            if (((Mesh)inputObj.Geometry).IsClosed)
+            {
+                tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+
+                RunQTO.doc.Objects.AddBrep(tempBrep);
+            }
+
+            else
+            {
+                _surfaceList.Add(tempBrep);
+            }
         }
     }
 }
