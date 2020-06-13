@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rhino.DocObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace QTO_Tool
         public double bottomArea { get; set; }
         public double sideArea { get; set; }
 
-        public FootingTemplate()
+        public FootingTemplate(RhinoObject rhobj)
         {
 
         }

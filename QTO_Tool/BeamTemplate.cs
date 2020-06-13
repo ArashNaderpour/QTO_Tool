@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino;
+using Rhino.Geometry;
+using Rhino.DocObjects;
 
 namespace QTO_Tool
 {
@@ -15,6 +18,11 @@ namespace QTO_Tool
         public double sideArea { get; set; }
 
         public BeamTemplate()
+        {
+
+        }
+
+        public BeamTemplate(RhinoObject rhobj)
         {
 
         }

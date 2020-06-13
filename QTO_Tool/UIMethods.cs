@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using Rhino;
-using Rhino.Commands;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace QTO_Tool
@@ -21,7 +11,7 @@ namespace QTO_Tool
     {
         public static void GenerateLayerTemplate(Grid grid)
         {
-            List<string> concreteTemplateNames = new List<string>() { "", "Footing", "Continous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
+            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
             int layerCounter = 0;
 
             foreach(Rhino.DocObjects.Layer layer in RunQTO.doc.Layers) { 

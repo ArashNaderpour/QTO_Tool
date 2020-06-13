@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:QTO_Tool"
              mc:Ignorable="d" 
-             Title="QUANTITY TAKE-OFF" Width="1000" Height="800" MinHeight="600" MinWidth="1000">
+             Title="QUANTITY TAKE-OFF" Width="1000" Height="850" MinHeight="600" MinWidth="1000">
 
     <Border x:Name="Container" Padding="10">
 
@@ -80,11 +80,12 @@
                      FontSize="20">
 
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" 
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto" Margin="10 0 10 10"
+                              >
 
                     <StackPanel Orientation="Vertical" Margin="0 10 0 0">
 
-                        <TextBlock Text="PRESETS" FontSize="42" Margin="5 0 0 20"
+                        <TextBlock Text="PRESETS" FontSize="42" Margin="5 0 5 20"
                    Foreground="#036fad" FontWeight="DemiBold"/>
 
                         <Grid Name="ConcreteLoadSaveGrid" Margin="10 0 10 10">
@@ -99,25 +100,77 @@
 
                             <Button Name="ConcreteSaveButton" Content="SAVE" Grid.Column="0"
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="0 0 10 0" FontSize="26" Click="Save_Clicked"/>
+                        Margin="20 0 10 0" FontSize="26" Click="Save_Clicked"/>
+
                             <Button Name="ConcreteLoadButton" Content="LOAD" Grid.Column="1" 
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="10 0 0 0" FontSize="26" Click="Load_Clicked"/>
+                        Margin="10 0 20 0" FontSize="26" Click="Load_Clicked"/>
+
                         </Grid>
 
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"
-                   Margin="0 10 0 20"/>
+                   Margin="20 10 20 20"/>
 
                         <TextBlock Text="TAKE-OFF TEMPLATE" FontSize="42" Margin="5 0 0 20"
                    Foreground="#036fad" FontWeight="DemiBold"/>
 
-                        <Grid Name="ConcreteTemplateGrid" Margin="10 0 10 10" 
-                              HorizontalAlignment="Stretch">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                      MaxHeight="400" Margin="10 0 10 10">
+
+                            <Grid Name="ConcreteTemplateGrid" 
+                              HorizontalAlignment="Stretch" Margin="10 0 10 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </ScrollViewer>
+
+                        <Grid Margin="10 0 10 10" HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Vertical" Grid.Column="0"
+                                        Margin="10 0 10 0" VerticalAlignment="Center">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Name="AngleThresholdLabel" 
+                                           Content="Angle Threshold" 
+                                           Grid.Column="0"
+                                           IsEnabled="False"/>
+                                    
+                                    <Slider Name="AngleThresholdSlider" Grid.Column="1"
+                                            Margin="10 0 5 0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="BottomRight"
+                                            AutoToolTipPrecision="1"
+                                            IsEnabled="False" 
+                                            Minimum="0" Value="0.70" Maximum="1"/>
+
+                                </Grid>
+                                
+                            </StackPanel>
+
+                            <Button Name="CalculateQuantitiesButton" Content="CALCULATE" 
+                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" 
+                                IsEnabled="False" Margin="10 0 35 0" FontSize="26" 
+                                 Height ="60"  Click="Calculate_Concrete_Clicked"/>
                         </Grid>
+                        <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"
+                   Margin="20 10 20 20"/>
+
 
                         <!--<Grid Name="ConcreteLayerTable" Margin="10 0 10 10">
 
