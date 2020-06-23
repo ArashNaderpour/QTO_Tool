@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Rhino.DocObjects;
+using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Rhino;
-using Rhino.Geometry;
-using Rhino.DocObjects;
+using System.Windows;
 
 namespace QTO_Tool
 {
@@ -13,18 +13,171 @@ namespace QTO_Tool
     {
         public string name { get; set; }
         public double volume { get; set; }
-        public double length { get; set; }
         public double bottomArea { get; set; }
         public double sideArea { get; set; }
+        public double length { get; set; }
 
-        public BeamTemplate()
+        static string type = "BeamTemplate";
+        private Brep topBrepFace;
+        private Brep bottomBrepFace;
+
+        public BeamTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
+            Brep tempBrep = (Brep)rhobj.Geometry;
+
+            name = rhobj.Name;
+
+            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            volume = Math.Round(mass_properties.Volume, 2);
+
+            bottomArea = BottomArea(tempBrep, angleThreshold);
+
+            sideArea = SideArea(tempBrep, angleThreshold);
 
         }
 
-        public BeamTemplate(RhinoObject rhobj)
+        double TopArea(Brep brep, double angleThreshold)
         {
+            double area = 0;
 
+            for (int i = 0; i < brep.Faces.Count; i++)
+            {
+                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                Point3d center = area_properties.Centroid;
+
+                double u, v;
+
+                if (brep.Faces[i].ClosestPoint(center, out u, out v))
+                {
+                    Vector3d normal = brep.Faces[i].NormalAt(u, v);
+
+                    normal.Unitize();
+
+                    double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
+
+                    if (dotProduct > angleThreshold && dotProduct <= 1)
+                    {
+                        area = Math.Round(area_properties.Area, 2);
+
+                        this.topBrepFace = brep.Faces[i].DuplicateFace(false);
+                    }
+                }
+            }
+
+            if (area == 0 && brep.Faces.Count > 0)
+            {
+                List<double> centerZValues = new List<double>();
+                List<double> faceAreas = new List<double>();
+
+                for (int i = 0; i < brep.Faces.Count; i++)
+                {
+                    var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                    Point3d center = area_properties.Centroid;
+
+                    centerZValues.Add(center.Z);
+                    faceAreas.Add(Math.Round(area_properties.Area, 2));
+                }
+
+                int topFaceIndex = centerZValues.IndexOf(centerZValues.Max());
+
+                area = faceAreas[topFaceIndex];
+
+                this.topBrepFace = brep.Faces[topFaceIndex].DuplicateFace(false);
+            }
+
+            return area;
+        }
+
+        double BottomArea(Brep brep, double angleThreshold)
+        {
+            double area = 0;
+
+            for (int i = 0; i < brep.Faces.Count; i++)
+            {
+                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                Point3d center = area_properties.Centroid;
+
+                double u, v;
+
+                if (brep.Faces[i].ClosestPoint(center, out u, out v))
+                {
+                    Vector3d normal = brep.Faces[i].NormalAt(u, v);
+
+                    normal.Unitize();
+
+                    double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
+
+                    if (dotProduct < -angleThreshold && dotProduct >= -1)
+                    {
+                        area = Math.Round(area_properties.Area, 2);
+                    }
+                }
+            }
+
+            if (area == 0 && brep.Faces.Count > 0)
+            {
+                List<double> centerZValues = new List<double>();
+                List<double> faceAreas = new List<double>();
+
+                for (int i = 0; i < brep.Faces.Count; i++)
+                {
+                    var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                    Point3d center = area_properties.Centroid;
+
+                    centerZValues.Add(center.Z);
+                    faceAreas.Add(Math.Round(area_properties.Area, 2));
+                }
+
+                int bottomFaceIndex = centerZValues.IndexOf(centerZValues.Min());
+
+                area = faceAreas[bottomFaceIndex];
+
+                this.bottomBrepFace = brep.Faces[bottomFaceIndex].DuplicateFace(false);
+            }
+
+            return area;
+        }
+
+        double SideArea(Brep brep, double angleThreshold)
+        {
+            double area = 0;
+            List<double> faceAreas = new List<double>();
+
+            for (int i = 0; i < brep.Faces.Count; i++)
+            {
+                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                area += area_properties.Area;
+
+                faceAreas.Add(area_properties.Area);
+            }
+
+            faceAreas.Sort();
+
+            area -= (this.TopArea(brep, angleThreshold) + this.bottomArea) +
+                (faceAreas[0] + faceAreas[1]);
+
+            return area;
+        }
+
+        double Length(Brep brep, double angleThreshold)
+        {
+            double area = 0;
+
+            for (int i = 0; i < brep.Faces.Count; i++)
+            {
+                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+
+                area += area_properties.Area;
+            }
+
+            area -= (this.TopArea(brep, angleThreshold) + this.bottomArea);
+
+            return area;
         }
     }
 }

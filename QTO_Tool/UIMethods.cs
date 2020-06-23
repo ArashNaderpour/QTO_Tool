@@ -14,12 +14,13 @@ namespace QTO_Tool
             List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
             int layerCounter = 0;
 
-            foreach(Rhino.DocObjects.Layer layer in RunQTO.doc.Layers) { 
+            foreach (Rhino.DocObjects.Layer layer in RunQTO.doc.Layers)
+            {
 
                 if (!String.IsNullOrWhiteSpace(layer.Name))
                 {
-                   //Dynamically adding Rows to the Grid
-                   RowDefinition rowDef = new RowDefinition();
+                    //Dynamically adding Rows to the Grid
+                    RowDefinition rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(60, GridUnitType.Pixel);
                     grid.RowDefinitions.Add(rowDef);
 
@@ -71,6 +72,303 @@ namespace QTO_Tool
                     layerCounter++;
                 }
             }
+        }
+
+        public static void GenerateAccumulatedSlabTableExpander(StackPanel stackPanel, string layerName, string templateType, List<object> layerTemplate, List<string> values)
+        {
+            Expander layerEstimateExpander = new Expander();
+            layerEstimateExpander.Name = "LayerEstimateExpader";
+            layerEstimateExpander.Header = layerName;
+            layerEstimateExpander.FontWeight = FontWeights.DemiBold;
+            layerEstimateExpander.Background = Brushes.DarkOrange;
+            layerEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
+
+            /*--- The Grid for setting up the name of the department input---*/
+            Grid layerEstimateGrid = new Grid();
+            layerEstimateGrid.Margin = new Thickness(2, 5, 2, 0);
+            layerEstimateGrid.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0f0f0"));
+
+            RowDefinition rowDef = new RowDefinition();
+            rowDef.Height = new GridLength(1, GridUnitType.Star);
+            layerEstimateGrid.RowDefinitions.Add(rowDef);
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                // Column Definition for Grids
+                ColumnDefinition colDef = new ColumnDefinition();
+                layerEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                Label quantityLabel = new Label();
+                quantityLabel.Content = values[i];
+                quantityLabel.FontSize = 20;
+                quantityLabel.FontWeight = FontWeights.Bold;
+                quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                layerEstimateGrid.Children.Add(quantityLabel);
+                Grid.SetColumn(quantityLabel, i);
+                Grid.SetRow(quantityLabel, 0);
+            }
+
+            foreach (object obj in layerTemplate)
+            {
+                //Dynamically adding Rows to the Grid
+                rowDef = new RowDefinition();
+                rowDef.Height = new GridLength(1, GridUnitType.Star);
+                layerEstimateGrid.RowDefinitions.Add(rowDef);
+
+                int count = layerTemplate.IndexOf(obj) + 1;
+                int valueFontSize = 18;
+
+                if (templateType == "Slab")
+                {
+                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+
+                else if (templateType == "Footing")
+                {
+                    UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+
+                else if (templateType == "Column")
+                {
+                    UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+
+                else if (templateType == "Beam")
+                {
+                   // UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+            }
+
+            layerEstimateExpander.Content = layerEstimateGrid;
+
+            stackPanel.Children.Add(layerEstimateExpander);
+        }
+
+        public static void GenerateCumulatedSlabTableExpander(StackPanel stackPanel)
+        {
+
+        }
+
+        static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            SlabTemplate slab = (SlabTemplate)_obj;
+
+            Label slabCount = new Label();
+            slabCount.Content = _count;
+            slabCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabCount);
+            slabCount.FontSize = _valueFontSize;
+            Grid.SetColumn(slabCount, 0);
+            Grid.SetRow(slabCount, _count);
+
+            Label slabName = new Label();
+            slabName.Content = slab.name;
+            slabName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabName);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabName, 1);
+            Grid.SetRow(slabName, _count);
+
+            Label slabGrossVolume = new Label();
+            slabGrossVolume.Content = slab.grossVolume.ToString();
+            slabGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabGrossVolume);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabGrossVolume, 2);
+            Grid.SetRow(slabGrossVolume, _count);
+
+            Label slabNetVolume = new Label();
+            slabNetVolume.Content = slab.netVolume.ToString();
+            slabNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabNetVolume);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabNetVolume, 3);
+            Grid.SetRow(slabNetVolume, _count);
+
+            Label slabTopArea = new Label();
+            slabTopArea.Content = slab.topArea.ToString();
+            slabTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabTopArea);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabTopArea, 4);
+            Grid.SetRow(slabTopArea, _count);
+
+            Label slabBottomArea = new Label();
+            slabBottomArea.Content = slab.bottomArea.ToString();
+            slabBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabBottomArea);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabBottomArea, 5);
+            Grid.SetRow(slabBottomArea, _count);
+
+            Label slabEdgeArea = new Label();
+            slabEdgeArea.Content = slab.edgeArea.ToString();
+            slabEdgeArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabEdgeArea);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabEdgeArea, 6);
+            Grid.SetRow(slabEdgeArea, _count);
+
+            Label slabPerimeter = new Label();
+            slabPerimeter.Content = slab.perimeter.ToString();
+            slabPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabPerimeter);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabPerimeter, 7);
+            Grid.SetRow(slabPerimeter, _count);
+
+            Label slabOpeningPerimeter = new Label();
+            slabOpeningPerimeter.Content = slab.openingPerimeter.ToString();
+            slabOpeningPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(slabOpeningPerimeter);
+            slabName.FontSize = _valueFontSize;
+            Grid.SetColumn(slabOpeningPerimeter, 8);
+            Grid.SetRow(slabOpeningPerimeter, _count);
+        }
+
+        static void GenerateFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            FootingTemplate footing = (FootingTemplate)_obj;
+
+            Label footingCount = new Label();
+            footingCount.Content = _count;
+            footingCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingCount);
+            footingCount.FontSize = _valueFontSize;
+            Grid.SetColumn(footingCount, 0);
+            Grid.SetRow(footingCount, _count);
+
+            Label footingName = new Label();
+            footingName.Content = footing.name;
+            footingName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingName);
+            footingName.FontSize = _valueFontSize;
+            Grid.SetColumn(footingName, 1);
+            Grid.SetRow(footingName, _count);
+
+            Label footingVolume = new Label();
+            footingVolume.Content = footing.volume.ToString();
+            footingVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingVolume);
+            footingName.FontSize = _valueFontSize;
+            Grid.SetColumn(footingVolume, 2);
+            Grid.SetRow(footingVolume, _count);
+
+            Label footingTopArea = new Label();
+            footingTopArea.Content = footing.topArea.ToString();
+            footingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingTopArea);
+            footingName.FontSize = _valueFontSize;
+            Grid.SetColumn(footingTopArea, 3);
+            Grid.SetRow(footingTopArea, _count);
+
+            Label footingBottomArea = new Label();
+            footingBottomArea.Content = footing.bottomArea.ToString();
+            footingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingBottomArea);
+            footingName.FontSize = _valueFontSize;
+            Grid.SetColumn(footingBottomArea, 4);
+            Grid.SetRow(footingBottomArea, _count);
+
+            Label footingSideArea = new Label();
+            footingSideArea.Content = footing.sideArea.ToString();
+            footingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(footingSideArea);
+            footingName.FontSize = _valueFontSize;
+            Grid.SetColumn(footingSideArea, 5);
+            Grid.SetRow(footingSideArea, _count);
+        }
+
+        static void GenerateColumnTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            ColumnTemplate column = (ColumnTemplate)_obj;
+
+            Label columnCount = new Label();
+            columnCount.Content = _count;
+            columnCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnCount);
+            columnCount.FontSize = _valueFontSize;
+            Grid.SetColumn(columnCount, 0);
+            Grid.SetRow(columnCount, _count);
+
+            Label columnName = new Label();
+            columnName.Content = column.name;
+            columnName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnName);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnName, 1);
+            Grid.SetRow(columnName, _count);
+
+            Label columnVolume = new Label();
+            columnVolume.Content = column.volume.ToString();
+            columnVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnVolume);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnVolume, 2);
+            Grid.SetRow(columnVolume, _count);
+
+            Label columnHeight = new Label();
+            columnHeight.Content = column.height.ToString();
+            columnHeight.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnHeight);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnHeight, 3);
+            Grid.SetRow(columnHeight, _count);
+
+            Label columnSideArea = new Label();
+            columnSideArea.Content = column.sideArea.ToString();
+            columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnSideArea);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnSideArea, 4);
+            Grid.SetRow(columnSideArea, _count);
+        }
+
+        static void GenerateBeamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            ColumnTemplate column = (ColumnTemplate)_obj;
+
+            Label columnCount = new Label();
+            columnCount.Content = _count;
+            columnCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnCount);
+            columnCount.FontSize = _valueFontSize;
+            Grid.SetColumn(columnCount, 0);
+            Grid.SetRow(columnCount, _count);
+
+            Label columnName = new Label();
+            columnName.Content = column.name;
+            columnName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnName);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnName, 1);
+            Grid.SetRow(columnName, _count);
+
+            Label columnVolume = new Label();
+            columnVolume.Content = column.volume.ToString();
+            columnVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnVolume);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnVolume, 2);
+            Grid.SetRow(columnVolume, _count);
+
+            Label columnHeight = new Label();
+            columnHeight.Content = column.height.ToString();
+            columnHeight.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnHeight);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnHeight, 3);
+            Grid.SetRow(columnHeight, _count);
+
+            Label columnSideArea = new Label();
+            columnSideArea.Content = column.sideArea.ToString();
+            columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(columnSideArea);
+            columnName.FontSize = _valueFontSize;
+            Grid.SetColumn(columnSideArea, 4);
+            Grid.SetRow(columnSideArea, _count);
         }
     }
 }
