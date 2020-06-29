@@ -30,6 +30,7 @@ namespace QTO_Tool
         List<CurbTemplate> allCurbs = new List<CurbTemplate>();
         List<FootingTemplate> allFootings = new List<FootingTemplate>();
         List<SlabTemplate> allSlabs = new List<SlabTemplate>();
+        List<WallTemplate> allWalls = new List<WallTemplate>();
         List<StyrofoamTemplate> allStyrofoams = new List<StyrofoamTemplate>();
 
         List<string> quantityValues = new List<string>();
@@ -104,7 +105,7 @@ namespace QTO_Tool
             string objType;
 
             List<object> layerTemplates;
-            
+
             for (int i = 0; i < this.ConcreteTemplateGrid.RowDefinitions.Count; i++)
             {
                 selectedConcreteTemplate = LogicalTreeHelper.FindLogicalNode(this.ConcreteTemplateGrid,
@@ -115,7 +116,7 @@ namespace QTO_Tool
                 layerName = RunQTO.doc.Layers[i].Name;
 
                 layerTemplates = new List<object>();
-                
+
                 if (selectedTemplate == "Beam")
                 {
                     rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
@@ -123,7 +124,7 @@ namespace QTO_Tool
                     for (int j = 0; j < rhobjs.Length; j++)
                     {
                         BeamTemplate beam = new BeamTemplate(rhobjs[j], layerName, angleThreshold);
-                        
+
                         allBeams.Add(beam);
                         layerTemplates.Add(beam);
                     }
@@ -202,7 +203,26 @@ namespace QTO_Tool
 
                     if (CombineValuesToggle.IsChecked == true)
                     {
-                        quantityValues = new List<string>() {"COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
+                    }
+                }
+
+                if (selectedTemplate == "Wall")
+                {
+                    rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
+
+                    for (int j = 0; j < rhobjs.Length; j++)
+                    {
+                        WallTemplate wall = new WallTemplate(rhobjs[j], layerName, angleThreshold);
+
+                        allWalls.Add(wall);
+                        layerTemplates.Add(wall);
+                    }
+
+                    if (CombineValuesToggle.IsChecked == true)
+                    {
+                        quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                            "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                     }
                 }
 
@@ -214,19 +234,15 @@ namespace QTO_Tool
                     {
                         objType = rhobjs[j].GetType().ToString().Split('.').Last<string>();
 
-                        if (objType == "BrepObject")
-                        {
+                        SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
 
-                            SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
-
-                            allSlabs.Add(slab);
-                            layerTemplates.Add(slab);
-                        }
+                        allSlabs.Add(slab);
+                        layerTemplates.Add(slab);
                     }
 
                     if (CombineValuesToggle.IsChecked == true)
                     {
-                        quantityValues = new List<string>() {"COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
+                        quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
                     }
                 }
 

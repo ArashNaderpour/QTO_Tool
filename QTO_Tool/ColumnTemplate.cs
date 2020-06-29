@@ -74,7 +74,7 @@ namespace QTO_Tool
 
             height = _topAndBottomFaceCenters["Top"].Z - _topAndBottomFaceCenters["Bottom"].Z;
 
-            Math.Round(height, 2);
+            height = Math.Round(height, 2);
 
             return height;
         }

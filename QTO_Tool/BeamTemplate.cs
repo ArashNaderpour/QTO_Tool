@@ -34,6 +34,8 @@ namespace QTO_Tool
 
             sideArea = SideArea(tempBrep, angleThreshold);
 
+            length = Length();
+
         }
 
         double TopArea(Brep brep, double angleThreshold)
@@ -151,9 +153,11 @@ namespace QTO_Tool
             {
                 var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
 
-                area += area_properties.Area;
+                double faceArea = Math.Round(area_properties.Area, 2);
 
-                faceAreas.Add(area_properties.Area);
+                area += faceArea;
+
+                faceAreas.Add(faceArea);
             }
 
             faceAreas.Sort();
@@ -164,20 +168,28 @@ namespace QTO_Tool
             return area;
         }
 
-        double Length(Brep brep, double angleThreshold)
+        double Length()
         {
-            double area = 0;
+            double length = 0;
 
-            for (int i = 0; i < brep.Faces.Count; i++)
+            List<double> edgeLengths = new List<double>();
+
+            for (int i = 0; i < this.topBrepFace.Edges.Count; i++)
             {
-                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+                double edgeLength = Math.Round(this.topBrepFace.Edges[i].GetLength(), 2);
 
-                area += area_properties.Area;
+                edgeLengths.Add(edgeLength);
+
+                length += edgeLength;
             }
 
-            area -= (this.TopArea(brep, angleThreshold) + this.bottomArea);
+            edgeLengths.Sort();
 
-            return area;
+            length -= (edgeLengths[0] + edgeLengths[1]);
+
+            length /= 2;
+
+            return length;
         }
     }
 }

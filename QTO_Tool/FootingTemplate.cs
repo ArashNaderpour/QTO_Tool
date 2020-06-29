@@ -148,7 +148,9 @@ namespace QTO_Tool
             {
                 var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
 
-                area += area_properties.Area;
+                double faceArea = Math.Round(area_properties.Area, 2);
+
+                area += faceArea;
             }
 
             area -= (this.topArea + this.bottomArea);
