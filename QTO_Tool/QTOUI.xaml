@@ -171,7 +171,7 @@
                                               VerticalAlignment="Stretch"
                                                   Margin="10 0 5 0"
                                                   IsEnabled="False">
-                                        
+
                                         <ToggleButton.Style>
                                             <Style TargetType="{x:Type ToggleButton}">
                                                 <Setter Property="Content" Value="PROJECT BASED"/>
@@ -184,7 +184,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </ToggleButton.Style>
-                                        
+
                                     </ToggleButton>
 
 
@@ -203,20 +203,8 @@
 
                         <StackPanel Name="ConcreteTablePanel" Orientation="Vertical"
                                     Margin="10 0 10 10"/>
-
-
-
-
-                        <!--<Grid Name="ConcreteLayerTable" Margin="10 0 10 10">
-
-                    </Grid>-->
-
-
-
                     </StackPanel>
                 </ScrollViewer>
-
-
             </TabItem>
 
             <TabItem Header="Exterior" Width="110" Height="45" Padding="5"

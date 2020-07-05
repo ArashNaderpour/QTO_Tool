@@ -68,13 +68,13 @@ namespace QTO_Tool
                     AngleThresholdSlider.IsEnabled = true;
                     CombineValuesLabel.IsEnabled = true;
                     CombineValuesToggle.IsEnabled = true;
-
                 }
                 else
                 {
                     this.ConcreteTemplateGrid.Children.Clear();
                     this.ConcreteTemplateGrid.RowDefinitions.Clear();
                     UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+                    this.ConcreteTablePanel.Children.Clear();
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -111,8 +111,8 @@ namespace QTO_Tool
                 selectedConcreteTemplate = LogicalTreeHelper.FindLogicalNode(this.ConcreteTemplateGrid,
                     "ConcreteTemplates_" + i.ToString()) as ComboBox;
 
-                selectedTemplate = selectedConcreteTemplate.SelectedItem.ToString().Split(':').Last().Replace(" ", String.Empty);
-
+                selectedTemplate = selectedConcreteTemplate.SelectedItem.ToString().Split(':').Last().Replace(" ", string.Empty);
+                
                 layerName = RunQTO.doc.Layers[i].Name;
 
                 layerTemplates = new List<object>();
@@ -138,7 +138,7 @@ namespace QTO_Tool
                 if (selectedTemplate == "Column")
                 {
                     rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
+                    
                     for (int j = 0; j < rhobjs.Length; j++)
                     {
                         ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName);
@@ -152,14 +152,14 @@ namespace QTO_Tool
                         quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                     }
                 }
-
-                if (selectedTemplate == "Continous Footing")
+                
+                if (selectedTemplate == "ContinousFooting")
                 {
                     rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
+                  
                     for (int j = 0; j < rhobjs.Length; j++)
                     {
-                        ContinousFootingTemplate continousFooting = new ContinousFootingTemplate(rhobjs[j]);
+                        ContinousFootingTemplate continousFooting = new ContinousFootingTemplate(rhobjs[j], layerName, angleThreshold);
 
                         allContinousFootings.Add(continousFooting);
                         layerTemplates.Add(continousFooting);
@@ -177,7 +177,7 @@ namespace QTO_Tool
 
                     for (int j = 0; j < rhobjs.Length; j++)
                     {
-                        CurbTemplate curb = new CurbTemplate(rhobjs[j]);
+                        CurbTemplate curb = new CurbTemplate(rhobjs[j], layerName, angleThreshold);
 
                         allCurbs.Add(curb);
                         layerTemplates.Add(curb);

@@ -167,6 +167,8 @@ namespace QTO_Tool
 
             area -= (this.topArea + this.bottomArea);
 
+            area = Math.Round(area, 2);
+
             return area;
         }
 

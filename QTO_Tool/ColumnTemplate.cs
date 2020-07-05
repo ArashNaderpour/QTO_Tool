@@ -31,7 +31,6 @@ namespace QTO_Tool
             sideArea = SideArea(tempBrep);
 
             height = Height(topAndBottomFaceCenters);
-            MessageBox.Show(height.ToString());
         }
 
         double SideArea(Brep brep)
@@ -64,6 +63,8 @@ namespace QTO_Tool
             topAndBottomFaceCenters.Add("Bottom", faceCenters[bottomFaceIndex]);
 
             area -= (faceAreas[topFaceIndex] + faceAreas[bottomFaceIndex]);
+
+            area = Math.Round(area, 2);
 
             return area;
         }

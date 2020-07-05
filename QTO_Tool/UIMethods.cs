@@ -144,6 +144,21 @@ namespace QTO_Tool
                 {
                     UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize);
                 }
+
+                else if (templateType == "Curb")
+                {
+                    UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+
+                else if (templateType == "ContinousFooting")
+                {
+                    UIMethods.GenerateContinousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
+
+                else if (templateType == "Styrofoam")
+                {
+                    UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                }
             }
 
             layerEstimateExpander.Content = layerEstimateGrid;
@@ -180,7 +195,7 @@ namespace QTO_Tool
             slabGrossVolume.Content = slab.grossVolume.ToString();
             slabGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabGrossVolume);
-            slabName.FontSize = _valueFontSize;
+            slabGrossVolume.FontSize = _valueFontSize;
             Grid.SetColumn(slabGrossVolume, 2);
             Grid.SetRow(slabGrossVolume, _count);
 
@@ -188,7 +203,7 @@ namespace QTO_Tool
             slabNetVolume.Content = slab.netVolume.ToString();
             slabNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabNetVolume);
-            slabName.FontSize = _valueFontSize;
+            slabNetVolume.FontSize = _valueFontSize;
             Grid.SetColumn(slabNetVolume, 3);
             Grid.SetRow(slabNetVolume, _count);
 
@@ -196,7 +211,7 @@ namespace QTO_Tool
             slabTopArea.Content = slab.topArea.ToString();
             slabTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabTopArea);
-            slabName.FontSize = _valueFontSize;
+            slabTopArea.FontSize = _valueFontSize;
             Grid.SetColumn(slabTopArea, 4);
             Grid.SetRow(slabTopArea, _count);
 
@@ -204,7 +219,7 @@ namespace QTO_Tool
             slabBottomArea.Content = slab.bottomArea.ToString();
             slabBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabBottomArea);
-            slabName.FontSize = _valueFontSize;
+            slabBottomArea.FontSize = _valueFontSize;
             Grid.SetColumn(slabBottomArea, 5);
             Grid.SetRow(slabBottomArea, _count);
 
@@ -212,7 +227,7 @@ namespace QTO_Tool
             slabEdgeArea.Content = slab.edgeArea.ToString();
             slabEdgeArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabEdgeArea);
-            slabName.FontSize = _valueFontSize;
+            slabEdgeArea.FontSize = _valueFontSize;
             Grid.SetColumn(slabEdgeArea, 6);
             Grid.SetRow(slabEdgeArea, _count);
 
@@ -220,7 +235,7 @@ namespace QTO_Tool
             slabPerimeter.Content = slab.perimeter.ToString();
             slabPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabPerimeter);
-            slabName.FontSize = _valueFontSize;
+            slabPerimeter.FontSize = _valueFontSize;
             Grid.SetColumn(slabPerimeter, 7);
             Grid.SetRow(slabPerimeter, _count);
 
@@ -228,7 +243,7 @@ namespace QTO_Tool
             slabOpeningPerimeter.Content = slab.openingPerimeter.ToString();
             slabOpeningPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabOpeningPerimeter);
-            slabName.FontSize = _valueFontSize;
+            slabOpeningPerimeter.FontSize = _valueFontSize;
             Grid.SetColumn(slabOpeningPerimeter, 8);
             Grid.SetRow(slabOpeningPerimeter, _count);
         }
@@ -257,7 +272,7 @@ namespace QTO_Tool
             footingVolume.Content = footing.volume.ToString();
             footingVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingVolume);
-            footingName.FontSize = _valueFontSize;
+            footingVolume.FontSize = _valueFontSize;
             Grid.SetColumn(footingVolume, 2);
             Grid.SetRow(footingVolume, _count);
 
@@ -265,7 +280,7 @@ namespace QTO_Tool
             footingTopArea.Content = footing.topArea.ToString();
             footingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingTopArea);
-            footingName.FontSize = _valueFontSize;
+            footingTopArea.FontSize = _valueFontSize;
             Grid.SetColumn(footingTopArea, 3);
             Grid.SetRow(footingTopArea, _count);
 
@@ -273,7 +288,7 @@ namespace QTO_Tool
             footingBottomArea.Content = footing.bottomArea.ToString();
             footingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingBottomArea);
-            footingName.FontSize = _valueFontSize;
+            footingBottomArea.FontSize = _valueFontSize;
             Grid.SetColumn(footingBottomArea, 4);
             Grid.SetRow(footingBottomArea, _count);
 
@@ -281,7 +296,7 @@ namespace QTO_Tool
             footingSideArea.Content = footing.sideArea.ToString();
             footingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingSideArea);
-            footingName.FontSize = _valueFontSize;
+            footingSideArea.FontSize = _valueFontSize;
             Grid.SetColumn(footingSideArea, 5);
             Grid.SetRow(footingSideArea, _count);
         }
@@ -310,7 +325,7 @@ namespace QTO_Tool
             columnVolume.Content = column.volume.ToString();
             columnVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnVolume);
-            columnName.FontSize = _valueFontSize;
+            columnVolume.FontSize = _valueFontSize;
             Grid.SetColumn(columnVolume, 2);
             Grid.SetRow(columnVolume, _count);
 
@@ -318,7 +333,7 @@ namespace QTO_Tool
             columnHeight.Content = column.height.ToString();
             columnHeight.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnHeight);
-            columnName.FontSize = _valueFontSize;
+            columnHeight.FontSize = _valueFontSize;
             Grid.SetColumn(columnHeight, 3);
             Grid.SetRow(columnHeight, _count);
 
@@ -326,7 +341,7 @@ namespace QTO_Tool
             columnSideArea.Content = column.sideArea.ToString();
             columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnSideArea);
-            columnName.FontSize = _valueFontSize;
+            columnSideArea.FontSize = _valueFontSize;
             Grid.SetColumn(columnSideArea, 4);
             Grid.SetRow(columnSideArea, _count);
         }
@@ -355,7 +370,7 @@ namespace QTO_Tool
             beamVolume.Content = beam.volume.ToString();
             beamVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamVolume);
-            beamName.FontSize = _valueFontSize;
+            beamVolume.FontSize = _valueFontSize;
             Grid.SetColumn(beamVolume, 2);
             Grid.SetRow(beamVolume, _count);
 
@@ -363,7 +378,7 @@ namespace QTO_Tool
             beamBottomArea.Content = beam.bottomArea.ToString();
             beamBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamBottomArea);
-            beamName.FontSize = _valueFontSize;
+            beamBottomArea.FontSize = _valueFontSize;
             Grid.SetColumn(beamBottomArea, 3);
             Grid.SetRow(beamBottomArea, _count);
 
@@ -371,7 +386,7 @@ namespace QTO_Tool
             beamSideArea.Content = beam.sideArea.ToString();
             beamSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamSideArea);
-            beamName.FontSize = _valueFontSize;
+            beamSideArea.FontSize = _valueFontSize;
             Grid.SetColumn(beamSideArea, 4);
             Grid.SetRow(beamSideArea, _count);
 
@@ -379,7 +394,7 @@ namespace QTO_Tool
             beamLength.Content = beam.length.ToString();
             beamLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamLength);
-            beamName.FontSize = _valueFontSize;
+            beamLength.FontSize = _valueFontSize;
             Grid.SetColumn(beamLength, 5);
             Grid.SetRow(beamLength, _count);
         }
@@ -408,7 +423,7 @@ namespace QTO_Tool
             wallGrossVolume.Content = wall.grossVolume.ToString();
             wallGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallGrossVolume);
-            wallName.FontSize = _valueFontSize;
+            wallGrossVolume.FontSize = _valueFontSize;
             Grid.SetColumn(wallGrossVolume, 2);
             Grid.SetRow(wallGrossVolume, _count);
 
@@ -416,7 +431,7 @@ namespace QTO_Tool
             wallNetVolume.Content = wall.netVolume.ToString();
             wallNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallNetVolume);
-            wallName.FontSize = _valueFontSize;
+            wallNetVolume.FontSize = _valueFontSize;
             Grid.SetColumn(wallNetVolume, 3);
             Grid.SetRow(wallNetVolume, _count);
 
@@ -424,7 +439,7 @@ namespace QTO_Tool
             wallTopArea.Content = wall.topArea.ToString();
             wallTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallTopArea);
-            wallName.FontSize = _valueFontSize;
+            wallTopArea.FontSize = _valueFontSize;
             Grid.SetColumn(wallTopArea, 4);
             Grid.SetRow(wallTopArea, _count);
 
@@ -432,7 +447,7 @@ namespace QTO_Tool
             endArea.Content = wall.endArea.ToString();
             endArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(endArea);
-            wallName.FontSize = _valueFontSize;
+            endArea.FontSize = _valueFontSize;
             Grid.SetColumn(endArea, 5);
             Grid.SetRow(endArea, _count);
 
@@ -440,7 +455,7 @@ namespace QTO_Tool
             sideArea_1.Content = wall.sideArea_1.ToString();
             sideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(sideArea_1);
-            wallName.FontSize = _valueFontSize;
+            sideArea_1.FontSize = _valueFontSize;
             Grid.SetColumn(sideArea_1, 6);
             Grid.SetRow(sideArea_1, _count);
 
@@ -448,7 +463,7 @@ namespace QTO_Tool
             sideArea_2.Content = wall.sideArea_2.ToString();
             sideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(sideArea_2);
-            wallName.FontSize = _valueFontSize;
+            sideArea_2.FontSize = _valueFontSize;
             Grid.SetColumn(sideArea_2, 7);
             Grid.SetRow(sideArea_2, _count);
 
@@ -456,7 +471,7 @@ namespace QTO_Tool
             length.Content = wall.length.ToString();
             length.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(length);
-            wallName.FontSize = _valueFontSize;
+            length.FontSize = _valueFontSize;
             Grid.SetColumn(length, 8);
             Grid.SetRow(length, _count);
 
@@ -464,9 +479,152 @@ namespace QTO_Tool
             openingArea.Content = wall.openingArea.ToString();
             openingArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(openingArea);
-            wallName.FontSize = _valueFontSize;
+            openingArea.FontSize = _valueFontSize;
             Grid.SetColumn(openingArea, 9);
             Grid.SetRow(openingArea, _count);
+        }
+
+        static void GenerateCurbTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            CurbTemplate curb = (CurbTemplate)_obj;
+
+            Label curbCount = new Label();
+            curbCount.Content = _count;
+            curbCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbCount);
+            curbCount.FontSize = _valueFontSize;
+            Grid.SetColumn(curbCount, 0);
+            Grid.SetRow(curbCount, _count);
+
+            Label curbName = new Label();
+            curbName.Content = curb.name;
+            curbName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbName);
+            curbName.FontSize = _valueFontSize;
+            Grid.SetColumn(curbName, 1);
+            Grid.SetRow(curbName, _count);
+
+            Label curbVolume = new Label();
+            curbVolume.Content = curb.volume.ToString();
+            curbVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbVolume);
+            curbVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(curbVolume, 2);
+            Grid.SetRow(curbVolume, _count);
+
+            Label curbTopArea = new Label();
+            curbTopArea.Content = curb.topArea.ToString();
+            curbTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbTopArea);
+            curbTopArea.FontSize = _valueFontSize;
+            Grid.SetColumn(curbTopArea, 3);
+            Grid.SetRow(curbTopArea, _count);
+
+            Label curbSideArea = new Label();
+            curbSideArea.Content = curb.sideArea.ToString();
+            curbSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbSideArea);
+            curbSideArea.FontSize = _valueFontSize;
+            Grid.SetColumn(curbSideArea, 4);
+            Grid.SetRow(curbSideArea, _count);
+
+            Label curbLength = new Label();
+            curbLength.Content = curb.length.ToString();
+            curbLength.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbLength);
+            curbLength.FontSize = _valueFontSize;
+            Grid.SetColumn(curbLength, 5);
+            Grid.SetRow(curbLength, _count);
+        }
+
+        static void GenerateContinousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            ContinousFootingTemplate continousFooting = (ContinousFootingTemplate)_obj;
+
+            Label continousFootingCount = new Label();
+            continousFootingCount.Content = _count;
+            continousFootingCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingCount);
+            continousFootingCount.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingCount, 0);
+            Grid.SetRow(continousFootingCount, _count);
+
+            Label continousFootingName = new Label();
+            continousFootingName.Content = continousFooting.name;
+            continousFootingName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingName);
+            continousFootingName.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingName, 1);
+            Grid.SetRow(continousFootingName, _count);
+
+            Label continousFootingVolume = new Label();
+            continousFootingVolume.Content = continousFooting.volume.ToString();
+            continousFootingVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingVolume);
+            continousFootingVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingVolume, 2);
+            Grid.SetRow(continousFootingVolume, _count);
+
+            Label continousFootingTopArea = new Label();
+            continousFootingTopArea.Content = continousFooting.topArea.ToString();
+            continousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingTopArea);
+            continousFootingTopArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingTopArea, 3);
+            Grid.SetRow(continousFootingTopArea, _count);
+
+            Label continousFootingBottomArea = new Label();
+            continousFootingBottomArea.Content = continousFooting.bottomArea.ToString();
+            continousFootingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingBottomArea);
+            continousFootingBottomArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingBottomArea, 4);
+            Grid.SetRow(continousFootingBottomArea, _count);
+
+            Label continousFootingSideArea = new Label();
+            continousFootingSideArea.Content = continousFooting.sideArea.ToString();
+            continousFootingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingSideArea);
+            continousFootingSideArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingSideArea, 5);
+            Grid.SetRow(continousFootingSideArea, _count);
+
+            Label continousFootingLength = new Label();
+            continousFootingLength.Content = continousFooting.length.ToString();
+            continousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continousFootingLength);
+            continousFootingLength.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingLength, 6);
+            Grid.SetRow(continousFootingLength, _count);
+        }
+
+        static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        {
+            StyrofoamTemplate styrofoam = (StyrofoamTemplate)_obj;
+
+            Label styrofoamCount = new Label();
+            styrofoamCount.Content = _count;
+            styrofoamCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(styrofoamCount);
+            styrofoamCount.FontSize = _valueFontSize;
+            Grid.SetColumn(styrofoamCount, 0);
+            Grid.SetRow(styrofoamCount, _count);
+
+            Label styrofoamName = new Label();
+            styrofoamName.Content = styrofoam.name;
+            styrofoamName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(styrofoamName);
+            styrofoamName.FontSize = _valueFontSize;
+            Grid.SetColumn(styrofoamName, 1);
+            Grid.SetRow(styrofoamName, _count);
+
+            Label styrofoamVolume = new Label();
+            styrofoamVolume.Content = styrofoam.volume.ToString();
+            styrofoamVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(styrofoamVolume);
+            styrofoamVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(styrofoamVolume, 2);
+            Grid.SetRow(styrofoamVolume, _count);
         }
     }
 }

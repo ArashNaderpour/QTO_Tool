@@ -13,11 +13,17 @@ namespace QTO_Tool
         public string name { get; set; }
         public double volume { get; set; }
 
+        static string type = "StyrofoamTemplate";
+        private Brep topBrepFace;
+
         public StyrofoamTemplate(RhinoObject rhobj, string layerName)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;
 
-            name = layerName;
+            name = rhobj.Name;
+
+            var mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
+            volume = Math.Round(mass_properties.Volume, 2);
         }
     }
 }

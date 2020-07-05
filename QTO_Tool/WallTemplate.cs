@@ -55,8 +55,8 @@ namespace QTO_Tool
             double area = 0;
 
             List<double> upfacingFaceElevations = new List<double>();
-            List<double> UpfacingFaceAreas= new List<double>();
-            List<Brep> UpfacingFaces = new List<Brep>();
+            List<double> upfacingFaceAreas= new List<double>();
+            List<Brep> upfacingFaces = new List<Brep>();
 
             List<Brep> topFaces = new List<Brep>();
 
@@ -79,8 +79,8 @@ namespace QTO_Tool
                     if (dotProduct > angleThreshold && dotProduct <= 1)
                     {
                         upfacingFaceElevations.Add(center.Z);
-                        UpfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
-                        UpfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
+                        upfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
+                        upfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
                 }
             }
@@ -91,8 +91,8 @@ namespace QTO_Tool
                 {
                     if (upfacingFaceElevations[i] == upfacingFaceElevations.Max())
                     {
-                        area += UpfacingFaceAreas[i];
-                        topFaces.Add(UpfacingFaces[i]);
+                        area += upfacingFaceAreas[i];
+                        topFaces.Add(upfacingFaces[i]);
                     }
 
                 }
@@ -202,7 +202,7 @@ namespace QTO_Tool
 
         void SidesAndEnedAreaAndOpeingArea(Brep brep, double angleThreshold)
         {
-            List<double> sideFaceAreas = new List<double>();
+            List<double> netSideFaceAreas = new List<double>();
             List<Brep> sideFaces = new List<Brep>();
 
             List<double> endFaceAreas = new List<double>();
@@ -215,8 +215,10 @@ namespace QTO_Tool
             double wallHeight = topFaceCenterPoint.Z - bottomFaceCenterPoint.Z;
             wallHeight = Math.Round(wallHeight, 2);
 
-            List<double> edgeLengths;
-            double edgeLength = 0;
+            List<double> edgesStartAndEndZ;
+            double edgeEndZ = 0;
+            double edgeStartZ = 0;
+            double zDifference;
 
             for (int i = 0; i < brep.Faces.Count; i++)
             {
@@ -227,15 +229,20 @@ namespace QTO_Tool
 
                 if (area_properties.Centroid.Z != topFaceCenterPoint.Z && area_properties.Centroid.Z != bottomFaceCenterPoint.Z)
                 {
-                    edgeLengths = new List<double>();
+                    edgesStartAndEndZ = new List<double>();
                    
                     for (int j = 0; j < tempBrep.Edges.Count; j++)
                     {
-                        edgeLength = Math.Round(tempBrep.Edges[j].GetLength(), 2);
-                        edgeLengths.Add(edgeLength);
+                        edgeStartZ = tempBrep.Edges[j].PointAtStart.Z;
+                        edgesStartAndEndZ.Add(edgeStartZ);
+
+                        edgeEndZ = tempBrep.Edges[j].PointAtEnd.Z;
+                        edgesStartAndEndZ.Add(edgeEndZ);
                     }
-                    
-                    if (wallHeight > edgeLengths.Max())
+
+                    zDifference = Math.Round(edgesStartAndEndZ.Max() - edgesStartAndEndZ.Min() , 2);
+                        
+                    if (wallHeight > zDifference)
                     {
                         endFaces.Add(tempBrep);
                         endFaceAreas.Add(faceArea);
@@ -244,43 +251,59 @@ namespace QTO_Tool
                     else
                     {
                         sideFaces.Add(tempBrep);
-                        sideFaceAreas.Add(faceArea);
+                        netSideFaceAreas.Add(faceArea);
                     }
                 }
             }
-
+            
             Brep[] sideFacesArray = sideFaces.ToArray();
-            double[] sideFaceAreasArray = sideFaceAreas.ToArray();
+            double[] netSideFaceAreasArray = netSideFaceAreas.ToArray();
             
             // Sort Based on Face Area
-            Array.Sort(sideFaceAreasArray, sideFacesArray);
-           
-            // Assigning End Area
-            this.endArea = endFaceAreas.Sum() + (sideFaceAreasArray[0] + sideFaceAreasArray[1]);
-
-            // Assigning Side Areas
-            sideFaces.Remove(sideFacesArray[0]);
-            sideFaces.Remove(sideFacesArray[1]);
-            
-            Brep[] joinedSideFaces = Brep.JoinBreps(sideFaces, 0.01);
+            Array.Sort(netSideFaceAreasArray, sideFacesArray);
 
             double side1Area;
             double side2Area;
 
-            if (joinedSideFaces.Length == 2) {
-                side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-                side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[1]).Area, 2);
+            if (sideFacesArray.Length > 2)
+            {
+
+                // Assigning End Area
+                this.endArea = endFaceAreas.Sum() + (netSideFaceAreasArray[0] + netSideFaceAreasArray[1]);
+
+                // Assigning Side Areas
+                sideFaces.Remove(sideFacesArray[0]);
+                sideFaces.Remove(sideFacesArray[1]);
+
+                Brep[] joinedSideFaces = Brep.JoinBreps(sideFaces, 0.01);
+
+                if (joinedSideFaces.Length == 2)
+                {
+                    side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+                    side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[1]).Area, 2);
+                }
+
+                else
+                {
+                    side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+                    side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+                }
+
+                // Opening Area
+                this.openingArea = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0].RemoveHoles(0.01)).Area, 2) - side1Area;
             }
 
             else
             {
-                side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-                side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+                // Assigning End Area
+                this.endArea = endFaceAreas.Sum();
+
+                side1Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[0]).Area, 2); ;
+                side2Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[1]).Area, 2); ;
+
+                // Opening Area
+                this.openingArea = netSideFaceAreasArray[0] - side1Area;
             }
-
-            // Opening Area
-            this.openingArea = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0].RemoveHoles(0.01)).Area, 2) - side1Area;
-
 
             // Assigning Side Areas
             if (side1Area <= side2Area)
