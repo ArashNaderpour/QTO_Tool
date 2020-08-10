@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace QTO_Tool
 {
@@ -246,6 +247,15 @@ namespace QTO_Tool
             slabOpeningPerimeter.FontSize = _valueFontSize;
             Grid.SetColumn(slabOpeningPerimeter, 8);
             Grid.SetRow(slabOpeningPerimeter, _count);
+
+            ToggleButton slabSelectObject = new ToggleButton();
+            slabSelectObject.Content = "SELECT";
+            slabSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            slabSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(slabSelectObject);
+            slabSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(slabSelectObject, 9);
+            Grid.SetRow(slabSelectObject, _count);
         }
 
         static void GenerateFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -299,6 +309,15 @@ namespace QTO_Tool
             footingSideArea.FontSize = _valueFontSize;
             Grid.SetColumn(footingSideArea, 5);
             Grid.SetRow(footingSideArea, _count);
+
+            ToggleButton footingSelectObject = new ToggleButton();
+            footingSelectObject.Content = "SELECT";
+            footingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            footingSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(footingSelectObject);
+            footingSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(footingSelectObject, 6);
+            Grid.SetRow(footingSelectObject, _count);
         }
 
         static void GenerateColumnTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -344,6 +363,15 @@ namespace QTO_Tool
             columnSideArea.FontSize = _valueFontSize;
             Grid.SetColumn(columnSideArea, 4);
             Grid.SetRow(columnSideArea, _count);
+
+            ToggleButton columnSelectObject = new ToggleButton();
+            columnSelectObject.Content = "SELECT";
+            columnSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            columnSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(columnSelectObject);
+            columnSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(columnSelectObject, 5);
+            Grid.SetRow(columnSelectObject, _count);
         }
 
         static void GenerateBeamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -397,6 +425,15 @@ namespace QTO_Tool
             beamLength.FontSize = _valueFontSize;
             Grid.SetColumn(beamLength, 5);
             Grid.SetRow(beamLength, _count);
+
+            ToggleButton beamSelectObject = new ToggleButton();
+            beamSelectObject.Content = "SELECT";
+            beamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            beamSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(beamSelectObject);
+            beamSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(beamSelectObject, 6);
+            Grid.SetRow(beamSelectObject, _count);
         }
 
         static void GenerateWallTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -443,45 +480,54 @@ namespace QTO_Tool
             Grid.SetColumn(wallTopArea, 4);
             Grid.SetRow(wallTopArea, _count);
 
-            Label endArea = new Label();
-            endArea.Content = wall.endArea.ToString();
-            endArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(endArea);
-            endArea.FontSize = _valueFontSize;
-            Grid.SetColumn(endArea, 5);
-            Grid.SetRow(endArea, _count);
+            Label wallEndArea = new Label();
+            wallEndArea.Content = wall.endArea.ToString();
+            wallEndArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(wallEndArea);
+            wallEndArea.FontSize = _valueFontSize;
+            Grid.SetColumn(wallEndArea, 5);
+            Grid.SetRow(wallEndArea, _count);
 
-            Label sideArea_1 = new Label();
-            sideArea_1.Content = wall.sideArea_1.ToString();
-            sideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(sideArea_1);
-            sideArea_1.FontSize = _valueFontSize;
-            Grid.SetColumn(sideArea_1, 6);
-            Grid.SetRow(sideArea_1, _count);
+            Label wallSideArea_1 = new Label();
+            wallSideArea_1.Content = wall.sideArea_1.ToString();
+            wallSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(wallSideArea_1);
+            wallSideArea_1.FontSize = _valueFontSize;
+            Grid.SetColumn(wallSideArea_1, 6);
+            Grid.SetRow(wallSideArea_1, _count);
 
-            Label sideArea_2 = new Label();
-            sideArea_2.Content = wall.sideArea_2.ToString();
-            sideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(sideArea_2);
-            sideArea_2.FontSize = _valueFontSize;
-            Grid.SetColumn(sideArea_2, 7);
-            Grid.SetRow(sideArea_2, _count);
+            Label wallSideArea_2 = new Label();
+            wallSideArea_2.Content = wall.sideArea_2.ToString();
+            wallSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(wallSideArea_2);
+            wallSideArea_2.FontSize = _valueFontSize;
+            Grid.SetColumn(wallSideArea_2, 7);
+            Grid.SetRow(wallSideArea_2, _count);
 
-            Label length = new Label();
-            length.Content = wall.length.ToString();
-            length.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(length);
-            length.FontSize = _valueFontSize;
-            Grid.SetColumn(length, 8);
-            Grid.SetRow(length, _count);
+            Label wallLength = new Label();
+            wallLength.Content = wall.length.ToString();
+            wallLength.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(wallLength);
+            wallLength.FontSize = _valueFontSize;
+            Grid.SetColumn(wallLength, 8);
+            Grid.SetRow(wallLength, _count);
 
-            Label openingArea = new Label();
-            openingArea.Content = wall.openingArea.ToString();
-            openingArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(openingArea);
-            openingArea.FontSize = _valueFontSize;
-            Grid.SetColumn(openingArea, 9);
-            Grid.SetRow(openingArea, _count);
+            Label wallOpeningArea = new Label();
+            wallOpeningArea.Content = wall.openingArea.ToString();
+            wallOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(wallOpeningArea);
+            wallOpeningArea.FontSize = _valueFontSize;
+            Grid.SetColumn(wallOpeningArea, 9);
+            Grid.SetRow(wallOpeningArea, _count);
+
+            ToggleButton wallSelectObject = new ToggleButton();
+            wallSelectObject.Content = "SELECT";
+            wallSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            wallSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(wallSelectObject);
+            wallSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(wallSelectObject, 10);
+            Grid.SetRow(wallSelectObject, _count);
         }
 
         static void GenerateCurbTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -535,6 +581,15 @@ namespace QTO_Tool
             curbLength.FontSize = _valueFontSize;
             Grid.SetColumn(curbLength, 5);
             Grid.SetRow(curbLength, _count);
+
+            ToggleButton curbSelectObject = new ToggleButton();
+            curbSelectObject.Content = "SELECT";
+            curbSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            curbSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(curbSelectObject);
+            curbSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(curbSelectObject, 6);
+            Grid.SetRow(curbSelectObject, _count);
         }
 
         static void GenerateContinousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -596,6 +651,15 @@ namespace QTO_Tool
             continousFootingLength.FontSize = _valueFontSize;
             Grid.SetColumn(continousFootingLength, 6);
             Grid.SetRow(continousFootingLength, _count);
+
+            ToggleButton continousFootingSelectObject = new ToggleButton();
+            continousFootingSelectObject.Content = "SELECT";
+            continousFootingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            continousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(continousFootingSelectObject);
+            continousFootingSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(continousFootingSelectObject, 7);
+            Grid.SetRow(continousFootingSelectObject, _count);
         }
 
         static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
@@ -625,6 +689,15 @@ namespace QTO_Tool
             styrofoamVolume.FontSize = _valueFontSize;
             Grid.SetColumn(styrofoamVolume, 2);
             Grid.SetRow(styrofoamVolume, _count);
+
+            ToggleButton styrofoamSelectObject = new ToggleButton();
+            styrofoamSelectObject.Content = "SELECT";
+            styrofoamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            styrofoamSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(styrofoamSelectObject);
+            styrofoamSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(styrofoamSelectObject, 3);
+            Grid.SetRow(styrofoamSelectObject, _count);
         }
     }
 }

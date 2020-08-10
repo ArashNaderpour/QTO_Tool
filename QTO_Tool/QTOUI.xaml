@@ -192,11 +192,27 @@
 
                             </StackPanel>
 
-                            <Button Name="CalculateQuantitiesButton" Content="CALCULATE" 
-                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" 
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button Name="CalculateQuantitiesButton" Content="CALCULATE" 
+                                Grid.Column="0" HorizontalAlignment="Stretch" 
                                 IsEnabled="False" Margin="10 0 35 0" FontSize="26" 
                                  Height ="60" VerticalAlignment="Stretch" 
                                     Click="Calculate_Concrete_Clicked"/>
+
+                                <Button Name="ExportExcelButton" Content="EXPORT" 
+                                Grid.Column="1" HorizontalAlignment="Stretch" 
+                                IsEnabled="False" Margin="10 0 35 0" FontSize="26" 
+                                 Height ="60" VerticalAlignment="Stretch" 
+                                        Background="#98AD80" 
+                                        Click="Export_Excel_Clicked"/>
+
+
+                            </Grid>
                         </Grid>
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"
                    Margin="20 10 20 20"/>
