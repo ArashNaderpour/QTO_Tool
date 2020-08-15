@@ -12,6 +12,7 @@ namespace QTO_Tool
     class SlabTemplate
     {
         public string name { get; set; }
+        public string id { get; set; }
         public double grossVolume { get; set; }
         public double netVolume { get; set; }
         public double topArea { get; set; }
@@ -29,6 +30,8 @@ namespace QTO_Tool
             Brep tempBrep = (Brep)rhobj.Geometry;
 
             name = rhobj.Name;
+
+            id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
             netVolume = Math.Round(mass_properties.Volume, 2);

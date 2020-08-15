@@ -8,13 +8,7 @@ using Rhino;
 using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace QTO_Tool
 {
@@ -35,6 +29,8 @@ namespace QTO_Tool
 
         List<string> quantityValues = new List<string>();
 
+        List<RhinoObject> selectedObjects = new List<RhinoObject>();
+
         public QTOUI()
         {
             InitializeComponent();
@@ -42,7 +38,7 @@ namespace QTO_Tool
 
         public void Load_Clicked(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         public void Save_Clicked(object sender, RoutedEventArgs e)
@@ -86,6 +82,38 @@ namespace QTO_Tool
             {
                 MessageBox.Show("Please select atleast one of the methods.");
             }
+
+            RhinoDoc.SelectObjects += OnSelectObjects;
+            RhinoDoc.DeselectObjects += OnDeselectObjects;
+            RhinoDoc.DeselectAllObjects += OnDeselectAllObjects;
+        }
+
+        /*---------------- Handeling Select Object Event ----------------*/
+        private void ObjectSelection_Activated(object sender, RoutedEventArgs e)
+        {
+            ToggleButton btn = sender as ToggleButton;
+            
+            RhinoObject rhobj = RunQTO.doc.Objects.FindId(new Guid(btn.Uid));
+            
+            selectedObjects.Add(rhobj);
+
+            rhobj.Select(true);
+
+            RunQTO.doc.Views.Redraw();
+        }
+
+        /*---------------- Handeling Deselect Object Event ----------------*/
+        private void ObjectDeselection_Activated(object sender, RoutedEventArgs e)
+        {
+            ToggleButton btn = sender as ToggleButton;
+
+            RhinoObject rhobj = RunQTO.doc.Objects.FindId(new Guid(btn.Uid));
+
+            selectedObjects.Remove(rhobj);
+
+            rhobj.Select(false);
+
+            RunQTO.doc.Views.Redraw();
         }
 
         private void Calculate_Concrete_Clicked(object sender, RoutedEventArgs e)
@@ -268,7 +296,8 @@ namespace QTO_Tool
 
                     if (CombineValuesToggle.IsChecked == true)
                     {
-                        UIMethods.GenerateAccumulatedSlabTableExpander(this.ConcreteTablePanel, layerName, selectedTemplate, layerTemplates, quantityValues);
+                        UIMethods.GenerateAccumulatedSlabTableExpander(this.ConcreteTablePanel, layerName, selectedTemplate,
+                            layerTemplates, quantityValues, ObjectSelection_Activated, ObjectDeselection_Activated);
 
                         quantityValues.Clear();
                     }
@@ -291,6 +320,35 @@ namespace QTO_Tool
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Export");
+        }
+
+        void OnSelectObjects(object sender, RhinoObjectSelectionEventArgs args)
+        {
+            if (args.Selected) // objects were selected
+            {
+                // do something
+                foreach (RhinoObject obj in args.RhinoObjects)
+                {
+                    MessageBox.Show(obj.Id + " was selected");
+                }
+            }
+        }
+
+        void OnDeselectObjects(object sender, RhinoObjectSelectionEventArgs args)
+        {
+            if (!args.Selected) // objects were selected
+            {
+                // do something
+                foreach (RhinoObject obj in args.RhinoObjects)
+                {
+                    MessageBox.Show(obj.Id + " was DESELECTED");
+                }
+            }
+        }
+
+        void OnDeselectAllObjects(object sender, RhinoDeselectAllObjectsEventArgs args)
+        {
+            MessageBox.Show("All Deselected");
         }
     }
 }

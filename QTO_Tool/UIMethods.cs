@@ -75,7 +75,9 @@ namespace QTO_Tool
             }
         }
 
-        public static void GenerateAccumulatedSlabTableExpander(StackPanel stackPanel, string layerName, string templateType, List<object> layerTemplate, List<string> values)
+        public static void GenerateAccumulatedSlabTableExpander(StackPanel stackPanel,
+            string layerName, string templateType, List<object> layerTemplate, List<string> values,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             Expander layerEstimateExpander = new Expander();
             layerEstimateExpander.Name = "LayerEstimateExpader";
@@ -123,7 +125,8 @@ namespace QTO_Tool
 
                 if (templateType == "Slab")
                 {
-                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid,
+                        valueFontSize, SelectObjectActivated, DeselectObjectActivated);
                 }
 
                 else if (templateType == "Footing")
@@ -172,7 +175,8 @@ namespace QTO_Tool
 
         }
 
-        static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             SlabTemplate slab = (SlabTemplate)_obj;
 
@@ -249,7 +253,10 @@ namespace QTO_Tool
             Grid.SetRow(slabOpeningPerimeter, _count);
 
             ToggleButton slabSelectObject = new ToggleButton();
+            slabSelectObject.Uid = slab.id;
             slabSelectObject.Content = "SELECT";
+            slabSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            slabSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             slabSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             slabSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(slabSelectObject);
