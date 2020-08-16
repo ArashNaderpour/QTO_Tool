@@ -235,5 +235,24 @@ namespace QTO_Tool
 
             return _badGeometryCount;
         }
+
+        public static UIElement GetByUid(DependencyObject rootElement, string uid)
+        {
+            foreach (UIElement element in LogicalTreeHelper.GetChildren(rootElement).OfType<UIElement>())
+            {
+                if (element.Uid == uid)
+                {
+                    return element;
+                }
+
+                UIElement resultChildren = GetByUid(element, uid);
+
+                if (resultChildren != null)
+                {
+                    return resultChildren;
+                }
+            }
+            return null;
+        }
     }
 }

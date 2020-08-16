@@ -179,7 +179,7 @@ namespace QTO_Tool
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             SlabTemplate slab = (SlabTemplate)_obj;
-
+            
             Label slabCount = new Label();
             slabCount.Content = _count;
             slabCount.HorizontalAlignment = HorizontalAlignment.Center;

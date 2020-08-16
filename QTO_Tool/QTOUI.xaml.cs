@@ -9,6 +9,7 @@ using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace QTO_Tool
 {
@@ -319,17 +320,19 @@ namespace QTO_Tool
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Export");
+            ExcelMethods.ExportExcel(this.ConcreteTablePanel);
         }
 
         void OnSelectObjects(object sender, RhinoObjectSelectionEventArgs args)
         {
             if (args.Selected) // objects were selected
             {
-                // do something
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
-                    MessageBox.Show(obj.Id + " was selected");
+
+                    ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
+
+                    selectToggleButton.IsChecked = true;
                 }
             }
         }
@@ -341,14 +344,30 @@ namespace QTO_Tool
                 // do something
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
-                    MessageBox.Show(obj.Id + " was DESELECTED");
+                    ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
+
+                    selectToggleButton.IsChecked = false;
                 }
             }
         }
 
         void OnDeselectAllObjects(object sender, RhinoDeselectAllObjectsEventArgs args)
         {
-            MessageBox.Show("All Deselected");
+            foreach (UIElement expander in this.ConcreteTablePanel.Children)
+            {
+                Grid contentGrid = (Grid)(((Expander)expander).Content);
+
+                foreach (UIElement element in contentGrid.Children)
+                {
+                    string elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
+
+                    if (elementType == "togglebutton")
+                    {
+                        ((ToggleButton)element).IsChecked = false;
+
+                    }
+                }
+            }
         }
     }
 }
