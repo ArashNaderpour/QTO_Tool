@@ -170,8 +170,50 @@ namespace QTO_Tool
             stackPanel.Children.Add(layerEstimateExpander);
         }
 
-        public static void GenerateCumulatedSlabTableExpander(StackPanel stackPanel)
+        public static void GenerateCumulatedSlabTableExpander(StackPanel stackPanel, Dictionary<string, object> selectedTemplates)
         {
+            foreach (string template in selectedTemplates.Keys)
+            {
+                if (template == "Beam")
+                {
+
+                }
+
+                if (template == "Column")
+                {
+
+                }
+
+                if (template == "Curb")
+                {
+
+                }
+
+                if (template == "Continous Footing")
+                {
+
+                }
+
+                if (template == "Footing")
+                {
+
+                }
+
+                if (template == "Wall")
+                {
+
+                }
+
+                if (template == "Slab")
+                {
+
+                }
+
+                if (template == "Footing")
+                {
+
+                }
+            }
 
         }
 
@@ -318,6 +360,7 @@ namespace QTO_Tool
             Grid.SetRow(footingSideArea, _count);
 
             ToggleButton footingSelectObject = new ToggleButton();
+            footingSelectObject.Uid = footing.id;
             footingSelectObject.Content = "SELECT";
             footingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             footingSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -372,6 +415,7 @@ namespace QTO_Tool
             Grid.SetRow(columnSideArea, _count);
 
             ToggleButton columnSelectObject = new ToggleButton();
+            columnSelectObject.Uid = column.id;
             columnSelectObject.Content = "SELECT";
             columnSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             columnSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -434,6 +478,7 @@ namespace QTO_Tool
             Grid.SetRow(beamLength, _count);
 
             ToggleButton beamSelectObject = new ToggleButton();
+            beamSelectObject.Uid = beam.id;
             beamSelectObject.Content = "SELECT";
             beamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             beamSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -528,6 +573,7 @@ namespace QTO_Tool
             Grid.SetRow(wallOpeningArea, _count);
 
             ToggleButton wallSelectObject = new ToggleButton();
+            wallSelectObject.Uid = wall.id;
             wallSelectObject.Content = "SELECT";
             wallSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             wallSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -590,6 +636,7 @@ namespace QTO_Tool
             Grid.SetRow(curbLength, _count);
 
             ToggleButton curbSelectObject = new ToggleButton();
+            curbSelectObject.Uid = curb.id;
             curbSelectObject.Content = "SELECT";
             curbSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             curbSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -660,6 +707,7 @@ namespace QTO_Tool
             Grid.SetRow(continousFootingLength, _count);
 
             ToggleButton continousFootingSelectObject = new ToggleButton();
+            continousFootingSelectObject.Uid = continousFooting.id;
             continousFootingSelectObject.Content = "SELECT";
             continousFootingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             continousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
@@ -698,6 +746,7 @@ namespace QTO_Tool
             Grid.SetRow(styrofoamVolume, _count);
 
             ToggleButton styrofoamSelectObject = new ToggleButton();
+            styrofoamSelectObject.Uid = styrofoam.id;
             styrofoamSelectObject.Content = "SELECT";
             styrofoamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             styrofoamSelectObject.Margin = new Thickness(2, 5, 2, 5);

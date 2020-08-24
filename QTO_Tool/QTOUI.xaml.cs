@@ -28,6 +28,8 @@ namespace QTO_Tool
         List<WallTemplate> allWalls = new List<WallTemplate>();
         List<StyrofoamTemplate> allStyrofoams = new List<StyrofoamTemplate>();
 
+        Dictionary<string, object> selectedTemplates = new Dictionary<string, object>();
+
         List<string> quantityValues = new List<string>();
 
         List<RhinoObject> selectedObjects = new List<RhinoObject>();
@@ -304,9 +306,18 @@ namespace QTO_Tool
                     }
                 }
 
+                this.selectedTemplates.Add("Beam", allBeams);
+                this.selectedTemplates.Add("Column", allColumns);
+                this.selectedTemplates.Add("Curb", allCurbs);
+                this.selectedTemplates.Add("Footing", allFootings);
+                this.selectedTemplates.Add("Wall", allWalls);
+                this.selectedTemplates.Add("Continous Footing", allContinousFootings);
+                this.selectedTemplates.Add("Slab", allSlabs);
+                this.selectedTemplates.Add("Styrofoam", allStyrofoams);
+
                 if (CombineValuesToggle.IsChecked == false)
                 {
-                    MessageBox.Show("Project Based");
+                    UIMethods.GenerateCumulatedSlabTableExpander(this.ConcreteTablePanel, this.selectedTemplates);
                 }
 
                 this.ExportExcelButton.IsEnabled = true;

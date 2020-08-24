@@ -12,6 +12,7 @@ namespace QTO_Tool
     class BeamTemplate
     {
         public string name { get; set; }
+        public string id { get; set; }
         public double volume { get; set; }
         public double bottomArea { get; set; }
         public double sideArea { get; set; }
@@ -26,6 +27,8 @@ namespace QTO_Tool
             Brep tempBrep = (Brep)rhobj.Geometry;
 
             name = rhobj.Name;
+
+            id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
             volume = Math.Round(mass_properties.Volume, 2);
