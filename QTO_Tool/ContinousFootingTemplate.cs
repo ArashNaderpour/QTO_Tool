@@ -22,6 +22,8 @@ namespace QTO_Tool
         static string type = "ContinousFootingTemplate";
         private Brep topBrepFace;
 
+        public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "Foot", "N/A" };
+
         public ContinousFootingTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;

@@ -20,6 +20,8 @@ namespace QTO_Tool
         static string type = "ColumnTemplate";
         Dictionary<string, Point3d> topAndBottomFaceCenters = new Dictionary<string, Point3d>();
 
+        public static string[] units = { "N/A", "N/A", "Cubic Yard", "Foot", "Square Foot", "N/A" };
+
         public ColumnTemplate(RhinoObject rhobj, string layerName)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;

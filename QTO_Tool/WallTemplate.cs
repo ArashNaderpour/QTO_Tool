@@ -29,6 +29,9 @@ namespace QTO_Tool
         private Brep bottomBrepFace;
         private List<double> brepBoundaryCurveLengths = new List<double>();
 
+        public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
+            "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
+
         public WallTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;

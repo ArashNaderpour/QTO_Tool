@@ -22,6 +22,8 @@ namespace QTO_Tool
         private Brep topBrepFace;
         private double bottomArea;
 
+        public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Foot", "N/A" };
+
         public CurbTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;

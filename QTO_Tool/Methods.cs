@@ -55,13 +55,18 @@ namespace QTO_Tool
             List<Mesh> meshList = new List<Mesh>();
             List<Brep> surfaceList = new List<Brep>();
 
+            Dictionary<Brep, string> newBreps = new Dictionary<Brep, string>();
+            List<ObjectAttributes> newObjectAttributes = new List<ObjectAttributes>();
+
             foreach (RhinoObject obj in RunQTO.doc.Objects)
             {
                 if (obj.IsValid)
                 {
                     int blockLevel = 0;
 
-                    Methods.PrepareObject(obj, surfaceList, invalidObjCount, blockLevel);
+                    ObjectAttributes mainObjectAttributes = obj.Attributes;
+
+                    Methods.PrepareObject(obj, mainObjectAttributes, surfaceList, invalidObjCount, blockLevel);
                 }
 
                 else
@@ -69,33 +74,56 @@ namespace QTO_Tool
                     invalidObjCount++;
                 }
 
+                Brep[] tempBreps = Brep.JoinBreps(surfaceList, 0.01);
+
+                if (tempBreps != null) {
+                    if (tempBreps.Length == 1)
+                    {
+                        newBreps.Add(tempBreps[0], "Good");
+                        newObjectAttributes.Add(obj.Attributes);
+                    }
+
+                    else
+                    {
+                        for (int i = 0; i < tempBreps.Length; i++)
+                        {
+                            if (tempBreps[i].IsSolid)
+                            {
+                                newBreps.Add(tempBreps[i], "Good");
+                                newObjectAttributes.Add(obj.Attributes);
+                            }
+
+                            else
+                            {
+                                newBreps.Add(tempBreps[i], "Bad");
+                                newObjectAttributes.Add(obj.Attributes);
+                            }
+
+                        }
+                    }
+                }
+
+                surfaceList.Clear();
                 RunQTO.doc.Objects.Delete(obj);
             }
 
-            Brep[] newBreps = Brep.JoinBreps(surfaceList, 0.01);
-
-            if (newBreps != null)
+            if (newBreps.Count != 0)
             {
-                foreach (Brep newBrep in newBreps)
+                foreach (Brep newBrep in newBreps.Keys)
                 {
                     newBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
 
-                    RunQTO.doc.Objects.AddBrep(newBrep);
-                }
-            }
+                    var mass_properties = VolumeMassProperties.Compute(newBrep);
+                    double volume_error_percentage = Math.Round((mass_properties.VolumeError / mass_properties.Volume) * 100, 3);
 
-            foreach (RhinoObject obj in RunQTO.doc.Objects)
-            {
-                var mass_properties = VolumeMassProperties.Compute((Brep)obj.Geometry);
-                double volume_error_percentage = Math.Round((mass_properties.VolumeError / mass_properties.Volume) * 100, 3);
-               
-                if (((Brep)obj.Geometry).IsSolid & volume_error_percentage <= 1)
-                {
-                    continue;
-                }
-                else
-                {
-                    badGeometryCount = Methods.BadGeometryDetected(obj, badGeometryCount);
+                    if (volume_error_percentage <= 1 && newBreps[newBrep] == "Good")
+                    {
+                        RunQTO.doc.Objects.AddBrep(newBrep, newObjectAttributes[newBreps.Keys.ToList().IndexOf(newBrep)]);
+                    }
+                    else
+                    {
+                        badGeometryCount = Methods.BadGeometryDetected(newBrep, newObjectAttributes[newBreps.Keys.ToList().IndexOf(newBrep)], badGeometryCount);
+                    }  
                 }
             }
 
@@ -120,7 +148,7 @@ namespace QTO_Tool
         }
 
         //Prepare BlockInstance
-        static void PrepareBlockInstance(RhinoObject inputObj, List<Brep> _surfaceList, int _badGeometryCount, int _blockLevel)
+        static void PrepareBlockInstance(RhinoObject inputObj, ObjectAttributes _mainObjectAttributes, List<Brep> _surfaceList, int _badGeometryCount, int _blockLevel)
         {
             InstanceObject instanceObj = (InstanceObject)inputObj;
 
@@ -137,27 +165,15 @@ namespace QTO_Tool
             
             foreach (RhinoObject subObj in subObjs)
             {       
-                subObj.Attributes.LayerIndex = inputObj.Attributes.LayerIndex;
                 
-                Methods.PrepareObject(subObj, _surfaceList, _badGeometryCount, _blockLevel);
-            }
-
-            Brep[] newBreps = Brep.JoinBreps(surfaceList, 0.01);
-
-            if (newBreps != null)
-            {
-                foreach (Brep newBrep in newBreps)
-                {
-                    newBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
-
-                    RunQTO.doc.Objects.AddBrep(newBrep);
-                }
+                Methods.PrepareObject(subObj, _mainObjectAttributes, _surfaceList, _badGeometryCount, _blockLevel);
             }
         }
 
         //Prepare Brep or extrusion
-        static void PrepareMesh(RhinoObject inputObj, List<Brep> _surfaceList)
+        static void PrepareMesh(RhinoObject inputObj, ObjectAttributes _mainObjectAttributes, List<Brep> _surfaceList)
         {
+           
             Brep tempBrep = Brep.CreateFromMesh(((Mesh)inputObj.Geometry), true);
 
             if (tempBrep.IsSurface)
@@ -169,15 +185,22 @@ namespace QTO_Tool
             {
                 tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
 
-                RunQTO.doc.Objects.Add(tempBrep, inputObj.Attributes);
+                if (tempBrep.IsSolid)
+                {
+                    RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                }
+
+                else
+                {
+                    _surfaceList.Add(tempBrep);
+                }
             }
         }
 
-        static void PrepareObject(RhinoObject inputObj, List<Brep> _surfaceList, int _badGeometryCount, int _blockLevel)
+        static void PrepareObject(RhinoObject inputObj, ObjectAttributes _mainObjectAttributes, List<Brep> _surfaceList, int _badGeometryCount, int _blockLevel)
         {
-            inputObj.Attributes.ObjectColor = System.Drawing.Color.Black;
-            inputObj.Attributes.ColorSource = ObjectColorSource.ColorFromObject;
-            inputObj.CommitChanges();
+            _mainObjectAttributes.ObjectColor = System.Drawing.Color.Black;
+            _mainObjectAttributes.ColorSource = ObjectColorSource.ColorFromObject;
 
             string objType = inputObj.GetType().ToString().Split('.').Last<string>();
 
@@ -194,7 +217,15 @@ namespace QTO_Tool
                 {
                     tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
 
-                    RunQTO.doc.Objects.Add(tempBrep, inputObj.Attributes);
+                    if (tempBrep.IsSolid)
+                    {
+                        RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                    }
+
+                    else
+                    {
+                        _surfaceList.Add(tempBrep);
+                    }  
                 }
             }
 
@@ -211,27 +242,37 @@ namespace QTO_Tool
                 {
                     tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
 
-                    RunQTO.doc.Objects.Add(tempBrep, inputObj.Attributes);
+                    if (tempBrep.IsSolid)
+                    {
+                        RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                    }
+
+                    else
+                    {
+                        _surfaceList.Add(tempBrep);
+                    }
                 }
             }
 
             else if (objType == "MeshObject")
             {
-                Methods.PrepareMesh(inputObj, _surfaceList);
+                Methods.PrepareMesh(inputObj, _mainObjectAttributes, _surfaceList);
             }
 
             else if (objType == "InstanceObject")
             {
-                Methods.PrepareBlockInstance(inputObj, _surfaceList, _badGeometryCount, _blockLevel);
+                Methods.PrepareBlockInstance(inputObj, _mainObjectAttributes, _surfaceList, _badGeometryCount, _blockLevel);
             }
         }
 
-        static int BadGeometryDetected(RhinoObject inputObj, int _badGeometryCount)
+        static int BadGeometryDetected(Brep brep, ObjectAttributes attributes, int _badGeometryCount)
         {
-            inputObj.Attributes.ObjectColor = System.Drawing.Color.Red;
-            inputObj.Attributes.ColorSource = ObjectColorSource.ColorFromObject;
-            inputObj.CommitChanges();
             _badGeometryCount++;
+
+            attributes.ObjectColor = System.Drawing.Color.Red;
+            attributes.ColorSource = ObjectColorSource.ColorFromObject;
+
+            RunQTO.doc.Objects.AddBrep(brep, attributes);
 
             return _badGeometryCount;
         }

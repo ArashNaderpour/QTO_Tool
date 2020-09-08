@@ -17,6 +17,8 @@ namespace QTO_Tool
         static string type = "StyrofoamTemplate";
         private Brep topBrepFace;
 
+        public static string[] units = { "N/A", "N/A", "Cubic Yard", "N/A" };
+
         public StyrofoamTemplate(RhinoObject rhobj, string layerName)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;

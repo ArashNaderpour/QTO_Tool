@@ -64,7 +64,6 @@ namespace QTO_Tool
                     concreteTemplatesSelector.HorizontalAlignment = HorizontalAlignment.Stretch;
                     concreteTemplatesSelector.VerticalAlignment = VerticalAlignment.Center;
                     concreteTemplatesSelector.Margin = new Thickness(10, 5, 0, 0);
-                    //concreteTemplatesSelector.SelectionChanged += ComboBox_SelectionChanged;
 
                     grid.Children.Add(concreteTemplatesSelector);
                     Grid.SetColumn(concreteTemplatesSelector, 1);
@@ -80,7 +79,7 @@ namespace QTO_Tool
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             Expander layerEstimateExpander = new Expander();
-            layerEstimateExpander.Name = "LayerEstimateExpader";
+            layerEstimateExpander.Name = "LayerEstimateExpader_";
             layerEstimateExpander.Header = layerName;
             layerEstimateExpander.FontWeight = FontWeights.DemiBold;
             layerEstimateExpander.Background = Brushes.DarkOrange;
@@ -113,6 +112,8 @@ namespace QTO_Tool
                 Grid.SetRow(quantityLabel, 0);
             }
 
+            int counter = 0;
+
             foreach (object obj in layerTemplate)
             {
                 //Dynamically adding Rows to the Grid
@@ -127,42 +128,84 @@ namespace QTO_Tool
                 {
                     UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid,
                         valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Slab";
+                    }
                 }
 
                 else if (templateType == "Footing")
                 {
                     UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Footing";
+                    }
                 }
 
                 else if (templateType == "Column")
                 {
                     UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Column";
+                    }
                 }
 
                 else if (templateType == "Beam")
                 {
                     UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Beam";
+                    }
                 }
 
                 else if (templateType == "Wall")
                 {
                     UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Wall";
+                    }
                 }
 
                 else if (templateType == "Curb")
                 {
                     UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Curb";
+                    }
                 }
 
                 else if (templateType == "ContinousFooting")
                 {
                     UIMethods.GenerateContinousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "ContinousFooting";
+                    }
                 }
 
                 else if (templateType == "Styrofoam")
                 {
                     UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Styrofoam";
+                    }
                 }
+
+                counter++;
             }
 
             layerEstimateExpander.Content = layerEstimateGrid;
@@ -221,7 +264,7 @@ namespace QTO_Tool
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             SlabTemplate slab = (SlabTemplate)_obj;
-            
+
             Label slabCount = new Label();
             slabCount.Content = _count;
             slabCount.HorizontalAlignment = HorizontalAlignment.Center;

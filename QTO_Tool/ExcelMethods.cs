@@ -27,24 +27,30 @@ namespace QTO_Tool
 
                 int rowCount = 1;
 
-                foreach (UIElement expander in concreteTable.Children)
+                foreach (UIElement container in concreteTable.Children)
                 {
-                    Grid contentGrid = (Grid)(((Expander)expander).Content);
+                    Expander expander = (Expander)container;
+
+                    string template = expander.Name.Split('_')[1];
+                    MessageBox.Show(template);
+                    Grid contentGrid = (Grid)expander.Content;
 
                     if (rowCount > 1)
                     {
-                        rowCount++;
+                        rowCount += 2;
                     }
                     workSheet.Cells[rowCount, 1].Interior.Color =
                                         System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
-                    workSheet.Cells[rowCount, 1] = "NAME";
-                        workSheet.Cells[rowCount + 1, 1] = ((Expander)expander).Header;
+                    workSheet.Cells[rowCount, 1] = expander.Header;
 
                     workSheet.Cells[rowCount, 2].Interior.Color =
                                         System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
-                    workSheet.Cells[rowCount, 2] = "COUNT";
-                        workSheet.Cells[rowCount + 1, 2] = contentGrid.RowDefinitions.Count - 1;
-                    
+                    workSheet.Cells[rowCount, 2] = "Quantity";
+
+                    workSheet.Cells[rowCount, 3].Interior.Color =
+                                        System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
+                    workSheet.Cells[rowCount, 3] = "Unit";
+
 
                     for (int i = 2; i < contentGrid.ColumnDefinitions.Count - 1; i++)
                     {
@@ -59,13 +65,51 @@ namespace QTO_Tool
                             if (element != null)
                             {
                                 if (j == 0)
-                                { 
+                                {
                                     header = ((Label)element).Content.ToString();
 
-                                    workSheet.Cells[rowCount, i + 1] = header;
+                                    workSheet.Cells[rowCount + 1, 1] = header;
 
-                                    workSheet.Cells[rowCount, i + 1].Interior.Color =
-                                        System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
+                                    if (template == "Beam")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = BeamTemplate.units[i];
+                                    }
+
+                                    if (template == "Column")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = ColumnTemplate.units[i];
+                                    }
+
+                                    if (template == "ContinousFooting")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = ContinousFootingTemplate.units[i];
+                                    }
+
+                                    if (template == "Curb")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = CurbTemplate.units[i];
+                                    }
+
+                                    if (template == "Footing")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = FootingTemplate.units[i];
+                                    }
+
+                                    if (template == "Slab")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = SlabTemplate.units[i];
+                                    }
+
+                                    if (template == "Styrofoam")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = StyrofoamTemplate.units[i];
+                                    }
+
+                                    if (template == "Wall")
+                                    {
+                                        workSheet.Cells[rowCount + 1, 3] = WallTemplate.units[i];
+                                    }
+
                                 }
                                 else
                                 {
@@ -89,17 +133,23 @@ namespace QTO_Tool
                                 return;
                             }
                         }
-                        workSheet.Cells[rowCount + 1, i + 1] = result;
+                        workSheet.Cells[rowCount + 1, 2] = result;
+
+                        rowCount++;
                     }
 
-                    rowCount++;
+                    if (contentGrid.Children.Count > 1)
+                    {
+                        workSheet.Cells[rowCount + 1, 1] = "Count";
+                        workSheet.Cells[rowCount + 1, 2] = contentGrid.RowDefinitions.Count - 1;
+                    }
                 }
 
                 Excel.Range formatRange = workSheet.UsedRange;
                 formatRange.EntireColumn.AutoFit();
                 formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
 
-               // workSheet.Columns["A"].Delete();
+                // workSheet.Columns["A"].Delete();
 
                 workBook.SaveAs(outputPath);
                 workBook.Close();
