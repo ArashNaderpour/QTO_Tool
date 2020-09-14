@@ -41,7 +41,7 @@ namespace QTO_Tool
 
         public void Load_Clicked(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         public void Save_Clicked(object sender, RoutedEventArgs e)
@@ -74,6 +74,11 @@ namespace QTO_Tool
                     this.ConcreteTemplateGrid.RowDefinitions.Clear();
                     UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
                     this.ConcreteTablePanel.Children.Clear();
+
+                    this.ExportExcelButton.IsEnabled = false;
+
+                    this.selectedTemplates.Clear();
+
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -95,9 +100,9 @@ namespace QTO_Tool
         private void ObjectSelection_Activated(object sender, RoutedEventArgs e)
         {
             ToggleButton btn = sender as ToggleButton;
-            
+
             RhinoObject rhobj = RunQTO.doc.Objects.FindId(new Guid(btn.Uid));
-            
+
             selectedObjects.Add(rhobj);
 
             rhobj.Select(true);
@@ -123,6 +128,17 @@ namespace QTO_Tool
         {
             try
             {
+                allBeams.Clear();
+                allColumns.Clear();
+                allCurbs.Clear();
+                allFootings.Clear();
+                allWalls.Clear();
+                allContinousFootings.Clear();
+                allSlabs.Clear();
+                allStyrofoams.Clear();
+
+                this.selectedTemplates.Clear();
+
                 ConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = this.AngleThresholdSlider.Value;
@@ -304,6 +320,11 @@ namespace QTO_Tool
 
                         quantityValues.Clear();
                     }
+
+                    if (selectedTemplate == "N/A")
+                    {
+
+                    }
                 }
 
                 this.selectedTemplates.Add("Beam", allBeams);
@@ -325,7 +346,7 @@ namespace QTO_Tool
 
             catch
             {
-
+                MessageBox.Show("Something went Wrong!");
             }
         }
 
@@ -336,46 +357,54 @@ namespace QTO_Tool
 
         void OnSelectObjects(object sender, RhinoObjectSelectionEventArgs args)
         {
-            if (args.Selected) // objects were selected
+            if (args.Selected && this.ExportExcelButton.IsEnabled) // objects were selected
             {
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
-
                     ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
 
-                    selectToggleButton.IsChecked = true;
+                    if (selectToggleButton != null)
+                    {
+                        selectToggleButton.IsChecked = true;
+                    }
                 }
             }
         }
 
         void OnDeselectObjects(object sender, RhinoObjectSelectionEventArgs args)
         {
-            if (!args.Selected) // objects were selected
+            if (!args.Selected && this.ExportExcelButton.IsEnabled) // objects were selected
             {
                 // do something
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
                     ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
 
-                    selectToggleButton.IsChecked = false;
+                    if (selectToggleButton != null)
+                    {
+                        selectToggleButton.IsChecked = false;
+                    }
                 }
             }
         }
 
         void OnDeselectAllObjects(object sender, RhinoDeselectAllObjectsEventArgs args)
         {
-            foreach (UIElement expander in this.ConcreteTablePanel.Children)
+            if (this.ExportExcelButton.IsEnabled)
             {
-                Grid contentGrid = (Grid)(((Expander)expander).Content);
-
-                foreach (UIElement element in contentGrid.Children)
+                foreach (UIElement expander in this.ConcreteTablePanel.Children)
                 {
-                    string elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
+                    Grid contentGrid = (Grid)(((Expander)expander).Content);
 
-                    if (elementType == "togglebutton")
+                    foreach (UIElement element in contentGrid.Children)
                     {
-                        ((ToggleButton)element).IsChecked = false;
+                        string elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
 
+                        if (elementType == "togglebutton")
+                        {
+                            ((ToggleButton)element).IsChecked = false;
+
+                        }
                     }
                 }
             }

@@ -137,7 +137,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Footing")
                 {
-                    UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -147,7 +148,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Column")
                 {
-                    UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -157,7 +159,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Beam")
                 {
-                    UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -167,7 +170,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Wall")
                 {
-                    UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -177,7 +181,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Curb")
                 {
-                    UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -187,7 +192,8 @@ namespace QTO_Tool
 
                 else if (templateType == "ContinousFooting")
                 {
-                    UIMethods.GenerateContinousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateContinousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -197,7 +203,8 @@ namespace QTO_Tool
 
                 else if (templateType == "Styrofoam")
                 {
-                    UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize);
+                    UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -350,7 +357,8 @@ namespace QTO_Tool
             Grid.SetRow(slabSelectObject, _count);
         }
 
-        static void GenerateFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             FootingTemplate footing = (FootingTemplate)_obj;
 
@@ -405,6 +413,8 @@ namespace QTO_Tool
             ToggleButton footingSelectObject = new ToggleButton();
             footingSelectObject.Uid = footing.id;
             footingSelectObject.Content = "SELECT";
+            footingSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            footingSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             footingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             footingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(footingSelectObject);
@@ -413,7 +423,8 @@ namespace QTO_Tool
             Grid.SetRow(footingSelectObject, _count);
         }
 
-        static void GenerateColumnTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateColumnTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             ColumnTemplate column = (ColumnTemplate)_obj;
 
@@ -460,6 +471,8 @@ namespace QTO_Tool
             ToggleButton columnSelectObject = new ToggleButton();
             columnSelectObject.Uid = column.id;
             columnSelectObject.Content = "SELECT";
+            columnSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            columnSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             columnSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             columnSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(columnSelectObject);
@@ -468,7 +481,8 @@ namespace QTO_Tool
             Grid.SetRow(columnSelectObject, _count);
         }
 
-        static void GenerateBeamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateBeamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             BeamTemplate beam = (BeamTemplate)_obj;
 
@@ -523,6 +537,8 @@ namespace QTO_Tool
             ToggleButton beamSelectObject = new ToggleButton();
             beamSelectObject.Uid = beam.id;
             beamSelectObject.Content = "SELECT";
+            beamSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            beamSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             beamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             beamSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(beamSelectObject);
@@ -531,7 +547,8 @@ namespace QTO_Tool
             Grid.SetRow(beamSelectObject, _count);
         }
 
-        static void GenerateWallTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateWallTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             WallTemplate wall = (WallTemplate)_obj;
 
@@ -618,6 +635,8 @@ namespace QTO_Tool
             ToggleButton wallSelectObject = new ToggleButton();
             wallSelectObject.Uid = wall.id;
             wallSelectObject.Content = "SELECT";
+            wallSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            wallSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             wallSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             wallSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(wallSelectObject);
@@ -626,7 +645,8 @@ namespace QTO_Tool
             Grid.SetRow(wallSelectObject, _count);
         }
 
-        static void GenerateCurbTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateCurbTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             CurbTemplate curb = (CurbTemplate)_obj;
 
@@ -681,6 +701,8 @@ namespace QTO_Tool
             ToggleButton curbSelectObject = new ToggleButton();
             curbSelectObject.Uid = curb.id;
             curbSelectObject.Content = "SELECT";
+            curbSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            curbSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             curbSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             curbSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(curbSelectObject);
@@ -689,7 +711,8 @@ namespace QTO_Tool
             Grid.SetRow(curbSelectObject, _count);
         }
 
-        static void GenerateContinousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateContinousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             ContinousFootingTemplate continousFooting = (ContinousFootingTemplate)_obj;
 
@@ -752,6 +775,8 @@ namespace QTO_Tool
             ToggleButton continousFootingSelectObject = new ToggleButton();
             continousFootingSelectObject.Uid = continousFooting.id;
             continousFootingSelectObject.Content = "SELECT";
+            continousFootingSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            continousFootingSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             continousFootingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             continousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(continousFootingSelectObject);
@@ -760,7 +785,8 @@ namespace QTO_Tool
             Grid.SetRow(continousFootingSelectObject, _count);
         }
 
-        static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize)
+        static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             StyrofoamTemplate styrofoam = (StyrofoamTemplate)_obj;
 
@@ -791,6 +817,8 @@ namespace QTO_Tool
             ToggleButton styrofoamSelectObject = new ToggleButton();
             styrofoamSelectObject.Uid = styrofoam.id;
             styrofoamSelectObject.Content = "SELECT";
+            styrofoamSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            styrofoamSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
             styrofoamSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
             styrofoamSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(styrofoamSelectObject);
