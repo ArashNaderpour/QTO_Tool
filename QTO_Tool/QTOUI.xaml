@@ -80,8 +80,7 @@
                      FontSize="20">
 
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" 
-                      VerticalScrollBarVisibility="Auto" Margin="10 0 10 10"
-                              >
+                      VerticalScrollBarVisibility="Auto" Margin="10 0 10 10">
 
                     <StackPanel Orientation="Vertical" Margin="0 10 0 0">
 
@@ -165,20 +164,21 @@
                                            Grid.Column="0" Grid.Row="1"
                                            IsEnabled="False"/>
 
-                                    <ToggleButton Name="CombineValuesToggle" 
+                                    <ToggleButton Name="CombinedValuesToggle" 
                                                   Grid.Column="1" Grid.Row="1"
                                               HorizontalAlignment="Stretch"
                                               VerticalAlignment="Stretch"
                                                   Margin="10 0 5 0"
-                                                  IsEnabled="False">
+                                                  IsEnabled="False" 
+                                                  Click="Combined_Values_Toggle_Clicked">
 
                                         <ToggleButton.Style>
                                             <Style TargetType="{x:Type ToggleButton}">
-                                                <Setter Property="Content" Value="PROJECT BASED"/>
+                                                <Setter Property="Content" Value="LAYER BASED"/>
                                                 <Setter Property="Background" Value="GhostWhite"/>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsChecked" Value="true">
-                                                        <Setter Property="Content" Value="LAYER BASED"/>
+                                                        <Setter Property="Content" Value="PROJECT BASED"/>
                                                         <Setter Property="Background" Value="Teal"/>
                                                     </Trigger>
                                                 </Style.Triggers>
@@ -217,9 +217,13 @@
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"
                    Margin="20 10 20 20"/>
 
-                        <StackPanel Name="ConcreteTablePanel" Orientation="Vertical"
-                                    Margin="10 0 10 10"/>
+                        <StackPanel Name="DissipatedConcreteTablePanel" Orientation="Vertical"
+                                    Visibility="Collapsed" Margin="10 0 10 10"/>
+
+                        <StackPanel Name="CombinedConcreteTablePanel" Orientation="Vertical"
+                                    Visibility="Collapsed" Margin="10 0 10 10"/>
                     </StackPanel>
+
                 </ScrollViewer>
             </TabItem>
 

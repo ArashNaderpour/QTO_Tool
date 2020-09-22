@@ -74,7 +74,7 @@ namespace QTO_Tool
             }
         }
 
-        public static void GenerateAccumulatedSlabTableExpander(StackPanel stackPanel,
+        public static void GenerateDissipatedTableExpander(StackPanel stackPanel,
             string layerName, string templateType, List<object> layerTemplate, List<string> values,
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
@@ -113,6 +113,7 @@ namespace QTO_Tool
             }
 
             int counter = 0;
+            int valueFontSize = 18;
 
             foreach (object obj in layerTemplate)
             {
@@ -122,7 +123,6 @@ namespace QTO_Tool
                 layerEstimateGrid.RowDefinitions.Add(rowDef);
 
                 int count = layerTemplate.IndexOf(obj) + 1;
-                int valueFontSize = 18;
 
                 if (templateType == "Slab")
                 {
@@ -220,51 +220,374 @@ namespace QTO_Tool
             stackPanel.Children.Add(layerEstimateExpander);
         }
 
-        public static void GenerateCumulatedSlabTableExpander(StackPanel stackPanel, Dictionary<string, object> selectedTemplates)
+        public static void GenerateCombinedTableExpander(StackPanel stackPanel, Dictionary<string,
+            object> selectedTemplates, Dictionary<string, List<string>> values,
+            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
+            Expander combinedEstimateExpander;
+
+            /*--- The Grid for setting up the name of the department input---*/
+            Grid combinedEstimateGrid;
+
+            RowDefinition rowDef;
+
+            //int counter = 0;
+            int valueFontSize = 18;
+
             foreach (string template in selectedTemplates.Keys)
             {
+                combinedEstimateExpander = new Expander();
+                combinedEstimateExpander.Name = "CombinedEstimateExpader_";
+                combinedEstimateExpander.FontWeight = FontWeights.DemiBold;
+                combinedEstimateExpander.Background = Brushes.DarkOrange;
+                combinedEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
+
+                combinedEstimateGrid = new Grid();
+                combinedEstimateGrid.Margin = new Thickness(2, 5, 2, 0);
+                combinedEstimateGrid.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0f0f0"));
+
+                int count = 1;
+
                 if (template == "Beam")
                 {
+                    combinedEstimateExpander.Header = "BEAMS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (BeamTemplate obj in (List<BeamTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateBeamTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Column")
                 {
+                    combinedEstimateExpander.Header = "COLUMNS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (ColumnTemplate obj in (List<ColumnTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateColumnTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Curb")
                 {
+                    combinedEstimateExpander.Header = "CURBS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (CurbTemplate obj in (List<CurbTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateCurbTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Continous Footing")
                 {
+                    combinedEstimateExpander.Header = "CONTINOUS FOOTINGS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (ContinousFootingTemplate obj in (List<ContinousFootingTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateContinousFootingTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Footing")
                 {
+                    combinedEstimateExpander.Header = "FOOTINGS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (FootingTemplate obj in (List<FootingTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateFootingTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Wall")
                 {
+                    combinedEstimateExpander.Header = "WALLS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (WallTemplate obj in (List<WallTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateWallTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
 
                 if (template == "Slab")
                 {
+                    combinedEstimateExpander.Header = "SLABS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (SlabTemplate obj in (List<SlabTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateSlabTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        
+                        count++;
+                    }
                 }
 
-                if (template == "Footing")
+                if (template == "Styrofoam")
                 {
+                    combinedEstimateExpander.Header = "STYROFOAMS";
 
+                    ColumnDefinition colDef;
+                    Label quantityLabel;
+
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    for (int i = 0; i < values[template].Count; i++)
+                    {
+                        // Column Definition for Grids
+                        colDef = new ColumnDefinition();
+                        combinedEstimateGrid.ColumnDefinitions.Add(colDef);
+
+                        quantityLabel = new Label();
+                        quantityLabel.Content = values[template][i];
+                        quantityLabel.FontSize = 20;
+                        quantityLabel.FontWeight = FontWeights.Bold;
+                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
+                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+                        combinedEstimateGrid.Children.Add(quantityLabel);
+                        Grid.SetColumn(quantityLabel, i);
+                        Grid.SetRow(quantityLabel, 0);
+                    }
+
+                    foreach (StyrofoamTemplate obj in (List<StyrofoamTemplate>)selectedTemplates[template])
+                    {
+                        rowDef = new RowDefinition();
+                        rowDef.Height = new GridLength(1, GridUnitType.Star);
+                        combinedEstimateGrid.RowDefinitions.Add(rowDef);
+
+                        UIMethods.GenerateStyrofoamTableExpander(obj, count, combinedEstimateGrid,
+                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+
+                        count++;
+                    }
                 }
-            }
 
+                combinedEstimateExpander.Content = combinedEstimateGrid;
+
+                stackPanel.Children.Add(combinedEstimateExpander);
+            }
         }
 
         static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,

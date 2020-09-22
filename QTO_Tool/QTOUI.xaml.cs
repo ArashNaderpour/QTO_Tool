@@ -29,6 +29,7 @@ namespace QTO_Tool
         List<StyrofoamTemplate> allStyrofoams = new List<StyrofoamTemplate>();
 
         Dictionary<string, object> selectedTemplates = new Dictionary<string, object>();
+        Dictionary<string, List<string>> selectedTemplateValues = new Dictionary<string, List<string>>();
 
         List<string> quantityValues = new List<string>();
 
@@ -66,19 +67,19 @@ namespace QTO_Tool
                     AngleThresholdLabel.IsEnabled = true;
                     AngleThresholdSlider.IsEnabled = true;
                     CombineValuesLabel.IsEnabled = true;
-                    CombineValuesToggle.IsEnabled = true;
+                    CombinedValuesToggle.IsEnabled = true;
                 }
                 else
                 {
                     this.ConcreteTemplateGrid.Children.Clear();
                     this.ConcreteTemplateGrid.RowDefinitions.Clear();
                     UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
-                    this.ConcreteTablePanel.Children.Clear();
+                    this.DissipatedConcreteTablePanel.Children.Clear();
 
                     this.ExportExcelButton.IsEnabled = false;
 
                     this.selectedTemplates.Clear();
-
+                    this.selectedTemplateValues.Clear();
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -138,8 +139,9 @@ namespace QTO_Tool
                 allStyrofoams.Clear();
 
                 this.selectedTemplates.Clear();
+                this.selectedTemplateValues.Clear();
 
-                ConcreteTablePanel.Children.Clear();
+                DissipatedConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = this.AngleThresholdSlider.Value;
 
@@ -178,10 +180,7 @@ namespace QTO_Tool
                             layerTemplates.Add(beam);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "Column")
@@ -196,10 +195,7 @@ namespace QTO_Tool
                             layerTemplates.Add(column);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "ContinousFooting")
@@ -214,10 +210,7 @@ namespace QTO_Tool
                             layerTemplates.Add(continousFooting);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "Curb")
@@ -232,10 +225,7 @@ namespace QTO_Tool
                             layerTemplates.Add(curb);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "Footing")
@@ -250,10 +240,7 @@ namespace QTO_Tool
                             layerTemplates.Add(footing);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "Wall")
@@ -268,11 +255,8 @@ namespace QTO_Tool
                             layerTemplates.Add(wall);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                        quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
-                        }
                     }
 
                     if (selectedTemplate == "Slab")
@@ -289,10 +273,7 @@ namespace QTO_Tool
                             layerTemplates.Add(slab);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
                     }
 
                     if (selectedTemplate == "Styrofoam")
@@ -307,52 +288,86 @@ namespace QTO_Tool
                             layerTemplates.Add(styrofoam);
                         }
 
-                        if (CombineValuesToggle.IsChecked == true)
-                        {
-                            quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" };
-                        }
+                        quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" };
                     }
 
-                    if (CombineValuesToggle.IsChecked == true)
-                    {
-                        UIMethods.GenerateAccumulatedSlabTableExpander(this.ConcreteTablePanel, layerName, selectedTemplate,
-                            layerTemplates, quantityValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+                    // Generate Dissipated Value Table
+                    UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
+                        layerTemplates, quantityValues, ObjectSelection_Activated, ObjectDeselection_Activated);
 
-                        quantityValues.Clear();
-                    }
+                    quantityValues.Clear();
+
 
                     if (selectedTemplate == "N/A")
                     {
-
+                        continue;
                     }
                 }
 
                 this.selectedTemplates.Add("Beam", allBeams);
+                this.selectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME", "VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.selectedTemplates.Add("Column", allColumns);
+                this.selectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
                 this.selectedTemplates.Add("Curb", allCurbs);
+                this.selectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.selectedTemplates.Add("Footing", allFootings);
+                this.selectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
                 this.selectedTemplates.Add("Wall", allWalls);
+                this.selectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                            "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" });
                 this.selectedTemplates.Add("Continous Footing", allContinousFootings);
+                this.selectedTemplateValues.Add("Continous Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.selectedTemplates.Add("Slab", allSlabs);
+                this.selectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
                 this.selectedTemplates.Add("Styrofoam", allStyrofoams);
+                this.selectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" });
 
-                if (CombineValuesToggle.IsChecked == false)
+                // Generate Combined Value Table
+                UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.selectedTemplates,
+                    this.selectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+
+                if (CombinedValuesToggle.IsChecked == true)
                 {
-                    UIMethods.GenerateCumulatedSlabTableExpander(this.ConcreteTablePanel, this.selectedTemplates);
+                    this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
+                    this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+                }
+
+                else
+                {
+                    this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
+                    this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
                 }
 
                 this.ExportExcelButton.IsEnabled = true;
             }
 
-            catch
+            catch(Exception ex)
             {
                 MessageBox.Show("Something went Wrong!");
+
+                MessageBox.Show(ex.ToString());
             }
         }
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
         {
-            ExcelMethods.ExportExcel(this.ConcreteTablePanel);
+            ExcelMethods.ExportExcel(this.DissipatedConcreteTablePanel);
+        }
+
+        private void Combined_Values_Toggle_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (this.DissipatedConcreteTablePanel.Visibility == Visibility.Collapsed)
+            {
+                this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
+
+                this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+
+                this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         void OnSelectObjects(object sender, RhinoObjectSelectionEventArgs args)
@@ -361,11 +376,18 @@ namespace QTO_Tool
             {
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
-                    ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
+                    ToggleButton dissipatedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.DissipatedConcreteTablePanel, obj.Id.ToString()));
 
-                    if (selectToggleButton != null)
+                    ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
+
+                    if (dissipatedSelectToggleButton != null)
                     {
-                        selectToggleButton.IsChecked = true;
+                        dissipatedSelectToggleButton.IsChecked = true;
+                    }
+
+                    if (combinedSelectToggleButton != null)
+                    {
+                        combinedSelectToggleButton.IsChecked = true;
                     }
                 }
             }
@@ -378,11 +400,18 @@ namespace QTO_Tool
                 // do something
                 foreach (RhinoObject obj in args.RhinoObjects)
                 {
-                    ToggleButton selectToggleButton = (ToggleButton)(Methods.GetByUid(this.ConcreteTablePanel, obj.Id.ToString()));
+                    ToggleButton dissipatedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.DissipatedConcreteTablePanel, obj.Id.ToString()));
 
-                    if (selectToggleButton != null)
+                    ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
+
+                    if (dissipatedSelectToggleButton != null)
                     {
-                        selectToggleButton.IsChecked = false;
+                        dissipatedSelectToggleButton.IsChecked = false;
+                    }
+
+                    if (combinedSelectToggleButton != null)
+                    {
+                        combinedSelectToggleButton.IsChecked = false;
                     }
                 }
             }
@@ -392,18 +421,35 @@ namespace QTO_Tool
         {
             if (this.ExportExcelButton.IsEnabled)
             {
-                foreach (UIElement expander in this.ConcreteTablePanel.Children)
+                Grid contentGrid;
+                string elementType;
+
+                foreach (UIElement expander in this.DissipatedConcreteTablePanel.Children)
                 {
-                    Grid contentGrid = (Grid)(((Expander)expander).Content);
+                    contentGrid = (Grid)(((Expander)expander).Content);
 
                     foreach (UIElement element in contentGrid.Children)
                     {
-                        string elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
+                        elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
 
                         if (elementType == "togglebutton")
                         {
                             ((ToggleButton)element).IsChecked = false;
+                        }
+                    }
+                }
 
+                foreach (UIElement expander in this.CombinedConcreteTablePanel.Children)
+                {
+                    contentGrid = (Grid)(((Expander)expander).Content);
+
+                    foreach (UIElement element in contentGrid.Children)
+                    {
+                        elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
+
+                        if (elementType == "togglebutton")
+                        {
+                            ((ToggleButton)element).IsChecked = false;
                         }
                     }
                 }
