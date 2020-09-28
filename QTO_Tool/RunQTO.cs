@@ -19,7 +19,7 @@ namespace QTO_Tool
         QTOUI UI;
 
         public static RhinoDoc doc = RhinoDoc.ActiveDoc;
-
+        
         public RunQTO()
         {
             // Rhino only creates one instance of each command class defined in a

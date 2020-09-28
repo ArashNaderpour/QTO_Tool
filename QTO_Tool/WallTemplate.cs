@@ -27,6 +27,7 @@ namespace QTO_Tool
         static string type = "WallTemplate";
         private Brep topBrepFace;
         private Brep bottomBrepFace;
+        private List<Brep> SideAndEndFaces = new List<Brep>();
         private List<double> brepBoundaryCurveLengths = new List<double>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
@@ -46,9 +47,11 @@ namespace QTO_Tool
             mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
             grossVolume = Math.Round(mass_properties.Volume, 2);
 
-            topArea = TopArea(tempBrep, angleThreshold);
-            
-            bottomArea = BottomArea(tempBrep, angleThreshold);
+            Dictionary<string, double> topAndBottom = this.TopAndBottomArea(tempBrep, angleThreshold);
+
+            topArea = topAndBottom["Top Area"];
+
+            bottomArea = topAndBottom["Bottom Area"];
 
             // Using the method that calculates Sides and End areas
             SidesAndEnedAreaAndOpeingArea(tempBrep, angleThreshold);
@@ -56,15 +59,21 @@ namespace QTO_Tool
             length = Length();
         }
 
-        double TopArea(Brep brep, double angleThreshold)
+        Dictionary<string, double> TopAndBottomArea(Brep brep, double angleThreshold)
         {
-            double area = 0;
+            Dictionary<string, double> result = new Dictionary<string, double>();
+
+            double topArea = 0;
+
+            double bottomArea = 0;
 
             List<double> upfacingFaceElevations = new List<double>();
-            List<double> upfacingFaceAreas= new List<double>();
+            List<double> upfacingFaceAreas = new List<double>();
             List<Brep> upfacingFaces = new List<Brep>();
 
-            List<Brep> topFaces = new List<Brep>();
+            List<double> downfacingFaceElevations = new List<double>();
+            List<double> downfacingFaceAreas = new List<double>();
+            List<Brep> downfacingFaces = new List<Brep>();
 
             for (int i = 0; i < brep.Faces.Count; i++)
             {
@@ -88,240 +97,156 @@ namespace QTO_Tool
                         upfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
                         upfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
-                }
-            }
 
-            if (upfacingFaceElevations.Count > 0)
-            {
-                for (int i = 0; i < upfacingFaceElevations.Count; i++)
-                {
-                    if (upfacingFaceElevations[i] == upfacingFaceElevations.Max())
-                    {
-                        area += upfacingFaceAreas[i];
-                        topFaces.Add(upfacingFaces[i]);
-                    }
-
-                }
-
-                this.topBrepFace = Brep.MergeBreps(topFaces, 0.01);
-            }
-
-            else
-            {
-                List<double> centerZValues = new List<double>();
-                List<double> faceAreas = new List<double>();
-
-                for (int i = 0; i < brep.Faces.Count; i++)
-                {
-                    var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
-
-                    Point3d center = area_properties.Centroid;
-
-                    centerZValues.Add(center.Z);
-                    faceAreas.Add(Math.Round(area_properties.Area, 2));
-                }
-
-                int topFaceIndex = centerZValues.IndexOf(centerZValues.Max());
-
-                area = faceAreas[topFaceIndex];
-
-                this.topBrepFace = brep.Faces[topFaceIndex].DuplicateFace(false);
-            }
-
-            return area;
-        }
-
-        double BottomArea(Brep brep, double angleThreshold)
-        {
-            double area = 0;
-
-            List<double> downfacingFaceElevations = new List<double>();
-            List<double> downfacingFaceAreas = new List<double>();
-            List<Brep> downfacingFaces = new List<Brep>();
-
-            List<Brep> bottomFaces = new List<Brep>();
-
-            for (int i = 0; i < brep.Faces.Count; i++)
-            {
-                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
-
-                Point3d center = area_properties.Centroid;
-
-                double u, v;
-
-                if (brep.Faces[i].ClosestPoint(center, out u, out v))
-                {
-                    Vector3d normal = brep.Faces[i].NormalAt(u, v);
-
-                    normal.Unitize();
-
-                    double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
-
-                    if (dotProduct < -angleThreshold && dotProduct >= -1)
+                   else if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
                         downfacingFaceElevations.Add(center.Z);
                         downfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
                         downfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
-                }
-            }
 
-            if (downfacingFaceElevations.Count > 0)
-            {
-                for (int i = 0; i < downfacingFaceElevations.Count; i++)
-                {
-                    if (downfacingFaceElevations[i] == downfacingFaceElevations.Min())
+                    else
                     {
-                        area += downfacingFaceAreas[i];
-                        bottomFaces.Add(downfacingFaces[i]);
+                        this.SideAndEndFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
-
                 }
-
-                this.bottomBrepFace = Brep.MergeBreps(bottomFaces, 0.01);
             }
 
-            else
-            {
-                List<double> centerZValues = new List<double>();
-                List<double> faceAreas = new List<double>();
+            int topFaceIndex = upfacingFaceAreas.IndexOf(upfacingFaceAreas.Max());
+            topArea = upfacingFaceAreas[topFaceIndex];
+            this.topBrepFace = upfacingFaces[topFaceIndex];
 
-                for (int i = 0; i < brep.Faces.Count; i++)
-                {
-                    var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+            int bottomFaceIndex = downfacingFaceAreas.IndexOf(downfacingFaceAreas.Max());
+            bottomArea = downfacingFaceAreas[bottomFaceIndex];
+            this.bottomBrepFace = downfacingFaces[bottomFaceIndex];
 
-                    Point3d center = area_properties.Centroid;
+            result.Add("Top Area", topArea);
+            result.Add("Bottom Area", topArea);
 
-                    centerZValues.Add(center.Z);
-                    faceAreas.Add(Math.Round(area_properties.Area, 2));
-                }
-
-                int bottomFaceIndex = centerZValues.IndexOf(centerZValues.Min());
-
-                area = faceAreas[bottomFaceIndex];
-
-                this.bottomBrepFace = brep.Faces[bottomFaceIndex].DuplicateFace(false);
-            }
-
-            return area;
+            return result;
         }
 
         void SidesAndEnedAreaAndOpeingArea(Brep brep, double angleThreshold)
         {
-            List<double> netSideFaceAreas = new List<double>();
-            List<Brep> sideFaces = new List<Brep>();
 
-            List<double> endFaceAreas = new List<double>();
-            List<Brep> endFaces = new List<Brep>();
 
-            Point3d topFaceCenterPoint = AreaMassProperties.Compute(topBrepFace).Centroid;
-            
-            Point3d bottomFaceCenterPoint = AreaMassProperties.Compute(bottomBrepFace).Centroid;
-            
-            double wallHeight = topFaceCenterPoint.Z - bottomFaceCenterPoint.Z;
-            wallHeight = Math.Round(wallHeight, 2);
 
-            List<double> edgesStartAndEndZ;
-            double edgeEndZ = 0;
-            double edgeStartZ = 0;
-            double zDifference;
 
-            for (int i = 0; i < brep.Faces.Count; i++)
-            {
-                Brep tempBrep = brep.Faces[i].DuplicateFace(false);
-                var area_properties = AreaMassProperties.Compute(tempBrep.RemoveHoles(0.01));
 
-                double faceArea = Math.Round(area_properties.Area, 2);
+            //List<double> netSideFaceAreas = new List<double>();
+            //List<Brep> sideFaces = new List<Brep>();
 
-                if (area_properties.Centroid.Z != topFaceCenterPoint.Z && area_properties.Centroid.Z != bottomFaceCenterPoint.Z)
-                {
-                    edgesStartAndEndZ = new List<double>();
-                   
-                    for (int j = 0; j < tempBrep.Edges.Count; j++)
-                    {
-                        edgeStartZ = tempBrep.Edges[j].PointAtStart.Z;
-                        edgesStartAndEndZ.Add(edgeStartZ);
+            //List<double> endFaceAreas = new List<double>();
+            //List<Brep> endFaces = new List<Brep>();
 
-                        edgeEndZ = tempBrep.Edges[j].PointAtEnd.Z;
-                        edgesStartAndEndZ.Add(edgeEndZ);
-                    }
+            //Point3d topFaceCenterPoint = AreaMassProperties.Compute(topBrepFace).Centroid;
 
-                    zDifference = Math.Round(edgesStartAndEndZ.Max() - edgesStartAndEndZ.Min() , 2);
-                        
-                    if (wallHeight > zDifference)
-                    {
-                        endFaces.Add(tempBrep);
-                        endFaceAreas.Add(faceArea);
-                    }
+            //Point3d bottomFaceCenterPoint = AreaMassProperties.Compute(bottomBrepFace).Centroid;
 
-                    else
-                    {
-                        sideFaces.Add(tempBrep);
-                        netSideFaceAreas.Add(faceArea);
-                    }
-                }
-            }
-            
-            Brep[] sideFacesArray = sideFaces.ToArray();
-            double[] netSideFaceAreasArray = netSideFaceAreas.ToArray();
-            
-            // Sort Based on Face Area
-            Array.Sort(netSideFaceAreasArray, sideFacesArray);
+            //double wallHeight = topFaceCenterPoint.Z - bottomFaceCenterPoint.Z;
+            //wallHeight = Math.Round(wallHeight, 2);
 
-            double side1Area;
-            double side2Area;
+            //List<double> edgesStartAndEndZ;
+            //double edgeEndZ = 0;
+            //double edgeStartZ = 0;
+            //double zDifference;
 
-            if (sideFacesArray.Length > 2)
-            {
+            //for (int i = 0; i < brep.Faces.Count; i++)
+            //{
+            //    Brep tempBrep = brep.Faces[i].DuplicateFace(false);
+            //    var area_properties = AreaMassProperties.Compute(tempBrep.RemoveHoles(0.01));
 
-                // Assigning End Area
-                this.endArea = endFaceAreas.Sum() + (netSideFaceAreasArray[0] + netSideFaceAreasArray[1]);
+            //    double faceArea = Math.Round(area_properties.Area, 2);
 
-                // Assigning Side Areas
-                sideFaces.Remove(sideFacesArray[0]);
-                sideFaces.Remove(sideFacesArray[1]);
+            //    if (area_properties.Centroid.Z != topFaceCenterPoint.Z && area_properties.Centroid.Z != bottomFaceCenterPoint.Z)
+            //    {
+            //        edgesStartAndEndZ = new List<double>();
 
-                Brep[] joinedSideFaces = Brep.JoinBreps(sideFaces, 0.01);
+            //        for (int j = 0; j < tempBrep.Edges.Count; j++)
+            //        {
+            //            edgeStartZ = tempBrep.Edges[j].PointAtStart.Z;
+            //            edgesStartAndEndZ.Add(edgeStartZ);
 
-                if (joinedSideFaces.Length == 2)
-                {
-                    side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-                    side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[1]).Area, 2);
-                }
+            //            edgeEndZ = tempBrep.Edges[j].PointAtEnd.Z;
+            //            edgesStartAndEndZ.Add(edgeEndZ);
+            //        }
 
-                else
-                {
-                    side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-                    side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-                }
+            //        zDifference = Math.Round(edgesStartAndEndZ.Max() - edgesStartAndEndZ.Min(), 2);
 
-                // Opening Area
-                this.openingArea = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0].RemoveHoles(0.01)).Area, 2) - side1Area;
-            }
+            //        if (wallHeight > zDifference)
+            //        {
+            //            endFaces.Add(tempBrep);
+            //            endFaceAreas.Add(faceArea);
+            //        }
 
-            else
-            {
-                // Assigning End Area
-                this.endArea = endFaceAreas.Sum();
+            //        else
+            //        {
+            //            sideFaces.Add(tempBrep);
+            //            netSideFaceAreas.Add(faceArea);
+            //        }
+            //    }
+            //}
 
-                side1Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[0]).Area, 2); ;
-                side2Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[1]).Area, 2); ;
+            //Brep[] sideFacesArray = sideFaces.ToArray();
+            //double[] netSideFaceAreasArray = netSideFaceAreas.ToArray();
 
-                // Opening Area
-                this.openingArea = netSideFaceAreasArray[0] - side1Area;
-            }
+            //// Sort Based on Face Area
+            //Array.Sort(netSideFaceAreasArray, sideFacesArray);
 
-            // Assigning Side Areas
-            if (side1Area <= side2Area)
-            {
-                this.sideArea_1 = side1Area;
-                this.sideArea_2 = side2Area;
-            }
-            else
-            {
-                this.sideArea_1 = side2Area;
-                this.sideArea_2 = side1Area;
-            }
+            //double side1Area;
+            //double side2Area;
+
+            //if (sideFacesArray.Length > 2)
+            //{
+
+            //    // Assigning End Area
+            //    this.endArea = endFaceAreas.Sum() + (netSideFaceAreasArray[0] + netSideFaceAreasArray[1]);
+
+            //    // Assigning Side Areas
+            //    sideFaces.Remove(sideFacesArray[0]);
+            //    sideFaces.Remove(sideFacesArray[1]);
+
+            //    Brep[] joinedSideFaces = Brep.JoinBreps(sideFaces, 0.01);
+
+            //    if (joinedSideFaces.Length == 2)
+            //    {
+            //        side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+            //        side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[1]).Area, 2);
+            //    }
+
+            //    else
+            //    {
+            //        side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+            //        side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
+            //    }
+
+            //    // Opening Area
+            //    this.openingArea = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0].RemoveHoles(0.01)).Area, 2) - side1Area;
+            //}
+
+            //else
+            //{
+            //    // Assigning End Area
+            //    this.endArea = endFaceAreas.Sum();
+
+            //    side1Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[0]).Area, 2); ;
+            //    side2Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[1]).Area, 2); ;
+
+            //    // Opening Area
+            //    this.openingArea = netSideFaceAreasArray[0] - side1Area;
+            //}
+
+            //// Assigning Side Areas
+            //if (side1Area <= side2Area)
+            //{
+            //    this.sideArea_1 = side1Area;
+            //    this.sideArea_2 = side2Area;
+            //}
+            //else
+            //{
+            //    this.sideArea_1 = side2Area;
+            //    this.sideArea_2 = side1Area;
+            //}
         }
 
         double Length()
