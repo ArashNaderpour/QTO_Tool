@@ -32,6 +32,7 @@ namespace QTO_Tool
         private List<Brep> sideAndEndFaces = new List<Brep>();
         private List<double> sideAndEndFaceAreas = new List<double>();
         private List<double> brepBoundaryCurveLengths = new List<double>();
+        private List<double> endFaceAreas = new List<double>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
             "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
@@ -60,6 +61,8 @@ namespace QTO_Tool
 
             // Using the method that calculates Sides and End areas
             SidesAndOpeingArea(boundingBox, sideAndEndFaceAreas, angleThreshold);
+
+            endArea = Math.Round(this.endFaceAreas.Sum(), 2);
 
             length = Length();
         }
@@ -132,7 +135,13 @@ namespace QTO_Tool
             this.bottomBrepFace = downfacingFaces[bottomFaceIndex];
 
             result.Add("Top Area", topArea);
-            result.Add("Bottom Area", topArea);
+            result.Add("Bottom Area", bottomArea);
+
+            upfacingFaceAreas.Remove(topArea);
+            this.endFaceAreas.AddRange(upfacingFaceAreas);
+
+            downfacingFaceAreas.Remove(bottomArea);
+            this.endFaceAreas.AddRange(downfacingFaceAreas);
 
             return result;
         }
@@ -172,125 +181,11 @@ namespace QTO_Tool
             this.sideArea_1 = sideAndEndFaceAreas.Max() + this.openingArea;
 
             sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
-
             this.sideArea_2 = sideAndEndFaceAreas.Max() + this.openingArea;
 
-
-
-            //List<double> netSideFaceAreas = new List<double>();
-            //List<Brep> sideFaces = new List<Brep>();
-
-            //List<double> endFaceAreas = new List<double>();
-            //List<Brep> endFaces = new List<Brep>();
-
-            //Point3d topFaceCenterPoint = AreaMassProperties.Compute(topBrepFace).Centroid;
-
-            //Point3d bottomFaceCenterPoint = AreaMassProperties.Compute(bottomBrepFace).Centroid;
-
-            //double wallHeight = topFaceCenterPoint.Z - bottomFaceCenterPoint.Z;
-            //wallHeight = Math.Round(wallHeight, 2);
-
-            //List<double> edgesStartAndEndZ;
-            //double edgeEndZ = 0;
-            //double edgeStartZ = 0;
-            //double zDifference;
-
-            //for (int i = 0; i < brep.Faces.Count; i++)
-            //{
-            //    Brep tempBrep = brep.Faces[i].DuplicateFace(false);
-            //    var area_properties = AreaMassProperties.Compute(tempBrep.RemoveHoles(0.01));
-
-            //    double faceArea = Math.Round(area_properties.Area, 2);
-
-            //    if (area_properties.Centroid.Z != topFaceCenterPoint.Z && area_properties.Centroid.Z != bottomFaceCenterPoint.Z)
-            //    {
-            //        edgesStartAndEndZ = new List<double>();
-
-            //        for (int j = 0; j < tempBrep.Edges.Count; j++)
-            //        {
-            //            edgeStartZ = tempBrep.Edges[j].PointAtStart.Z;
-            //            edgesStartAndEndZ.Add(edgeStartZ);
-
-            //            edgeEndZ = tempBrep.Edges[j].PointAtEnd.Z;
-            //            edgesStartAndEndZ.Add(edgeEndZ);
-            //        }
-
-            //        zDifference = Math.Round(edgesStartAndEndZ.Max() - edgesStartAndEndZ.Min(), 2);
-
-            //        if (wallHeight > zDifference)
-            //        {
-            //            endFaces.Add(tempBrep);
-            //            endFaceAreas.Add(faceArea);
-            //        }
-
-            //        else
-            //        {
-            //            sideFaces.Add(tempBrep);
-            //            netSideFaceAreas.Add(faceArea);
-            //        }
-            //    }
-            //}
-
-            //Brep[] sideFacesArray = sideFaces.ToArray();
-            //double[] netSideFaceAreasArray = netSideFaceAreas.ToArray();
-
-            //// Sort Based on Face Area
-            //Array.Sort(netSideFaceAreasArray, sideFacesArray);
-
-            //double side1Area;
-            //double side2Area;
-
-            //if (sideFacesArray.Length > 2)
-            //{
-
-            //    // Assigning End Area
-            //    this.endArea = endFaceAreas.Sum() + (netSideFaceAreasArray[0] + netSideFaceAreasArray[1]);
-
-            //    // Assigning Side Areas
-            //    sideFaces.Remove(sideFacesArray[0]);
-            //    sideFaces.Remove(sideFacesArray[1]);
-
-            //    Brep[] joinedSideFaces = Brep.JoinBreps(sideFaces, 0.01);
-
-            //    if (joinedSideFaces.Length == 2)
-            //    {
-            //        side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-            //        side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[1]).Area, 2);
-            //    }
-
-            //    else
-            //    {
-            //        side1Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-            //        side2Area = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0]).Area, 2);
-            //    }
-
-            //    // Opening Area
-            //    this.openingArea = Math.Round(AreaMassProperties.Compute(joinedSideFaces[0].RemoveHoles(0.01)).Area, 2) - side1Area;
-            //}
-
-            //else
-            //{
-            //    // Assigning End Area
-            //    this.endArea = endFaceAreas.Sum();
-
-            //    side1Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[0]).Area, 2); ;
-            //    side2Area = Math.Round(AreaMassProperties.Compute(sideFacesArray[1]).Area, 2); ;
-
-            //    // Opening Area
-            //    this.openingArea = netSideFaceAreasArray[0] - side1Area;
-            //}
-
-            //// Assigning Side Areas
-            //if (side1Area <= side2Area)
-            //{
-            //    this.sideArea_1 = side1Area;
-            //    this.sideArea_2 = side2Area;
-            //}
-            //else
-            //{
-            //    this.sideArea_1 = side2Area;
-            //    this.sideArea_2 = side1Area;
-            //}
+            //adding end face areas to the list
+            sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
+            this.endFaceAreas.AddRange(sideAndEndFaceAreas);
         }
 
         double Length()
