@@ -125,14 +125,31 @@ namespace QTO_Tool
                 }
             }
 
-            int topFaceIndex = upfacingFaceAreas.IndexOf(upfacingFaceAreas.Max());
-            topArea = upfacingFaceAreas[topFaceIndex];
+            double tempFaceElevation = upfacingFaceElevations.Max();
+            int topFaceIndex = upfacingFaceElevations.IndexOf(tempFaceElevation);
+
             this.topBrepFace = upfacingFaces[topFaceIndex];
             this.topBrepFaceFrame = upfacingFacesFrame[topFaceIndex];
 
-            int bottomFaceIndex = downfacingFaceAreas.IndexOf(downfacingFaceAreas.Max());
-            bottomArea = downfacingFaceAreas[bottomFaceIndex];
+            while (upfacingFaceElevations.Contains(tempFaceElevation))
+            {
+                topArea += upfacingFaceAreas[upfacingFaceElevations.IndexOf(tempFaceElevation)];
+                upfacingFaceAreas.Remove(upfacingFaceAreas[upfacingFaceElevations.IndexOf(tempFaceElevation)]);
+
+                upfacingFaceElevations.Remove(tempFaceElevation);
+            }
+
+            tempFaceElevation = downfacingFaceElevations.Min();
+            int bottomFaceIndex = downfacingFaceElevations.IndexOf(tempFaceElevation);
+
             this.bottomBrepFace = downfacingFaces[bottomFaceIndex];
+
+            while (downfacingFaceElevations.Contains(tempFaceElevation))
+            {
+                bottomArea += downfacingFaceAreas[downfacingFaceElevations.IndexOf(tempFaceElevation)];
+                downfacingFaceAreas.Remove(downfacingFaceAreas[downfacingFaceElevations.IndexOf(tempFaceElevation)]);
+                downfacingFaceElevations.Remove(tempFaceElevation);
+            }
 
             result.Add("Top Area", topArea);
             result.Add("Bottom Area", bottomArea);
