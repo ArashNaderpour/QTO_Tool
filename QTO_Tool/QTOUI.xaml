@@ -99,11 +99,11 @@
 
                             <Button Name="ConcreteSaveButton" Content="SAVE" Grid.Column="0"
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="20 0 10 0" FontSize="26" Click="Save_Clicked"/>
+                        Margin="20 0 10 0" FontSize="26" Click="Concrete_Save_Clicked"/>
 
                             <Button Name="ConcreteLoadButton" Content="LOAD" Grid.Column="1" 
-                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="10 0 20 0" FontSize="26" Click="Load_Clicked"/>
+                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="True" 
+                        Margin="10 0 20 0" FontSize="26" Click="Concrete_Load_Clicked"/>
 
                         </Grid>
 

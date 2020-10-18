@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Windows;
 using Rhino;
 using Rhino.Geometry;
@@ -19,6 +20,9 @@ namespace QTO_Tool
     /// 
     public partial class QTOUI : Window
     {
+        List<string> layerNames = new List<string>();
+        List<string> selectedConcreteTemplatesForLayers = new List<string>();
+
         List<BeamTemplate> allBeams = new List<BeamTemplate>();
         List<ColumnTemplate> allColumns = new List<ColumnTemplate>();
         List<ContinousFootingTemplate> allContinousFootings = new List<ContinousFootingTemplate>();
@@ -28,12 +32,15 @@ namespace QTO_Tool
         List<WallTemplate> allWalls = new List<WallTemplate>();
         List<StyrofoamTemplate> allStyrofoams = new List<StyrofoamTemplate>();
 
-        Dictionary<string, object> selectedTemplates = new Dictionary<string, object>();
-        Dictionary<string, List<string>> selectedTemplateValues = new Dictionary<string, List<string>>();
+        Dictionary<string, object> allSelectedTemplates = new Dictionary<string, object>();
+        Dictionary<string, List<string>> allSelectedTemplateValues = new Dictionary<string, List<string>>();
 
         List<string> quantityValues = new List<string>();
 
         List<RhinoObject> selectedObjects = new List<RhinoObject>();
+
+        // Save Dictionary
+        Dictionary<string, object> saveData = new Dictionary<string, object>();
 
         public QTOUI()
         {
@@ -54,7 +61,7 @@ namespace QTO_Tool
         {
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
-           
+
                 this.CheckupResults.Content = Methods.ConcreteModelSetup();
 
                 this.CheckupResults.Visibility = Visibility.Visible;
@@ -77,9 +84,13 @@ namespace QTO_Tool
                     this.DissipatedConcreteTablePanel.Children.Clear();
 
                     this.ExportExcelButton.IsEnabled = false;
+                    this.ConcreteSaveButton.IsEnabled = false;
 
-                    this.selectedTemplates.Clear();
-                    this.selectedTemplateValues.Clear();
+                    this.allSelectedTemplates.Clear();
+                    this.allSelectedTemplateValues.Clear();
+
+                    this.layerNames.Clear();
+                    this.selectedConcreteTemplatesForLayers.Clear();
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -138,10 +149,14 @@ namespace QTO_Tool
                 allSlabs.Clear();
                 allStyrofoams.Clear();
 
-                this.selectedTemplates.Clear();
-                this.selectedTemplateValues.Clear();
+                this.allSelectedTemplates.Clear();
+                this.allSelectedTemplateValues.Clear();
 
-                DissipatedConcreteTablePanel.Children.Clear();
+                this.layerNames.Clear();
+                this.selectedConcreteTemplatesForLayers.Clear();
+
+                this.DissipatedConcreteTablePanel.Children.Clear();
+                this.CombinedConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = this.AngleThresholdSlider.Value;
 
@@ -165,8 +180,10 @@ namespace QTO_Tool
                             "ConcreteTemplates_" + i.ToString()) as ComboBox;
 
                         selectedTemplate = selectedConcreteTemplate.SelectedItem.ToString().Split(':').Last().Replace(" ", string.Empty);
+                        this.selectedConcreteTemplatesForLayers.Add(selectedTemplate);
 
                         layerName = RunQTO.doc.Layers[i].Name;
+                        this.layerNames.Add(layerName);
 
                         layerTemplates = new List<object>();
 
@@ -299,7 +316,6 @@ namespace QTO_Tool
 
                         quantityValues.Clear();
 
-
                         if (selectedTemplate == "N/A")
                         {
                             continue;
@@ -307,27 +323,27 @@ namespace QTO_Tool
                     }
                 }
 
-                this.selectedTemplates.Add("Beam", allBeams);
-                this.selectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME", "VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.selectedTemplates.Add("Column", allColumns);
-                this.selectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
-                this.selectedTemplates.Add("Curb", allCurbs);
-                this.selectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.selectedTemplates.Add("Footing", allFootings);
-                this.selectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
-                this.selectedTemplates.Add("Wall", allWalls);
-                this.selectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                this.allSelectedTemplates.Add("Beam", allBeams);
+                this.allSelectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME", "VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplates.Add("Column", allColumns);
+                this.allSelectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
+                this.allSelectedTemplates.Add("Curb", allCurbs);
+                this.allSelectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplates.Add("Footing", allFootings);
+                this.allSelectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
+                this.allSelectedTemplates.Add("Wall", allWalls);
+                this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" });
-                this.selectedTemplates.Add("Continous Footing", allContinousFootings);
-                this.selectedTemplateValues.Add("Continous Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.selectedTemplates.Add("Slab", allSlabs);
-                this.selectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
-                this.selectedTemplates.Add("Styrofoam", allStyrofoams);
-                this.selectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" });
+                this.allSelectedTemplates.Add("Continous Footing", allContinousFootings);
+                this.allSelectedTemplateValues.Add("Continous Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplates.Add("Slab", allSlabs);
+                this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
+                this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);
+                this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" });
 
                 // Generate Combined Value Table
-                UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.selectedTemplates,
-                    this.selectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+                UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,
+                    this.allSelectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
 
                 if (CombinedValuesToggle.IsChecked == true)
                 {
@@ -342,6 +358,7 @@ namespace QTO_Tool
                 }
 
                 this.ExportExcelButton.IsEnabled = true;
+                this.ConcreteSaveButton.IsEnabled = true;
             }
 
             catch (Exception ex)
@@ -350,6 +367,45 @@ namespace QTO_Tool
 
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void Concrete_Save_Clicked(object sender, RoutedEventArgs e)
+        {
+            Stream stream = null;
+            StreamWriter streamWriter = null;
+
+            this.saveData.Add("LayerNames", this.layerNames);
+            this.saveData.Add("SelectedConcreteTemplatesForLayers", this.selectedConcreteTemplatesForLayers);
+            this.saveData.Add("AllSelectedTemplates", this.allSelectedTemplates);
+            this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
+
+            // Json String Of The Save Data
+            string projectData = JsonConvert.SerializeObject(saveData, Formatting.Indented);
+
+            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                using (stream = File.Open(saveFileDialog.FileName, FileMode.Create))
+                {
+                    using (streamWriter = new StreamWriter(stream))
+                    {
+                        streamWriter.Write(projectData);
+                    }
+                }
+
+                MessageBox.Show("Save was successful.");
+            }
+
+            else
+            {
+                MessageBox.Show("Something went wrong, please try again.");
+            }
+        }
+
+        private void Concrete_Load_Clicked(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Not Implemented Yet!");
         }
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)

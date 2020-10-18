@@ -32,7 +32,7 @@ namespace QTO_Tool
                     case MessageBoxResult.Yes:
 
                         outputPath = outputPath.Replace(".xlsx", "_Project-Based.xlsx");
-                        MessageBox.Show(outputPath);
+                       
                         ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath);
 
                         MessageBox.Show("Export was successful.");
