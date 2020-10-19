@@ -20,8 +20,7 @@ namespace QTO_Tool
     /// 
     public partial class QTOUI : Window
     {
-        List<string> layerNames = new List<string>();
-        List<string> selectedConcreteTemplatesForLayers = new List<string>();
+        Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
 
         List<BeamTemplate> allBeams = new List<BeamTemplate>();
         List<ColumnTemplate> allColumns = new List<ColumnTemplate>();
@@ -39,8 +38,9 @@ namespace QTO_Tool
 
         List<RhinoObject> selectedObjects = new List<RhinoObject>();
 
-        // Save Dictionary
+        // Save/Load Dictionary
         Dictionary<string, object> saveData = new Dictionary<string, object>();
+        Dictionary<string, object> loadData = new Dictionary<string, object>();
 
         public QTOUI()
         {
@@ -89,8 +89,10 @@ namespace QTO_Tool
                     this.allSelectedTemplates.Clear();
                     this.allSelectedTemplateValues.Clear();
 
-                    this.layerNames.Clear();
                     this.selectedConcreteTemplatesForLayers.Clear();
+
+                    this.saveData.Clear();
+                    this.loadData.Clear();
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -152,8 +154,10 @@ namespace QTO_Tool
                 this.allSelectedTemplates.Clear();
                 this.allSelectedTemplateValues.Clear();
 
-                this.layerNames.Clear();
                 this.selectedConcreteTemplatesForLayers.Clear();
+
+                this.saveData.Clear();
+                this.loadData.Clear();
 
                 this.DissipatedConcreteTablePanel.Children.Clear();
                 this.CombinedConcreteTablePanel.Children.Clear();
@@ -180,10 +184,10 @@ namespace QTO_Tool
                             "ConcreteTemplates_" + i.ToString()) as ComboBox;
 
                         selectedTemplate = selectedConcreteTemplate.SelectedItem.ToString().Split(':').Last().Replace(" ", string.Empty);
-                        this.selectedConcreteTemplatesForLayers.Add(selectedTemplate);
 
                         layerName = RunQTO.doc.Layers[i].Name;
-                        this.layerNames.Add(layerName);
+
+                        this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
 
                         layerTemplates = new List<object>();
 
@@ -374,7 +378,6 @@ namespace QTO_Tool
             Stream stream = null;
             StreamWriter streamWriter = null;
 
-            this.saveData.Add("LayerNames", this.layerNames);
             this.saveData.Add("SelectedConcreteTemplatesForLayers", this.selectedConcreteTemplatesForLayers);
             this.saveData.Add("AllSelectedTemplates", this.allSelectedTemplates);
             this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
@@ -405,7 +408,80 @@ namespace QTO_Tool
 
         private void Concrete_Load_Clicked(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Not Implemented Yet!");
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            Stream stream = null;
+
+            string pathToFile = "";
+
+            // Read The File
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    stream = openFileDialog.OpenFile();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could Not Read File From Disk. Original Error: " + ex.Message);
+                    return;
+                }
+
+                if (stream != null)
+                {
+                    pathToFile = openFileDialog.FileName;
+
+                    try
+                    {
+                        loadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(pathToFile));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: Could Not Open The File. Original error: " + ex.Message);
+                        return;
+                    }
+
+                    // Load The Project
+                    try
+                    {
+                        Dictionary<string, string> tempSelectedConcreteTemplatesForLayers =
+                            ((JObject)loadData["SelectedConcreteTemplatesForLayers"]).ToObject<Dictionary<string, string>>();
+
+                        for (int i = 0; i < this.ConcreteTemplateGrid.Children.Count; i++)
+                        {
+                            if (this.ConcreteTemplateGrid.Children[i].GetType().ToString().Split('.').Last() == "DockPanel")
+                            {
+                                DockPanel tempDockPanel = (DockPanel)this.ConcreteTemplateGrid.Children[i];
+
+                                Label tempLabel = (Label)tempDockPanel.Children[0];
+
+                                if (tempSelectedConcreteTemplatesForLayers.Keys.Contains(tempLabel.Content.ToString()))
+                                {
+                                    ComboBox tempComboBox = LogicalTreeHelper.FindLogicalNode(this.ConcreteTemplateGrid,
+                                            "ConcreteTemplates_" + tempLabel.Name.Split('_').Last()) as ComboBox;
+
+                                    tempComboBox.Text = tempSelectedConcreteTemplatesForLayers[tempLabel.Content.ToString()];
+                                }
+
+                                else
+                                {
+                                    MessageBox.Show("No saved data exists for layer " + "\"" + tempLabel.Content.ToString() + "\"" + ".");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: Data is Corupted, " + ex.Message);
+                    }
+                }
+
+                // Handeling Selected File Not Exist.
+                else
+                {
+                    MessageBox.Show("Error: File Not Found.");
+                    return;
+                }
+            }
         }
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
