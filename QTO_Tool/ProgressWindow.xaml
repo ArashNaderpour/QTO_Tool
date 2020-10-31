@@ -7,9 +7,14 @@
              mc:Ignorable="d" 
              Name="ProgressBar"
              WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-             Title="Calculation..." Width="230" Height="90" ResizeMode="NoResize">
+        WindowStyle="None" AllowsTransparency="True"
+             Title="Calculation..." Width="300" Height="300" ResizeMode="NoResize">
+
+    <Window.Background>
+        <SolidColorBrush Opacity="0" Color="White"/>
+    </Window.Background>
+    
     <Grid>
-        <Image Source="Resources/Images/progressBar.png" Stretch="Fill"/>
+        <Image Source="Resources/Images/ProgressImage.png" Stretch="Fill"/>
     </Grid>
 </Window>

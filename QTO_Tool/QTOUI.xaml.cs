@@ -71,7 +71,7 @@ namespace QTO_Tool
 
                 // Create and configure the window
                 ProgressWindow progressWindow = new ProgressWindow();
-
+          
                 // When the window closes, shut down the dispatcher
                 progressWindow.Closed += (s, eventArg) =>
                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
@@ -172,8 +172,35 @@ namespace QTO_Tool
 
         private void Calculate_Concrete_Clicked(object sender, RoutedEventArgs e)
         {
+
+            Thread newWindowThread = new Thread(new ThreadStart(() =>
+            {
+                // Create our context, and install it:
+                SynchronizationContext.SetSynchronizationContext(
+                    new DispatcherSynchronizationContext(
+                        Dispatcher.CurrentDispatcher));
+
+                // Create and configure the window
+                ProgressWindow progressWindow = new ProgressWindow();
+
+                // When the window closes, shut down the dispatcher
+                progressWindow.Closed += (s, eventArg) =>
+                   Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+
+                progressWindow.Show();
+                // Start the Dispatcher Processing
+                Dispatcher.Run();
+            }));
+
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            // Make the thread a background thread
+            newWindowThread.IsBackground = true;
+            // Start the thread
+            newWindowThread.Start();
+
             try
             {
+
                 allBeams.Clear();
                 allColumns.Clear();
                 allCurbs.Clear();
@@ -395,10 +422,14 @@ namespace QTO_Tool
 
                 this.ExportExcelButton.IsEnabled = true;
                 this.ConcreteSaveButton.IsEnabled = true;
+
+                Dispatcher.FromThread(newWindowThread).InvokeShutdown();
             }
 
             catch (Exception ex)
             {
+                Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+
                 MessageBox.Show("Something went Wrong!");
 
                 MessageBox.Show(ex.ToString());
