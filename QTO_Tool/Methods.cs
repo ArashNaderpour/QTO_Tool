@@ -9,6 +9,9 @@ using System.Windows.Interop;
 using Rhino;
 using Rhino.Geometry;
 using Rhino.DocObjects;
+using System.Threading;
+using System.Windows.Threading;
+using System.Reflection;
 
 namespace QTO_Tool
 {
@@ -80,7 +83,8 @@ namespace QTO_Tool
 
                 Brep[] tempBreps = Brep.JoinBreps(surfaceList, 0.01);
 
-                if (tempBreps != null) {
+                if (tempBreps != null)
+                {
                     if (tempBreps.Length == 1)
                     {
                         newBreps.Add(tempBreps[0], "Good");
@@ -127,7 +131,7 @@ namespace QTO_Tool
                     else
                     {
                         badGeometryCount = Methods.BadGeometryDetected(newBrep, newObjectAttributes[newBreps.Keys.ToList().IndexOf(newBrep)], badGeometryCount);
-                    }  
+                    }
                 }
             }
 
@@ -166,10 +170,10 @@ namespace QTO_Tool
             RhinoObject[] subObjs = instanceObj.GetSubObjects();
 
             instanceObj.Explode(true, out geometryPieces, out objAtts, out objTransform);
-            
+
             foreach (RhinoObject subObj in subObjs)
-            {       
-                
+            {
+
                 Methods.PrepareObject(subObj, _mainObjectAttributes, _surfaceList, _badGeometryCount, _blockLevel);
             }
         }
@@ -177,7 +181,7 @@ namespace QTO_Tool
         //Prepare Brep or extrusion
         static void PrepareMesh(RhinoObject inputObj, ObjectAttributes _mainObjectAttributes, List<Brep> _surfaceList)
         {
-           
+
             Brep tempBrep = Brep.CreateFromMesh(((Mesh)inputObj.Geometry), true);
 
             if (tempBrep.IsSurface)
@@ -229,7 +233,7 @@ namespace QTO_Tool
                     else
                     {
                         _surfaceList.Add(tempBrep);
-                    }  
+                    }
                 }
             }
 
@@ -298,6 +302,32 @@ namespace QTO_Tool
                 }
             }
             return null;
+        }
+
+        public static void CloseWindowUsingIdentifier(string windowName)
+        {
+            Assembly currentAssembly = Assembly.GetExecutingAssembly();
+            string name;
+
+            foreach (Window w in Application.Current.Windows)
+            {
+
+                try
+                {
+                    name = w.Name;
+                }
+                catch
+                {
+                    name = "";
+                }
+
+                if (name == windowName)
+                {
+                    w.Close();
+                    break;
+                }
+
+            }
         }
     }
 }

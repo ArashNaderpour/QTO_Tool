@@ -36,10 +36,10 @@ namespace QTO_Tool
             id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
-            netVolume = Math.Round(mass_properties.Volume, 2);
+            netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
-            grossVolume = Math.Round(mass_properties.Volume, 2);
+            grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             topArea = TopArea(tempBrep, angleThreshold);
 

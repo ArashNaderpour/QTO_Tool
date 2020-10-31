@@ -1,0 +1,15 @@
+﻿<Window x:Class="QTO_Tool.ProgressWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:QTO_Tool"
+             mc:Ignorable="d" 
+             Name="ProgressBar"
+             WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+             Title="Calculation..." Width="230" Height="90" ResizeMode="NoResize">
+    <Grid>
+        <Image Source="Resources/Images/progressBar.png" Stretch="Fill"/>
+    </Grid>
+</Window>

@@ -46,7 +46,7 @@ namespace QTO_Tool
             id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
-            netVolume = Math.Round(mass_properties.Volume, 2);
+            netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(tempBrep, angleThreshold);
 
@@ -57,7 +57,7 @@ namespace QTO_Tool
             this.boundingBox = tempBrep.GetBoundingBox(this.topBrepFaceFrame).ToBrep();
 
             mass_properties = VolumeMassProperties.Compute(this.boundingBox);
-            grossVolume = Math.Round(mass_properties.Volume, 2);
+            grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             // Using the method that calculates Sides and End areas
             SidesAndOpeingArea(boundingBox, sideAndEndFaceAreas, angleThreshold);

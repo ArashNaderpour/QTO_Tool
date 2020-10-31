@@ -10,7 +10,8 @@ using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Excel = Microsoft.Office.Interop.Excel;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace QTO_Tool
 {
@@ -20,6 +21,8 @@ namespace QTO_Tool
     /// 
     public partial class QTOUI : Window
     {
+        ProgressWindow progressWindow;
+
         Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
 
         List<BeamTemplate> allBeams = new List<BeamTemplate>();
@@ -59,6 +62,33 @@ namespace QTO_Tool
 
         private void StartCheckup_Clicked(object sender, RoutedEventArgs e)
         {
+            Thread newWindowThread = new Thread(new ThreadStart(() =>
+            {
+                // Create our context, and install it:
+                SynchronizationContext.SetSynchronizationContext(
+                    new DispatcherSynchronizationContext(
+                        Dispatcher.CurrentDispatcher));
+
+                // Create and configure the window
+                ProgressWindow progressWindow = new ProgressWindow();
+
+                // When the window closes, shut down the dispatcher
+                progressWindow.Closed += (s, eventArg) =>
+                   Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+
+                progressWindow.Show();
+                // Start the Dispatcher Processing
+                Dispatcher.Run();
+            }));
+
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            // Make the thread a background thread
+            newWindowThread.IsBackground = true;
+            // Start the thread
+            newWindowThread.Start();
+
+            // Methods.LoadWindowInThread();
+
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
 
@@ -108,6 +138,8 @@ namespace QTO_Tool
             RhinoDoc.SelectObjects += OnSelectObjects;
             RhinoDoc.DeselectObjects += OnDeselectObjects;
             RhinoDoc.DeselectAllObjects += OnDeselectAllObjects;
+
+            Dispatcher.FromThread(newWindowThread).InvokeShutdown();
         }
 
         /*---------------- Handeling Select Object Event ----------------*/
@@ -381,6 +413,8 @@ namespace QTO_Tool
             this.saveData.Add("SelectedConcreteTemplatesForLayers", this.selectedConcreteTemplatesForLayers);
             this.saveData.Add("AllSelectedTemplates", this.allSelectedTemplates);
             this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
+            this.saveData.Add("DissipatedConcreteTablePanel", this.DissipatedConcreteTablePanel);
+            this.saveData.Add("CombinedConcreteTablePanel", this.CombinedConcreteTablePanel);
 
             // Json String Of The Save Data
             string projectData = JsonConvert.SerializeObject(saveData, Formatting.Indented);

@@ -31,7 +31,7 @@ namespace QTO_Tool
             id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
-            volume = Math.Round(mass_properties.Volume, 2);
+            volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             sideArea = SideArea(tempBrep);
 
