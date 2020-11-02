@@ -60,9 +60,9 @@ namespace QTO_Tool
                             ComboBoxItem item = new ComboBoxItem();
                             item.Content = templateName;
                             concreteTemplatesSelector.Items.Add(item);
-                        }
-                        
-                        concreteTemplatesSelector.SelectedIndex = 0;
+                        }                       
+
+                        concreteTemplatesSelector.SelectedIndex = Methods.AutomaticTemplateSelect(layer.Name, concreteTemplateNames); ;
                         concreteTemplatesSelector.HorizontalAlignment = HorizontalAlignment.Stretch;
                         concreteTemplatesSelector.VerticalAlignment = VerticalAlignment.Center;
                         concreteTemplatesSelector.Margin = new Thickness(10, 5, 0, 0);

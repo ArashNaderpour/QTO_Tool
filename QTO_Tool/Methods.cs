@@ -329,5 +329,22 @@ namespace QTO_Tool
 
             }
         }
+
+        public static int AutomaticTemplateSelect(string layerName, List<string> concreteTemplateNames)
+        {
+            int result = 0;
+
+            for (int i = 0; i < concreteTemplateNames.Count; i++)
+            {
+                if (layerName.Contains(concreteTemplateNames[i]))
+                {
+                    result = i;
+
+                    return result;
+                }
+            }
+
+            return result;
+        }
     }
 }

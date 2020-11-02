@@ -200,7 +200,6 @@ namespace QTO_Tool
 
             try
             {
-
                 allBeams.Clear();
                 allColumns.Clear();
                 allCurbs.Clear();

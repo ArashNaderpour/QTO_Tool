@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace QTO_Tool
@@ -27,6 +28,31 @@ namespace QTO_Tool
 
                 MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
 
+                Thread newWindowThread = new Thread(new ThreadStart(() =>
+                {
+                    // Create our context, and install it:
+                    SynchronizationContext.SetSynchronizationContext(
+                        new DispatcherSynchronizationContext(
+                            Dispatcher.CurrentDispatcher));
+
+                    // Create and configure the window
+                    ProgressWindow progressWindow = new ProgressWindow();
+
+                    // When the window closes, shut down the dispatcher
+                    progressWindow.Closed += (s, eventArg) =>
+                       Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+
+                    progressWindow.Show();
+                    // Start the Dispatcher Processing
+                    Dispatcher.Run();
+                }));
+
+                newWindowThread.SetApartmentState(ApartmentState.STA);
+                // Make the thread a background thread
+                newWindowThread.IsBackground = true;
+                // Start the thread
+                newWindowThread.Start();
+
                 switch (userDecision)
                 {
                     case MessageBoxResult.Yes:
@@ -35,17 +61,22 @@ namespace QTO_Tool
                        
                         ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath);
 
+                        Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+
                         MessageBox.Show("Export was successful.");
 
                         return;
 
                     case MessageBoxResult.No:
 
+                        Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+
                         MessageBox.Show("Export was successful.");
 
                         return;
                 }
             }
+
             else
             {
                 MessageBox.Show("Something went wrong, please try again.");
