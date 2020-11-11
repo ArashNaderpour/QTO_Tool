@@ -69,7 +69,7 @@ namespace QTO_Tool
 
                     case MessageBoxResult.No:
 
-                        Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+                        newWindowThread.Abort();
 
                         MessageBox.Show("Export was successful.");
 
