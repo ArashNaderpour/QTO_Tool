@@ -198,20 +198,29 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
                                 <Button Name="CalculateQuantitiesButton" Content="CALCULATE" 
-                                Grid.Column="0" HorizontalAlignment="Stretch" 
+                                Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" 
                                 IsEnabled="False" Margin="10 0 35 0" FontSize="26" 
                                  Height ="60" VerticalAlignment="Stretch" 
                                     Click="Calculate_Concrete_Clicked"/>
 
                                 <Button Name="ExportExcelButton" Content="EXPORT" 
-                                Grid.Column="1" HorizontalAlignment="Stretch" 
+                                Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" 
                                 IsEnabled="False" Margin="10 0 35 0" FontSize="26" 
                                  Height ="60" VerticalAlignment="Stretch" 
                                         Background="#98AD80" 
                                         Click="Export_Excel_Clicked"/>
 
-
+                                <Button Name="SendToMySql" Content="MYSQL" 
+                                Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" 
+                                IsEnabled="False" Margin="10 15 35 0" FontSize="26" 
+                                 Height ="60" VerticalAlignment="Stretch" 
+                                    Background="#52a0d1" Click="Send_To_MySql"/>
                             </Grid>
                         </Grid>
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"

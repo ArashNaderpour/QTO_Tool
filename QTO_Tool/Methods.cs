@@ -10,7 +10,7 @@ using Rhino;
 using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Threading;
-using System.Windows.Threading;
+using MySql.Data.MySqlClient;
 using System.Reflection;
 
 namespace QTO_Tool
@@ -345,6 +345,14 @@ namespace QTO_Tool
             }
 
             return result;
+        }
+
+        public static void CreateMySqlDatabase (string databaseName, MySqlConnection conn)
+        {
+            string s0 = string.Format("CREATE DATABASE IF NOT EXISTS `{0}`", databaseName);
+            MySqlCommand cmd = new MySqlCommand(s0, conn);
+            cmd.ExecuteNonQuery();
+
         }
     }
 }

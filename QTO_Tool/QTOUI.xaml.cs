@@ -6,12 +6,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Windows;
 using Rhino;
-using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Threading;
 using System.Windows.Threading;
+using MySql.Data.MySqlClient;
+using Microsoft.VisualBasic;
 
 namespace QTO_Tool
 {
@@ -21,8 +22,6 @@ namespace QTO_Tool
     /// 
     public partial class QTOUI : Window
     {
-        ProgressWindow progressWindow;
-
         Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
 
         List<BeamTemplate> allBeams = new List<BeamTemplate>();
@@ -71,7 +70,7 @@ namespace QTO_Tool
 
                 // Create and configure the window
                 ProgressWindow progressWindow = new ProgressWindow();
-          
+
                 // When the window closes, shut down the dispatcher
                 progressWindow.Closed += (s, eventArg) =>
                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
@@ -421,6 +420,7 @@ namespace QTO_Tool
 
                 this.ExportExcelButton.IsEnabled = true;
                 this.ConcreteSaveButton.IsEnabled = true;
+                this.SendToMySql.IsEnabled = true;
 
                 Dispatcher.FromThread(newWindowThread).InvokeShutdown();
             }
@@ -651,6 +651,47 @@ namespace QTO_Tool
                             ((ToggleButton)element).IsChecked = false;
                         }
                     }
+                }
+            }
+        }
+
+        //------------------------------------SQL------------------------------------
+
+        private void Send_To_MySql(object sender, RoutedEventArgs e)
+        {
+            string connStr = @"server=localhost;userid=root;password=VDCTurner2021";
+
+            MySqlConnection conn = null;
+
+            try
+            {
+                string mySqlProjectName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", ""));
+
+                if (mySqlProjectName == string.Empty)
+                {
+                    throw new ArgumentException("Project name has to be selected.", "mySqlProjectName");
+                }
+
+                conn = new MySqlConnection(connStr);
+                conn.Open();
+
+                Methods.CreateMySqlDatabase(mySqlProjectName, conn);
+
+                mySqlProjectName += "_Project-Based";
+
+                Methods.CreateMySqlDatabase(mySqlProjectName, conn);
+
+                MessageBox.Show("Successful");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
                 }
             }
         }
