@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Collections.Generic;
-using System.Windows.Input;
 using System.Windows.Interop;
 using Rhino;
 using Rhino.Geometry;
 using Rhino.DocObjects;
-using System.Threading;
-using MySql.Data.MySqlClient;
 using System.Reflection;
 
 namespace QTO_Tool
@@ -345,14 +340,6 @@ namespace QTO_Tool
             }
 
             return result;
-        }
-
-        public static void CreateMySqlDatabase (string databaseName, MySqlConnection conn)
-        {
-            string s0 = string.Format("CREATE DATABASE IF NOT EXISTS `{0}`", databaseName);
-            MySqlCommand cmd = new MySqlCommand(s0, conn);
-            cmd.ExecuteNonQuery();
-
         }
     }
 }
