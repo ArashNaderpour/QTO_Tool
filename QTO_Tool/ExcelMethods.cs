@@ -204,7 +204,7 @@ namespace QTO_Tool
 
                 if (contentGrid.Children.Count > 1)
                 {
-                    workSheet.Cells[rowCount + 1, 1] = "Count";
+                    workSheet.Cells[rowCount + 1, 1] = "COUNT";
                     workSheet.Cells[rowCount + 1, 2] = contentGrid.RowDefinitions.Count - 1;
                 }
             }
