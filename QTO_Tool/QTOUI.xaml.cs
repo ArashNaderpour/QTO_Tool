@@ -677,7 +677,9 @@ namespace QTO_Tool
 
                 MySqlMethods.CreateMySqlDatabase(mySqlProjectName, conn);
 
-                MySqlMethods.CreateMySqlTable(mySqlProjectName, this.DissipatedConcreteTablePanel, conn);
+                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlProjectName, this.DissipatedConcreteTablePanel, conn);
+
+                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlProjectName + "_ProjectBased", this.CombinedConcreteTablePanel, conn);
 
                 MessageBox.Show("Successful");
             }

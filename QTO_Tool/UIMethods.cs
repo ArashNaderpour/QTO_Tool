@@ -255,6 +255,8 @@ namespace QTO_Tool
                 {
                     combinedEstimateExpander.Header = "BEAMS";
 
+                    combinedEstimateExpander.Name += "Beam";
+
                     ColumnDefinition colDef;
                     Label quantityLabel;
 
@@ -296,6 +298,8 @@ namespace QTO_Tool
                 if (template == "Column")
                 {
                     combinedEstimateExpander.Header = "COLUMNS";
+
+                    combinedEstimateExpander.Name += "Column";
 
                     ColumnDefinition colDef;
                     Label quantityLabel;
@@ -339,6 +343,8 @@ namespace QTO_Tool
                 {
                     combinedEstimateExpander.Header = "CURBS";
 
+                    combinedEstimateExpander.Name += "Curb";
+
                     ColumnDefinition colDef;
                     Label quantityLabel;
 
@@ -380,6 +386,8 @@ namespace QTO_Tool
                 if (template == "Continous Footing")
                 {
                     combinedEstimateExpander.Header = "CONTINOUS FOOTINGS";
+
+                    combinedEstimateExpander.Name += "ContinousFooting";
 
                     ColumnDefinition colDef;
                     Label quantityLabel;
@@ -423,6 +431,8 @@ namespace QTO_Tool
                 {
                     combinedEstimateExpander.Header = "FOOTINGS";
 
+                    combinedEstimateExpander.Name += "Footing";
+
                     ColumnDefinition colDef;
                     Label quantityLabel;
 
@@ -464,6 +474,8 @@ namespace QTO_Tool
                 if (template == "Wall")
                 {
                     combinedEstimateExpander.Header = "WALLS";
+
+                    combinedEstimateExpander.Name += "Wall";
 
                     ColumnDefinition colDef;
                     Label quantityLabel;
@@ -507,6 +519,8 @@ namespace QTO_Tool
                 {
                     combinedEstimateExpander.Header = "SLABS";
 
+                    combinedEstimateExpander.Name += "Slab";
+
                     ColumnDefinition colDef;
                     Label quantityLabel;
 
@@ -548,6 +562,8 @@ namespace QTO_Tool
                 if (template == "Styrofoam")
                 {
                     combinedEstimateExpander.Header = "STYROFOAMS";
+
+                    combinedEstimateExpander.Name += "Styrofoam";
 
                     ColumnDefinition colDef;
                     Label quantityLabel;

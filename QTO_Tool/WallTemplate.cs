@@ -41,30 +41,30 @@ namespace QTO_Tool
         {
             Brep tempBrep = (Brep)rhobj.Geometry;
 
-            name = rhobj.Name;
+            this.name = rhobj.Name;
 
-            id = rhobj.Id.ToString();
+            this.id = rhobj.Id.ToString();
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
-            netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(tempBrep, angleThreshold);
 
-            topArea = topAndBottomArea["Top Area"];
+            this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
-            bottomArea = topAndBottomArea["Bottom Area"];
+            this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
             this.boundingBox = tempBrep.GetBoundingBox(this.topBrepFaceFrame).ToBrep();
 
             mass_properties = VolumeMassProperties.Compute(this.boundingBox);
-            grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             // Using the method that calculates Sides and End areas
-            SidesAndOpeingArea(boundingBox, sideAndEndFaceAreas, angleThreshold);
+            SidesAndOpeingArea(this.boundingBox, sideAndEndFaceAreas, angleThreshold);
 
-            endArea = Math.Round(this.endFaceAreas.Sum(), 2);
+            this.endArea = Math.Round(this.endFaceAreas.Sum(), 2);
 
-            length = Length();
+            this.length = Math.Round(Length(), 2);
         }
 
         Dictionary<string, double> TopAndBottomArea(Brep brep, double angleThreshold)
@@ -103,24 +103,26 @@ namespace QTO_Tool
                     if (dotProduct > angleThreshold && dotProduct <= 1)
                     {
                         upfacingFaceElevations.Add(center.Z);
-                        upfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
+                        upfacingFaceAreas.Add(area_properties.Area);
                         upfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
+
                         Plane frame;
                         brep.Faces[i].FrameAt(u, v, out frame);
+
                         upfacingFacesFrame.Add(frame);
                     }
 
                    else if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
                         downfacingFaceElevations.Add(center.Z);
-                        downfacingFaceAreas.Add(Math.Round(area_properties.Area, 2));
+                        downfacingFaceAreas.Add(area_properties.Area);
                         downfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
 
                     else
                     {
                         this.sideAndEndFaces.Add(brep.Faces[i].DuplicateFace(false));
-                        this.sideAndEndFaceAreas.Add(Math.Round(area_properties.Area, 2));
+                        this.sideAndEndFaceAreas.Add(area_properties.Area);
                     }
                 }
             }
@@ -188,17 +190,17 @@ namespace QTO_Tool
                     if ((dotProduct > angleThreshold && dotProduct <= 1) == false &&
                         (dotProduct < -angleThreshold && dotProduct >= -1) == false)
                     {
-                        bbsideAndEndFaceAreas.Add(Math.Round(area_properties.Area, 2));
+                        bbsideAndEndFaceAreas.Add(area_properties.Area);
                     }
                 }
             }
-
-            this.openingArea = bbsideAndEndFaceAreas.Max() - netSideArea;
+           
+            this.openingArea = Math.Abs(Math.Round(bbsideAndEndFaceAreas.Max() - netSideArea, 2));
             
-            this.sideArea_1 = sideAndEndFaceAreas.Max() + this.openingArea;
+            this.sideArea_1 = Math.Round(sideAndEndFaceAreas.Max() + this.openingArea, 2);
 
             sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
-            this.sideArea_2 = sideAndEndFaceAreas.Max() + this.openingArea;
+            this.sideArea_2 = Math.Round(sideAndEndFaceAreas.Max() + this.openingArea, 2);
 
             //adding end face areas to the list
             sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
@@ -213,7 +215,7 @@ namespace QTO_Tool
 
             for (int i = 0; i < this.topBrepFace.Edges.Count; i++)
             {
-                double edgeLength = Math.Round(this.topBrepFace.Edges[i].GetLength(), 2);
+                double edgeLength = this.topBrepFace.Edges[i].GetLength();
 
                 edgeLengths.Add(edgeLength);
 

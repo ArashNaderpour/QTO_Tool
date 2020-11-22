@@ -34,11 +34,11 @@ namespace QTO_Tool
             var mass_properties = VolumeMassProperties.Compute(tempBrep);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            topArea = TopArea(tempBrep, angleThreshold);
+            this.topArea = TopArea(tempBrep, angleThreshold);
            
-            bottomArea = BottomArea(tempBrep, angleThreshold);
+            this.bottomArea = BottomArea(tempBrep, angleThreshold);
 
-            sideArea = SideArea(tempBrep);
+            this.sideArea = SideArea(tempBrep);
         }
 
         double TopArea(Brep brep, double angleThreshold)
@@ -153,14 +153,14 @@ namespace QTO_Tool
             {
                 var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
 
-                double faceArea = Math.Round(area_properties.Area, 2);
+                double faceArea = area_properties.Area;
 
                 area += faceArea;
             }
 
             area -= (this.topArea + this.bottomArea);
 
-            return area;
+            return Math.Round(area, 2);
         }
     }
 }
