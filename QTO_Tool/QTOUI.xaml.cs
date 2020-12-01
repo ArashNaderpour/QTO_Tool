@@ -61,6 +61,12 @@ namespace QTO_Tool
 
         private void StartCheckup_Clicked(object sender, RoutedEventArgs e)
         {
+            // Always get the Active model
+            if (RunQTO.doc.IsAvailable == false)
+            {
+                RunQTO.doc = RhinoDoc.ActiveDoc;
+            }
+
             Thread newWindowThread = new Thread(new ThreadStart(() =>
             {
                 // Create our context, and install it:

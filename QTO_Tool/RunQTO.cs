@@ -18,7 +18,7 @@ namespace QTO_Tool
         // SubWindows: Generate Initial Data Window
         QTOUI UI;
 
-        public static RhinoDoc doc = RhinoDoc.ActiveDoc;
+        public static RhinoDoc doc;
         
         public RunQTO()
         {
@@ -45,6 +45,9 @@ namespace QTO_Tool
             // ---
 
             ChildStatus winChildStatus = ChildStatus.ChildOfRhino;
+
+            // Always get the Actice model
+            RunQTO.doc = RhinoDoc.ActiveDoc;
 
             //try closing a window if it's already up
             try

@@ -49,7 +49,7 @@ namespace QTO_Tool
             string modelUnitSystem = "Model's current unit system is: " + RunQTO.doc.GetUnitSystemName(true, true, true, true);
             string modelAngleTolerance = "Model's current angle tolerance is: " + RunQTO.doc.ModelAngleToleranceDegrees.ToString();
             string modelAbsoluteTolerance = "Model's current unit system is: " + RunQTO.doc.ModelAbsoluteTolerance.ToString();
-
+            
             string examinationResult = "";
             int invalidObjCount = 0;
             int badGeometryCount = 0;
