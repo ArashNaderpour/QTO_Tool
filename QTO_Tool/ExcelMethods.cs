@@ -19,15 +19,6 @@ namespace QTO_Tool
             {
                 string outputPath = saveFileDialog.FileName;
 
-                ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath);
-
-                string messageBoxText = "Do you want to save \"Project Based\" results?";
-                string caption = "Save Project Based";
-                MessageBoxButton button = MessageBoxButton.YesNo;
-                MessageBoxImage icon = MessageBoxImage.Warning;
-
-                MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
-
                 Thread newWindowThread = new Thread(new ThreadStart(() =>
                 {
                     // Create our context, and install it:
@@ -53,6 +44,42 @@ namespace QTO_Tool
                 // Start the thread
                 newWindowThread.Start();
 
+                ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath);
+
+                Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+
+                string messageBoxText = "Do you want to save \"Project Based\" results?";
+                string caption = "Save Project Based";
+                MessageBoxButton button = MessageBoxButton.YesNo;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+
+                MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
+
+                Thread newWindowThread_1 = new Thread(new ThreadStart(() =>
+                {
+                    // Create our context, and install it:
+                    SynchronizationContext.SetSynchronizationContext(
+                        new DispatcherSynchronizationContext(
+                            Dispatcher.CurrentDispatcher));
+
+                    // Create and configure the window
+                    ProgressWindow progressWindow = new ProgressWindow();
+
+                    // When the window closes, shut down the dispatcher
+                    progressWindow.Closed += (s, eventArg) =>
+                       Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+
+                    progressWindow.Show();
+                    // Start the Dispatcher Processing
+                    Dispatcher.Run();
+                }));
+
+                newWindowThread_1.SetApartmentState(ApartmentState.STA);
+                // Make the thread a background thread
+                newWindowThread_1.IsBackground = true;
+                // Start the thread
+                newWindowThread_1.Start();
+
                 switch (userDecision)
                 {
                     case MessageBoxResult.Yes:
@@ -61,7 +88,7 @@ namespace QTO_Tool
                        
                         ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath);
 
-                        Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+                        Dispatcher.FromThread(newWindowThread_1).InvokeShutdown();
 
                         MessageBox.Show("Export was successful.");
 
@@ -69,7 +96,7 @@ namespace QTO_Tool
 
                     case MessageBoxResult.No:
 
-                        newWindowThread.Abort();
+                        newWindowThread_1.Abort();
 
                         MessageBox.Show("Export was successful.");
 
