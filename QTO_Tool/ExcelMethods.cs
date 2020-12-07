@@ -171,9 +171,9 @@ namespace QTO_Tool
                                     workSheet.Cells[rowCount + 1, 3] = ColumnTemplate.units[i];
                                 }
 
-                                if (template == "ContinousFooting")
+                                if (template == "ContinuousFooting")
                                 {
-                                    workSheet.Cells[rowCount + 1, 3] = ContinousFootingTemplate.units[i];
+                                    workSheet.Cells[rowCount + 1, 3] = ContinuousFootingTemplate.units[i];
                                 }
 
                                 if (template == "Curb")

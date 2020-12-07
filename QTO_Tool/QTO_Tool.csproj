@@ -86,7 +86,7 @@
   <ItemGroup>
     <Compile Include="BeamTemplate.cs" />
     <Compile Include="ColumnTemplate.cs" />
-    <Compile Include="ContinousFootingTemplate.cs" />
+    <Compile Include="ContinuousFootingTemplate.cs" />
     <Compile Include="CurbTemplate.cs" />
     <Compile Include="ExcelMethods.cs" />
     <Compile Include="FootingTemplate.cs" />

@@ -12,7 +12,7 @@ namespace QTO_Tool
     {
         public static void GenerateLayerTemplate(Grid grid)
         {
-            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
+            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continuous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
             int layerCounter = 0;
 
             foreach (Rhino.DocObjects.Layer layer in RunQTO.doc.Layers)
@@ -71,9 +71,9 @@ namespace QTO_Tool
                         Grid.SetColumn(concreteTemplatesSelector, 1);
                         Grid.SetRow(concreteTemplatesSelector, layerCounter);
                     }
-                }
 
-                layerCounter++;
+                    layerCounter++;
+                } 
             }
         }
 
@@ -193,14 +193,14 @@ namespace QTO_Tool
                     }
                 }
 
-                else if (templateType == "ContinousFooting")
+                else if (templateType == "ContinuousFooting")
                 {
-                    UIMethods.GenerateContinousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                    UIMethods.GenerateContinuousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
                         SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
-                        layerEstimateExpander.Name += "ContinousFooting";
+                        layerEstimateExpander.Name += "ContinuousFooting";
                     }
                 }
 
@@ -383,11 +383,11 @@ namespace QTO_Tool
                     }
                 }
 
-                if (template == "Continous Footing")
+                if (template == "Continuous Footing")
                 {
-                    combinedEstimateExpander.Header = "CONTINOUS FOOTINGS";
+                    combinedEstimateExpander.Header = "CONTINUOUS FOOTINGS";
 
-                    combinedEstimateExpander.Name += "ContinousFooting";
+                    combinedEstimateExpander.Name += "ContinuousFooting";
 
                     ColumnDefinition colDef;
                     Label quantityLabel;
@@ -414,13 +414,13 @@ namespace QTO_Tool
                         Grid.SetRow(quantityLabel, 0);
                     }
 
-                    foreach (ContinousFootingTemplate obj in (List<ContinousFootingTemplate>)selectedTemplates[template])
+                    foreach (ContinuousFootingTemplate obj in (List<ContinuousFootingTemplate>)selectedTemplates[template])
                     {
                         rowDef = new RowDefinition();
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateContinousFootingTableExpander(obj, count, combinedEstimateGrid,
+                        UIMethods.GenerateContinuousFootingTableExpander(obj, count, combinedEstimateGrid,
                             valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
@@ -1053,78 +1053,78 @@ namespace QTO_Tool
             Grid.SetRow(curbSelectObject, _count);
         }
 
-        static void GenerateContinousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+        static void GenerateContinuousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
-            ContinousFootingTemplate continousFooting = (ContinousFootingTemplate)_obj;
+            ContinuousFootingTemplate continuousFooting = (ContinuousFootingTemplate)_obj;
 
-            Label continousFootingCount = new Label();
-            continousFootingCount.Content = _count;
-            continousFootingCount.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingCount);
-            continousFootingCount.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingCount, 0);
-            Grid.SetRow(continousFootingCount, _count);
+            Label continuousFootingCount = new Label();
+            continuousFootingCount.Content = _count;
+            continuousFootingCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingCount);
+            continuousFootingCount.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingCount, 0);
+            Grid.SetRow(continuousFootingCount, _count);
 
-            Label continousFootingName = new Label();
-            continousFootingName.Content = continousFooting.name;
-            continousFootingName.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingName);
-            continousFootingName.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingName, 1);
-            Grid.SetRow(continousFootingName, _count);
+            Label continuousFootingName = new Label();
+            continuousFootingName.Content = continuousFooting.name;
+            continuousFootingName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingName);
+            continuousFootingName.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingName, 1);
+            Grid.SetRow(continuousFootingName, _count);
 
-            Label continousFootingVolume = new Label();
-            continousFootingVolume.Content = continousFooting.volume.ToString();
-            continousFootingVolume.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingVolume);
-            continousFootingVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingVolume, 2);
-            Grid.SetRow(continousFootingVolume, _count);
+            Label continuousFootingVolume = new Label();
+            continuousFootingVolume.Content = continuousFooting.volume.ToString();
+            continuousFootingVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingVolume);
+            continuousFootingVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingVolume, 2);
+            Grid.SetRow(continuousFootingVolume, _count);
 
-            Label continousFootingTopArea = new Label();
-            continousFootingTopArea.Content = continousFooting.topArea.ToString();
-            continousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingTopArea);
-            continousFootingTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingTopArea, 3);
-            Grid.SetRow(continousFootingTopArea, _count);
+            Label continuousFootingTopArea = new Label();
+            continuousFootingTopArea.Content = continuousFooting.topArea.ToString();
+            continuousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingTopArea);
+            continuousFootingTopArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingTopArea, 3);
+            Grid.SetRow(continuousFootingTopArea, _count);
 
-            Label continousFootingBottomArea = new Label();
-            continousFootingBottomArea.Content = continousFooting.bottomArea.ToString();
-            continousFootingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingBottomArea);
-            continousFootingBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingBottomArea, 4);
-            Grid.SetRow(continousFootingBottomArea, _count);
+            Label continuousFootingBottomArea = new Label();
+            continuousFootingBottomArea.Content = continuousFooting.bottomArea.ToString();
+            continuousFootingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingBottomArea);
+            continuousFootingBottomArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingBottomArea, 4);
+            Grid.SetRow(continuousFootingBottomArea, _count);
 
-            Label continousFootingSideArea = new Label();
-            continousFootingSideArea.Content = continousFooting.sideArea.ToString();
-            continousFootingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingSideArea);
-            continousFootingSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingSideArea, 5);
-            Grid.SetRow(continousFootingSideArea, _count);
+            Label continuousFootingSideArea = new Label();
+            continuousFootingSideArea.Content = continuousFooting.sideArea.ToString();
+            continuousFootingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingSideArea);
+            continuousFootingSideArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingSideArea, 5);
+            Grid.SetRow(continuousFootingSideArea, _count);
 
-            Label continousFootingLength = new Label();
-            continousFootingLength.Content = continousFooting.length.ToString();
-            continousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continousFootingLength);
-            continousFootingLength.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingLength, 6);
-            Grid.SetRow(continousFootingLength, _count);
+            Label continuousFootingLength = new Label();
+            continuousFootingLength.Content = continuousFooting.length.ToString();
+            continuousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingLength);
+            continuousFootingLength.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingLength, 6);
+            Grid.SetRow(continuousFootingLength, _count);
 
-            ToggleButton continousFootingSelectObject = new ToggleButton();
-            continousFootingSelectObject.Uid = continousFooting.id;
-            continousFootingSelectObject.Content = "SELECT";
-            continousFootingSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
-            continousFootingSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
-            continousFootingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
-            continousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
-            _layerEstimateGrid.Children.Add(continousFootingSelectObject);
-            continousFootingSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(continousFootingSelectObject, 7);
-            Grid.SetRow(continousFootingSelectObject, _count);
+            ToggleButton continuousFootingSelectObject = new ToggleButton();
+            continuousFootingSelectObject.Uid = continuousFooting.id;
+            continuousFootingSelectObject.Content = "SELECT";
+            continuousFootingSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            continuousFootingSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
+            continuousFootingSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            continuousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(continuousFootingSelectObject);
+            continuousFootingSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingSelectObject, 7);
+            Grid.SetRow(continuousFootingSelectObject, _count);
         }
 
         static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,

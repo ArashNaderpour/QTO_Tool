@@ -26,7 +26,7 @@ namespace QTO_Tool
 
         List<BeamTemplate> allBeams = new List<BeamTemplate>();
         List<ColumnTemplate> allColumns = new List<ColumnTemplate>();
-        List<ContinousFootingTemplate> allContinousFootings = new List<ContinousFootingTemplate>();
+        List<ContinuousFootingTemplate> allContinuousFootings = new List<ContinuousFootingTemplate>();
         List<CurbTemplate> allCurbs = new List<CurbTemplate>();
         List<FootingTemplate> allFootings = new List<FootingTemplate>();
         List<SlabTemplate> allSlabs = new List<SlabTemplate>();
@@ -91,8 +91,6 @@ namespace QTO_Tool
             newWindowThread.IsBackground = true;
             // Start the thread
             newWindowThread.Start();
-
-            // Methods.LoadWindowInThread();
 
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
@@ -210,7 +208,7 @@ namespace QTO_Tool
                 allCurbs.Clear();
                 allFootings.Clear();
                 allWalls.Clear();
-                allContinousFootings.Clear();
+                allContinuousFootings.Clear();
                 allSlabs.Clear();
                 allStyrofoams.Clear();
 
@@ -284,16 +282,16 @@ namespace QTO_Tool
                             quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                         }
 
-                        if (selectedTemplate == "ContinousFooting")
+                        if (selectedTemplate == "ContinuousFooting")
                         {
                             rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
                             for (int j = 0; j < rhobjs.Length; j++)
                             {
-                                ContinousFootingTemplate continousFooting = new ContinousFootingTemplate(rhobjs[j], layerName, angleThreshold);
+                                ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allContinousFootings.Add(continousFooting);
-                                layerTemplates.Add(continousFooting);
+                                allContinuousFootings.Add(continuousFooting);
+                                layerTemplates.Add(continuousFooting);
                             }
 
                             quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
@@ -401,8 +399,8 @@ namespace QTO_Tool
                 this.allSelectedTemplates.Add("Wall", allWalls);
                 this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" });
-                this.allSelectedTemplates.Add("Continous Footing", allContinousFootings);
-                this.allSelectedTemplateValues.Add("Continous Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplates.Add("Continuous Footing", allContinuousFootings);
+                this.allSelectedTemplateValues.Add("Continuous Footing", new List<string>() { "COUNT", "NAME", "VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.allSelectedTemplates.Add("Slab", allSlabs);
                 this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
                 this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);

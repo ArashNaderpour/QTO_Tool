@@ -41,7 +41,7 @@ namespace QTO_Tool
                 {
                     rowCount += 2;
                 }
-
+                MessageBox.Show(databaseName + "---");
                 MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}')", databaseName, tableName, expander.Header, "Quantity", "Unit");
                 MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
                 MySqlCommand.ExecuteNonQuery();
@@ -80,9 +80,9 @@ namespace QTO_Tool
                                     MySqlCommand.ExecuteNonQuery();
                                 }
 
-                                if (template == "ContinousFooting")
+                                if (template == "ContinuousFooting")
                                 {
-                                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ContinousFootingTemplate.units[i], rowCount + 1);
+                                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ContinuousFootingTemplate.units[i], rowCount + 1);
                                     MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
                                     MySqlCommand.ExecuteNonQuery();
                                 }

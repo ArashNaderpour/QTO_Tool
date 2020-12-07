@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace QTO_Tool
 {
-    class ContinousFootingTemplate
+    class ContinuousFootingTemplate
     {
         public string name { get; set; }
         public string id { get; set; }
@@ -19,12 +19,12 @@ namespace QTO_Tool
         public double sideArea { get; set; }
         public double length { get; set; }
 
-        static string type = "ContinousFootingTemplate";
+        static string type = "ContinuousFootingTemplate";
         private Brep topBrepFace;
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "Foot", "N/A" };
 
-        public ContinousFootingTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
+        public ContinuousFootingTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
             Brep tempBrep = (Brep)rhobj.Geometry;
 
