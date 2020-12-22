@@ -27,8 +27,8 @@ namespace QTO_Tool
         static string type = "WallTemplate";
         private Brep topBrepFace;
         private Brep bottomBrepFace;
-        private Brep boundingBox;
-        private List<Brep> sideAndEndFaces = new List<Brep>();
+        //private Brep boundingBox;
+        private List<BrepFace> sideAndEndFaces = new List<BrepFace>();
         private List<double> sideAndEndFaceAreas = new List<double>();
         private List<double> brepBoundaryCurveLengths = new List<double>();
         private List<double> endFaceAreas = new List<double>();
@@ -54,7 +54,7 @@ namespace QTO_Tool
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
             // Using the method that calculates Sides and End areas
-            SidesAndOpeingArea(this.boundingBox, sideAndEndFaceAreas, angleThreshold);
+            SidesAndOpeingArea();
 
             this.endArea = Math.Round(this.endFaceAreas.Sum(), 2);
 
@@ -103,7 +103,7 @@ namespace QTO_Tool
                     if (tempBoundingBoxVolume < this.grossVolume)
                     {
                         this.grossVolume = tempBoundingBoxVolume;
-                        this.boundingBox = tempBoundingBox;
+                        //this.boundingBox = tempBoundingBox;
                     }
 
                     double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
@@ -124,7 +124,7 @@ namespace QTO_Tool
 
                     else
                     {
-                        this.sideAndEndFaces.Add(brep.Faces[i].DuplicateFace(false));
+                        this.sideAndEndFaces.Add(brep.Faces[i]);
                         this.sideAndEndFaceAreas.Add(area_properties.Area);
                     }
                 }
@@ -167,39 +167,30 @@ namespace QTO_Tool
             return result;
         }
 
-        void SidesAndOpeingArea(Brep brep, List<double> sideAndEndFaceAreas, double angleThreshold)
+        void SidesAndOpeingArea()
         {
-            List<double> bbsideAndEndFaceAreas = new List<double>();
-
             double netSideArea = sideAndEndFaceAreas.Max();
 
-            for (int i = 0; i < brep.Faces.Count; i++)
+            BrepFace bigSideFace = sideAndEndFaces[sideAndEndFaceAreas.IndexOf(netSideArea)];
+
+            var area_properties = AreaMassProperties.Compute(bigSideFace);
+
+            Point3d center = area_properties.Centroid;
+
+            double u, v;
+
+            if (bigSideFace.ClosestPoint(center, out u, out v))
             {
-                var area_properties = AreaMassProperties.Compute(brep.Faces[i]);
+                Plane frame;
+                bigSideFace.FrameAt(u, v, out frame);
 
-                Point3d center = area_properties.Centroid;
+                BoundingBox bigSideFaceBoundingBox = bigSideFace.GetBoundingBox(frame);
 
-                double u, v;
+                this.sideArea_1 = Math.Round(bigSideFaceBoundingBox.Area/2, 2);
 
-                if (brep.Faces[i].ClosestPoint(center, out u, out v))
-                {
-                    Vector3d normal = brep.Faces[i].NormalAt(u, v);
+                this.openingArea = Math.Abs(Math.Round(this.sideArea_1 - netSideArea, 2));
 
-                    normal.Unitize();
-
-                    double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
-
-                    if ((dotProduct > angleThreshold && dotProduct <= 1) == false &&
-                        (dotProduct < -angleThreshold && dotProduct >= -1) == false)
-                    {
-                        bbsideAndEndFaceAreas.Add(area_properties.Area);
-                    }
-                }
             }
-
-            this.openingArea = Math.Abs(Math.Round(bbsideAndEndFaceAreas.Max() - netSideArea, 2));
-
-            this.sideArea_1 = Math.Round(sideAndEndFaceAreas.Max() + this.openingArea, 2);
 
             sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
             this.sideArea_2 = Math.Round(sideAndEndFaceAreas.Max() + this.openingArea, 2);
