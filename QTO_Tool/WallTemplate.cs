@@ -13,7 +13,7 @@ namespace QTO_Tool
     {
         public string name { get; set; }
         public string id { get; set; }
-        public double grossVolume { get; set; }
+        public double grossVolume = double.MaxValue;
         public double netVolume { get; set; }
         public double topArea { get; set; }
         public double endArea { get; set; }
@@ -26,7 +26,6 @@ namespace QTO_Tool
 
         static string type = "WallTemplate";
         private Brep topBrepFace;
-        private Plane topBrepFaceFrame;
         private Brep bottomBrepFace;
         private Brep boundingBox;
         private List<Brep> sideAndEndFaces = new List<Brep>();
@@ -54,11 +53,6 @@ namespace QTO_Tool
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
-            this.boundingBox = tempBrep.GetBoundingBox(this.topBrepFaceFrame).ToBrep();
-
-            mass_properties = VolumeMassProperties.Compute(this.boundingBox);
-            this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
-
             // Using the method that calculates Sides and End areas
             SidesAndOpeingArea(this.boundingBox, sideAndEndFaceAreas, angleThreshold);
 
@@ -78,7 +72,6 @@ namespace QTO_Tool
             List<double> upfacingFaceElevations = new List<double>();
             List<double> upfacingFaceAreas = new List<double>();
             List<Brep> upfacingFaces = new List<Brep>();
-            List<Plane> upfacingFacesFrame = new List<Plane>();
 
             List<double> downfacingFaceElevations = new List<double>();
             List<double> downfacingFaceAreas = new List<double>();
@@ -95,8 +88,23 @@ namespace QTO_Tool
                 if (brep.Faces[i].ClosestPoint(center, out u, out v))
                 {
                     Vector3d normal = brep.Faces[i].NormalAt(u, v);
-                   
+
                     normal.Unitize();
+
+                    //Calculating Gross Volume
+                    Plane frame;
+                    brep.Faces[i].FrameAt(u, v, out frame);
+
+                    Brep tempBoundingBox = brep.GetBoundingBox(frame).ToBrep();
+
+                    var mass_properties = VolumeMassProperties.Compute(tempBoundingBox);
+                    double tempBoundingBoxVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+
+                    if (tempBoundingBoxVolume < this.grossVolume)
+                    {
+                        this.grossVolume = tempBoundingBoxVolume;
+                        this.boundingBox = tempBoundingBox;
+                    }
 
                     double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
 
@@ -105,14 +113,9 @@ namespace QTO_Tool
                         upfacingFaceElevations.Add(center.Z);
                         upfacingFaceAreas.Add(area_properties.Area);
                         upfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
-
-                        Plane frame;
-                        brep.Faces[i].FrameAt(u, v, out frame);
-
-                        upfacingFacesFrame.Add(frame);
                     }
 
-                   else if (dotProduct < -angleThreshold && dotProduct >= -1)
+                    else if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
                         downfacingFaceElevations.Add(center.Z);
                         downfacingFaceAreas.Add(area_properties.Area);
@@ -131,7 +134,6 @@ namespace QTO_Tool
             int topFaceIndex = upfacingFaceElevations.IndexOf(tempFaceElevation);
 
             this.topBrepFace = upfacingFaces[topFaceIndex];
-            this.topBrepFaceFrame = upfacingFacesFrame[topFaceIndex];
 
             while (upfacingFaceElevations.Contains(tempFaceElevation))
             {
@@ -194,9 +196,9 @@ namespace QTO_Tool
                     }
                 }
             }
-           
+
             this.openingArea = Math.Abs(Math.Round(bbsideAndEndFaceAreas.Max() - netSideArea, 2));
-            
+
             this.sideArea_1 = Math.Round(sideAndEndFaceAreas.Max() + this.openingArea, 2);
 
             sideAndEndFaceAreas.Remove(sideAndEndFaceAreas.Max());
