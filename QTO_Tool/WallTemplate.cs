@@ -110,14 +110,14 @@ namespace QTO_Tool
 
                     if (dotProduct > angleThreshold && dotProduct <= 1)
                     {
-                        upfacingFaceElevations.Add(center.Z);
+                        upfacingFaceElevations.Add(Math.Round(center.Z, 2));
                         upfacingFaceAreas.Add(area_properties.Area);
                         upfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
 
                     else if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
-                        downfacingFaceElevations.Add(center.Z);
+                        downfacingFaceElevations.Add(Math.Round(center.Z, 2));
                         downfacingFaceAreas.Add(area_properties.Area);
                         downfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
@@ -145,7 +145,7 @@ namespace QTO_Tool
 
             tempFaceElevation = downfacingFaceElevations.Min();
             int bottomFaceIndex = downfacingFaceElevations.IndexOf(tempFaceElevation);
-
+            
             this.bottomBrepFace = downfacingFaces[bottomFaceIndex];
 
             while (downfacingFaceElevations.Contains(tempFaceElevation))
@@ -154,10 +154,10 @@ namespace QTO_Tool
                 downfacingFaceAreas.Remove(downfacingFaceAreas[downfacingFaceElevations.IndexOf(tempFaceElevation)]);
                 downfacingFaceElevations.Remove(tempFaceElevation);
             }
-
+           
             result.Add("Top Area", topArea);
             result.Add("Bottom Area", bottomArea);
-
+            
             upfacingFaceAreas.Remove(topArea);
             this.endFaceAreas.AddRange(upfacingFaceAreas);
 
@@ -184,7 +184,7 @@ namespace QTO_Tool
                 Plane frame;
                 bigSideFace.FrameAt(u, v, out frame);
 
-                BoundingBox bigSideFaceBoundingBox = bigSideFace.GetBoundingBox(frame);
+                BoundingBox bigSideFaceBoundingBox = bigSideFace.GetMesh(new MeshType()).GetBoundingBox(true);
 
                 this.sideArea_1 = Math.Round(bigSideFaceBoundingBox.Area/2, 2);
 
