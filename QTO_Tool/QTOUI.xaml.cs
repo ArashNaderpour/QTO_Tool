@@ -223,7 +223,7 @@ namespace QTO_Tool
                 this.DissipatedConcreteTablePanel.Children.Clear();
                 this.CombinedConcreteTablePanel.Children.Clear();
 
-                double angleThreshold = this.AngleThresholdSlider.Value;
+                double angleThreshold = Math.Cos(this.AngleThresholdSlider.Value * (Math.PI / 180));
 
                 ComboBox selectedConcreteTemplate;
 
