@@ -41,7 +41,7 @@ namespace QTO_Tool
                 {
                     rowCount += 2;
                 }
-                MessageBox.Show(databaseName + "---");
+                
                 MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}')", databaseName, tableName, expander.Header, "Quantity", "Unit");
                 MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
                 MySqlCommand.ExecuteNonQuery();
