@@ -663,7 +663,7 @@ namespace QTO_Tool
 
         private void Send_To_MySql(object sender, RoutedEventArgs e)
         {
-            string connStr = @"server=localhost;userid=root;password=VDCTurner2021";
+            string connStr = @"server=172.18.30.54;userid=TurnerUser;password=VDCTurner2021";
 
             MySqlConnection conn = null;
 
