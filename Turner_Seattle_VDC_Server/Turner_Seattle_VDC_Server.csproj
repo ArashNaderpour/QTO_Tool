@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\ProgressImage.png" />
+    <None Remove="Resources\Images\Turner_VDC.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\ProgressImage.png" />
+    <Resource Include="Resources\Images\Turner_VDC.jpg" />
+  </ItemGroup>
+
+</Project>
