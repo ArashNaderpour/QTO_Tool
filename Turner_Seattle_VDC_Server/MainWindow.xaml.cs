@@ -23,6 +23,11 @@ namespace Turner_Seattle_VDC_Server
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        string connStr = @"server=172.18.30.54;userid=TurnerUser;password=VDCTurner2021";
+
+        MySqlConnection conn = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -30,15 +35,10 @@ namespace Turner_Seattle_VDC_Server
 
         private void Connect_Clicked(object sender, RoutedEventArgs e)
         {
-            string connStr = @"server=172.18.30.54;userid=TurnerUser;password=VDCTurner2021";
+            string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
-            MySqlConnection conn = null;
-
-            try
+            if (connectionResult == "success")
             {
-                conn = new MySqlConnection(connStr);
-                conn.Open();
-
                 this.ConnectionResult.Text = "Connection to the database was successful.";
                 this.ConnectionResultWrapper.Visibility = Visibility.Visible;
 
@@ -51,22 +51,14 @@ namespace Turner_Seattle_VDC_Server
                 this.ImportExteriorButton.IsEnabled = true;
 
                 this.ConnectButton.Background = System.Windows.Media.Brushes.YellowGreen;
-
             }
-            catch (Exception ex)
+            else
             {
-                this.ConnectionResult.Text = "Connection to the database was not successful:" + "\n" + "\n" + ex.ToString();
+                this.ConnectionResult.Text = "Connection to the server was not successful:" + "\n" + "\n" + connectionResult;
 
                 this.ConnectButton.Background = System.Windows.Media.Brushes.IndianRed;
 
                 this.ConnectionResultWrapper.Visibility = Visibility.Visible;
-            }
-            finally
-            {
-                if (conn != null)
-                {
-                    conn.Close();
-                }
             }
         }
 
@@ -112,6 +104,41 @@ namespace Turner_Seattle_VDC_Server
             int rowCount = range.Rows.Count;
             int columnCount = range.Columns.Count;
 
+            try
+            {
+                conn = new MySqlConnection(connStr);
+                conn.Open();
+
+                string connectionResult = MySqlMethods.CreateMySqlDatabase("Test", this.connStr, this.conn);
+                
+                if (connectionResult == "success")
+                {
+                    this.ConnectionResult.Text = "Data has been successfully uploaded to the database.";
+                }
+                else
+                {
+                    this.ConnectionResult.Text = "Connection problem:" + "\n" + "\n" + connectionResult;
+
+                    this.ConnectButton.Background = System.Windows.Media.Brushes.IndianRed;
+
+                    this.ConnectionResultWrapper.Visibility = Visibility.Visible;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ConnectionResult.Text = "Connection problem:" + "\n" + "\n" + ex.ToString();
+
+                this.ConnectButton.Background = System.Windows.Media.Brushes.IndianRed;
+
+                this.ConnectionResultWrapper.Visibility = Visibility.Visible;
+            }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
 
         }
     }

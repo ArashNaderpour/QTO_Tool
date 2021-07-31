@@ -35,7 +35,7 @@
                                 </Grid.ColumnDefinitions>
                                 
                             <Button x:Name="ConnectButton" HorizontalAlignment="Left" Width="125" Height="50" Grid.Column="0"
-                                    Margin="25 20 0 30" Click="Connect_Clicked">CONNECT</Button>
+                                    Margin="25 20 0 30" Click="Connect_Clicked" x:FieldModifier="public">CONNECT</Button>
                                 
                                 <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                             Margin="25 20 0 30">
@@ -50,7 +50,7 @@
                             <Border x:Name="ConnectionResultWrapper" BorderThickness="2" BorderBrush="Black" 
                                     Visibility="Collapsed">
                                 <TextBlock x:Name="ConnectionResult" FontSize="15" Height="200" Padding="5"
-                                   HorizontalAlignment="Stretch" 
+                                   HorizontalAlignment="Stretch"
                                    VerticalAlignment="Stretch"></TextBlock>
                             </Border>
                         </StackPanel>
