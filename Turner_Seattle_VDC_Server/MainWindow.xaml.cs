@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Turner_Seattle_VDC_Server
 {
@@ -50,7 +51,7 @@ namespace Turner_Seattle_VDC_Server
                 this.ImportExteriorButton.IsEnabled = true;
 
                 this.ConnectButton.Background = System.Windows.Media.Brushes.YellowGreen;
-   
+
             }
             catch (Exception ex)
             {
@@ -67,6 +68,51 @@ namespace Turner_Seattle_VDC_Server
                     conn.Close();
                 }
             }
+        }
+
+        private void ImportConcrete_Clicked(object sender, RoutedEventArgs e)
+        {
+            // Open The Spread Sheet File
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+
+            // Excel File Properties
+            Excel.Application xlApp;
+            Excel.Workbook xlWorkBook;
+            Excel.Worksheet xlWorkSheet;
+            Excel.Range range;
+
+            String filePath = "";
+
+            openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm|All files (*.*)|*.*";
+
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                filePath = openFileDialog.FileName;
+
+                if (filePath.Substring(filePath.Length - 3).ToLower() != "xls" &&
+                    filePath.Substring(filePath.Length - 4).ToLower() != "xlsx")
+                {
+                    MessageBox.Show("Please select an Execl file.");
+                    return;
+                }
+            }
+            else
+            {
+                // Nothing Was Selected
+                return;
+            }
+
+            xlApp = new Excel.Application();
+            xlWorkBook = xlApp.Workbooks.Open(filePath, 0, true, 5, "", "", true,
+                Excel.XlPlatform.xlWindows, "\t", false,
+                false, 0, true, 1, 0);
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+
+            range = xlWorkSheet.UsedRange;
+            int rowCount = range.Rows.Count;
+            int columnCount = range.Columns.Count;
+
+
         }
     }
 }

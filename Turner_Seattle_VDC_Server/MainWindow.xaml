@@ -40,7 +40,7 @@
                                 <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                             Margin="25 20 0 30">
                                     <Button x:Name="ImportConcreteButton" HorizontalAlignment="Left" Width="125" Height="50"
-                                    Margin="0 0 100 0" IsEnabled="False">IMPORT CONCRETE</Button>
+                                    Margin="0 0 100 0" IsEnabled="True" Click="ImportConcrete_Clicked">IMPORT CONCRETE</Button>
 
                                 <Button x:Name="ImportExteriorButton" HorizontalAlignment="Left" Width="125" Height="50"
                                     IsEnabled="False">IMPORT EXTERIOR</Button>
