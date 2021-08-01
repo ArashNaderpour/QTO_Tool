@@ -35,6 +35,8 @@ namespace Turner_Seattle_VDC_Server
 
         private void Connect_Clicked(object sender, RoutedEventArgs e)
         {
+            this.ConnectionResult.Text = "";
+
             string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
             if (connectionResult == "success")
@@ -64,6 +66,8 @@ namespace Turner_Seattle_VDC_Server
 
         private void ImportConcrete_Clicked(object sender, RoutedEventArgs e)
         {
+
+            this.ConnectionResult.Text = "";
             // Open The Spread Sheet File
             System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
 
@@ -81,7 +85,7 @@ namespace Turner_Seattle_VDC_Server
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 filePath = openFileDialog.FileName;
-                fileName = filePath.Split('\\').Last().Split('.').First();
+                fileName = filePath.Split('\\').Last().Split('.').First().Replace('-', '_');
 
                 if (filePath.Substring(filePath.Length - 3).ToLower() != "xls" &&
                     filePath.Substring(filePath.Length - 4).ToLower() != "xlsx")
@@ -109,8 +113,24 @@ namespace Turner_Seattle_VDC_Server
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
-                string databaseName = fileName.ToLower().Split('_').First();
-                string tableName = fileName.Split('_').Last();
+                string[] nameParts = fileName.ToLower().Split('_');
+
+                string databaseName = "";
+
+                if (nameParts.Length > 2)
+                {
+                    for (int i = 0; i < nameParts.Length; i++) {
+                        databaseName += nameParts[i] + "_";
+                    }
+
+                    databaseName = databaseName.Remove(databaseName.Length - 1);
+                }
+                else
+                {
+                    databaseName = nameParts.First();
+                }
+                
+                string tableName = nameParts.Last();
 
                 string connectionResult = MySqlMethods.CreateMySqlDatabase(databaseName, this.connStr, this.conn);
                 
@@ -118,7 +138,7 @@ namespace Turner_Seattle_VDC_Server
 
                 if (connectionResult == "")
                 {
-                    this.ConnectionResult.Text = "Data has been successfully uploaded to the database.";
+                    this.ConnectionResult.Text = "Data has been uploaded to the database successfully.";
                 }
                 else
                 {

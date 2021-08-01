@@ -28,32 +28,31 @@
                                 <Label FontSize="40" FontWeight="Bold" Grid.Column="1"
                                    Margin="10 20 10 0"  Content="TRANSFER DATA"/>
                             </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
                             <Button x:Name="ConnectButton" HorizontalAlignment="Left" Width="125" Height="50" Grid.Column="0"
                                     Margin="25 20 0 30" Click="Connect_Clicked" x:FieldModifier="public">CONNECT</Button>
-                                
-                                <StackPanel Orientation="Horizontal" Grid.Column="1" 
+
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" 
                                             Margin="25 20 0 30">
-                                    <Button x:Name="ImportConcreteButton" HorizontalAlignment="Left" Width="125" Height="50"
+                                <Button x:Name="ImportConcreteButton" HorizontalAlignment="Left" Width="125" Height="50"
                                     Margin="0 0 100 0" IsEnabled="False" Click="ImportConcrete_Clicked">IMPORT CONCRETE</Button>
 
                                 <Button x:Name="ImportExteriorButton" HorizontalAlignment="Left" Width="125" Height="50"
                                     IsEnabled="False">IMPORT EXTERIOR</Button>
-                                </StackPanel>
-                            </Grid>
-                            
-                            <Border x:Name="ConnectionResultWrapper" BorderThickness="2" BorderBrush="Black" 
+                            </StackPanel>
+                        </Grid>
+                        <Border x:Name="ConnectionResultWrapper" BorderThickness="2" BorderBrush="Black" 
                                     Visibility="Collapsed">
-                                <TextBlock x:Name="ConnectionResult" FontSize="15" Height="400" Padding="5"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"></TextBlock>
+                                <TextBox x:Name="ConnectionResult" FontSize="15" Height="350" Padding="5"
+                                   HorizontalAlignment="Stretch" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
+                                   VerticalAlignment="Stretch"></TextBox>
                             </Border>
-                        </StackPanel>
+                    </StackPanel>
 
                 </TabItem>
                 <TabItem x:Name="ConcreteTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="CONCRETE">xyz</TabItem>
