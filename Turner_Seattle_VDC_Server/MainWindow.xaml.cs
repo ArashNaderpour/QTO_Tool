@@ -73,13 +73,15 @@ namespace Turner_Seattle_VDC_Server
             Excel.Worksheet xlWorkSheet;
             Excel.Range range;
 
-            String filePath = "";
+            string filePath = "";
+            string fileName = "";
 
             openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm|All files (*.*)|*.*";
 
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 filePath = openFileDialog.FileName;
+                fileName = filePath.Split('\\').Last().Split('.').First();
 
                 if (filePath.Substring(filePath.Length - 3).ToLower() != "xls" &&
                     filePath.Substring(filePath.Length - 4).ToLower() != "xlsx")
@@ -101,17 +103,20 @@ namespace Turner_Seattle_VDC_Server
             xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
 
             range = xlWorkSheet.UsedRange;
-            int rowCount = range.Rows.Count;
-            int columnCount = range.Columns.Count;
 
             try
             {
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
-                string connectionResult = MySqlMethods.CreateMySqlDatabase("Test", this.connStr, this.conn);
+                string databaseName = fileName.ToLower().Split('_').First();
+                string tableName = fileName.Split('_').Last();
+
+                string connectionResult = MySqlMethods.CreateMySqlDatabase(databaseName, this.connStr, this.conn);
                 
-                if (connectionResult == "success")
+                connectionResult += MySqlMethods.CreateMySqlTable(databaseName, tableName, conn, range);
+
+                if (connectionResult == "")
                 {
                     this.ConnectionResult.Text = "Data has been successfully uploaded to the database.";
                 }
@@ -139,7 +144,6 @@ namespace Turner_Seattle_VDC_Server
                     conn.Close();
                 }
             }
-
         }
     }
 }

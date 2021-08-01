@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Turner_Seattle_VDC_Server
 {
@@ -39,153 +40,163 @@ namespace Turner_Seattle_VDC_Server
 
             try
             {
-                string MySqlQuery = string.Format("DROP DATABASE IF EXISTS `{0}`;", databaseName);
+                string MySqlQuery = string.Format("CREATE DATABASE IF NOT EXISTS `{0}`;", databaseName);
                 MySqlCommand MySqlCommand = new MySqlCommand(MySqlQuery, conn);
                 MySqlCommand.ExecuteNonQuery();
 
-                MySqlQuery = string.Format("CREATE DATABASE IF NOT EXISTS `{0}`;", databaseName);
-                MySqlCommand = new MySqlCommand(MySqlQuery, conn);
-                MySqlCommand.ExecuteNonQuery();
-
-                connectionResult = "success";
+                connectionResult = "";
             }
             catch(Exception ex)
             {
-                connectionResult = ex.ToString();
+                connectionResult = ex.ToString() + "\n";
             }
 
             return connectionResult;
         }
 
-        //    public static void CreateMySqlTable(string databaseName, string tableName, StackPanel concreteTable, MySqlConnection conn)
-        //    {
-        //        string MySqlQuaery = string.Format(
-        //            "CREATE TABLE `{0}`.`{1}` (`RowNumber` INT NOT NULL AUTO_INCREMENT,`Category` VARCHAR(45) NULL,`Quantity` VARCHAR(45) NULL,`Unit` VARCHAR(45) NULL,PRIMARY KEY(`RowNumber`)); ",
-        //            databaseName, tableName);
-        //        MySqlCommand MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //        MySqlCommand.ExecuteNonQuery();
+        public static string CreateMySqlTable(string databaseName, string tableName, MySqlConnection conn, Excel.Range range)
+        {
+            string connectionResult = "";
 
-        //        int rowCount = 1;
+            int rowCount = range.Rows.Count;
+            int columnCount = range.Columns.Count;
 
-        //        foreach (UIElement container in concreteTable.Children)
-        //        {
-        //            Expander expander = (Expander)container;
+            string MySqlQuaery;
+            MySqlCommand MySqlCommand;
 
-        //            string template = expander.Name.Split('_')[1];
+            try
+            {
+                MySqlQuaery = string.Format("DROP TABLE IF EXISTS `{0}`.`{1}`;", databaseName, tableName);
+                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                MySqlCommand.ExecuteNonQuery();
 
-        //            Grid contentGrid = (Grid)expander.Content;
+                MySqlQuaery = string.Format("CREATE TABLE `{0}`.`{1}` (`RowNumber` INT NOT NULL AUTO_INCREMENT,`Category` VARCHAR(45) NULL,`Quantity` VARCHAR(45) NULL,`Unit` VARCHAR(45) NULL,PRIMARY KEY(`RowNumber`));",
+                    databaseName, tableName);
+                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                MySqlCommand.ExecuteNonQuery();
 
-        //            if (rowCount > 1)
-        //            {
-        //                rowCount += 2;
-        //            }
+                connectionResult = "";
+            }
+            catch (Exception ex)
+            {
+                connectionResult = ex.ToString() + "\n";
+            }
 
-        //            MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}')", databaseName, tableName, expander.Header, "Quantity", "Unit");
-        //            MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //            MySqlCommand.ExecuteNonQuery();
+            for (int r = 1; r < rowCount; r++)
+            {
+                MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}');", databaseName, tableName,
+                    ((range.Cells[r, 1] as Excel.Range).Value2).ToString(),
+                    ((range.Cells[r, 2] as Excel.Range).Value2).ToString(),
+                    ((range.Cells[r, 3] as Excel.Range).Value2).ToString());
 
-        //            for (int i = 2; i < contentGrid.ColumnDefinitions.Count - 1; i++)
-        //            {
-        //                double result = 0;
-        //                string header = "";
+                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                MySqlCommand.ExecuteNonQuery();
 
-        //                for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
-        //                {
-        //                    UIElement element = contentGrid.Children.Cast<UIElement>().
-        //                        FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
 
-        //                    if (element != null)
-        //                    {
-        //                        if (j == 0)
-        //                        {
-        //                            header = ((Label)element).Content.ToString();
+                //for (int i = 2; i < contentGrid.ColumnDefinitions.Count - 1; i++)
+                //{
+                //    double result = 0;
+                //    string header = "";
 
-        //                            MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category) VALUES('{2}')", databaseName, tableName, header);
-        //                            MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                            MySqlCommand.ExecuteNonQuery();
+                //    for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
+                //    {
+                //        UIElement element = contentGrid.Children.Cast<UIElement>().
+                //            FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
 
-        //                            if (template == "Beam")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, BeamTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //        if (element != null)
+                //        {
+                //            if (j == 0)
+                //            {
+                //                header = ((Label)element).Content.ToString();
 
-        //                            if (template == "Column")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ColumnTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category) VALUES('{2}')", databaseName, tableName, header);
+                //                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                MySqlCommand.ExecuteNonQuery();
 
-        //                            if (template == "ContinuousFooting")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ContinuousFootingTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                if (template == "Beam")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, BeamTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                            if (template == "Curb")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, CurbTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                if (template == "Column")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ColumnTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                            if (template == "Footing")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, FootingTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                if (template == "ContinuousFooting")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, ContinuousFootingTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                            if (template == "Slab")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, SlabTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                if (template == "Curb")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, CurbTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                            if (template == "Styrofoam")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, StyrofoamTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
+                //                if (template == "Footing")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, FootingTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                            if (template == "Wall")
-        //                            {
-        //                                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, WallTemplate.units[i], rowCount + 1);
-        //                                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                                MySqlCommand.ExecuteNonQuery();
-        //                            }
-        //                        }
-        //                        else
-        //                        {
-        //                            result += Convert.ToDouble(((Label)element).Content.ToString());
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        MessageBox.Show("A Null data was detected.");
+                //                if (template == "Slab")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, SlabTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                        return;
-        //                    }
-        //                }
-        //                MySqlQuaery = string.Format("UPDATE {0}.{1} SET Quantity='{2}' WHERE RowNumber='{3}'", databaseName, tableName, result, rowCount + 1);
-        //                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                MySqlCommand.ExecuteNonQuery();
+                //                if (template == "Styrofoam")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, StyrofoamTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
 
-        //                rowCount++;
-        //            }
+                //                if (template == "Wall")
+                //                {
+                //                    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Unit='{2}' WHERE RowNumber='{3}'", databaseName, tableName, WallTemplate.units[i], rowCount + 1);
+                //                    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //                    MySqlCommand.ExecuteNonQuery();
+                //                }
+                //            }
+                //            else
+                //            {
+                //                result += Convert.ToDouble(((Label)element).Content.ToString());
+                //            }
+                //        }
+                //        else
+                //        {
+                //            MessageBox.Show("A Null data was detected.");
 
-        //            if (contentGrid.Children.Count > 1)
-        //            {
-        //                MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}')", databaseName, tableName, "COUNT", contentGrid.RowDefinitions.Count - 1, "");
-        //                MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
-        //                MySqlCommand.ExecuteNonQuery();
-        //            }
-        //        }
-        //    }
+                //            return;
+                //        }
+                //    }
+                //    MySqlQuaery = string.Format("UPDATE {0}.{1} SET Quantity='{2}' WHERE RowNumber='{3}'", databaseName, tableName, result, rowCount + 1);
+                //    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //    MySqlCommand.ExecuteNonQuery();
+
+                //    rowCount++;
+                //}
+
+                //if (contentGrid.Children.Count > 1)
+                //{
+                //    MySqlQuaery = string.Format("INSERT INTO {0}.{1}(Category, Quantity, Unit) VALUES('{2}', '{3}', '{4}')", databaseName, tableName, "COUNT", contentGrid.RowDefinitions.Count - 1, "");
+                //    MySqlCommand = new MySqlCommand(MySqlQuaery, conn);
+                //    MySqlCommand.ExecuteNonQuery();
+                //}
+            }
+
+            return connectionResult;
+        }
     }
 }
