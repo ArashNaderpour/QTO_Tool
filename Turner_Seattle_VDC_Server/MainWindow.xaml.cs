@@ -53,6 +53,8 @@ namespace Turner_Seattle_VDC_Server
                 this.ImportExteriorButton.IsEnabled = true;
 
                 this.ConnectButton.Background = System.Windows.Media.Brushes.YellowGreen;
+
+
             }
             else
             {
