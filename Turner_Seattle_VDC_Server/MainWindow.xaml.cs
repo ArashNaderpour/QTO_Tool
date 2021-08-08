@@ -39,6 +39,11 @@ namespace Turner_Seattle_VDC_Server
 
             string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
+            Dictionary<string, List<string>> concreteDataTable = MySqlMethods.GenerateConcreteDataTable(this.connStr, this.conn, "ConcreteAnalyticsTab");
+
+                //MessageBox.Show(concreteDataTable[concreteDataTable.Keys.ToList()[0]][1]);
+
+            
             if (connectionResult == "success")
             {
                 this.ConnectionResult.Text = "Connection to the database was successful.";
@@ -129,14 +134,14 @@ namespace Turner_Seattle_VDC_Server
                 }
                 else
                 {
-                    databaseName = nameParts.First();
+                    databaseName = "concrete_" + nameParts.First();
                 }
                 
                 string tableName = nameParts.Last();
 
-                string connectionResult = MySqlMethods.CreateMySqlDatabase(databaseName, this.connStr, this.conn);
+                string connectionResult = MySqlMethods.CreateConcreteMySqlDatabase(databaseName, this.connStr, this.conn);
                 
-                connectionResult += MySqlMethods.CreateMySqlTable(databaseName, tableName, conn, range);
+                connectionResult += MySqlMethods.CreateMySqlTable(databaseName, tableName, this.conn, range);
 
                 if (connectionResult == "")
                 {
