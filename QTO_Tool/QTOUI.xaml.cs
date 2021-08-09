@@ -669,23 +669,25 @@ namespace QTO_Tool
 
             try
             {
-                string mySqlProjectName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", ""));
+                string mySqlTableName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", ""));
 
-                if (mySqlProjectName == string.Empty)
+                if (mySqlTableName == string.Empty)
                 {
                     throw new ArgumentException("Project name has to be selected.", "mySqlProjectName");
                 }
+
+                string mySqlProjectName = "concrete_" + mySqlTableName;
 
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
                 MySqlMethods.CreateMySqlDatabase(mySqlProjectName, conn);
 
-                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlProjectName, this.DissipatedConcreteTablePanel, conn);
+                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlTableName, this.DissipatedConcreteTablePanel, conn);
 
-                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlProjectName + "_ProjectBased", this.CombinedConcreteTablePanel, conn);
+                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlTableName + "_ProjectBased", this.CombinedConcreteTablePanel, conn);
 
-                MessageBox.Show("Successful");
+                MessageBox.Show("Successful!");
             }
             catch (Exception ex)
             {

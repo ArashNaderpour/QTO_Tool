@@ -173,7 +173,7 @@ namespace Turner_Seattle_VDC_Server
 
             TreeView concreteDataTable = new TreeView();
             
-            concreteDataTable.FontSize = 40;
+            concreteDataTable.FontSize = 35;
             concreteDataTable.Margin = new Thickness(10, 10, 10, 0);
             concreteDataTable.HorizontalAlignment = HorizontalAlignment.Stretch;
             concreteDataTable.VerticalAlignment = VerticalAlignment.Top;
@@ -186,16 +186,16 @@ namespace Turner_Seattle_VDC_Server
             {
                 TreeViewItem project = new TreeViewItem();
                 project.Header = databaseName.Replace("concrete_", "");
-                ParentItem.Items.Add(project);
-                project.FontSize = 30;
                 project.Foreground = System.Windows.Media.Brushes.MidnightBlue;
+                project.FontSize = 25;
+                ParentItem.Items.Add(project);
 
                 foreach (string tableName in dataTable[databaseName])
                 {
                     TreeViewItem tableItem = new TreeViewItem();
                     tableItem.Header = tableName.Replace("concrete_", "");
-                    tableItem.Items.Add(tableItem);
                     tableItem.FontSize = 20;
+                    project.Items.Add(tableItem);
                 }
             }
 

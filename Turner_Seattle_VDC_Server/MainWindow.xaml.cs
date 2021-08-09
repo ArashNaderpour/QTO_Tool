@@ -35,15 +35,14 @@ namespace Turner_Seattle_VDC_Server
 
         private void Connect_Clicked(object sender, RoutedEventArgs e)
         {
+
             this.ConnectionResult.Text = "";
 
             string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
             MySqlMethods.CreateConcreteDataTable(this.connStr, this.conn, this.ConcreteDataTable);
 
-       
 
-            
             if (connectionResult == "success")
             {
                 this.ConnectionResult.Text = "Connection to the database was successful.";
@@ -93,7 +92,7 @@ namespace Turner_Seattle_VDC_Server
             {
                 filePath = openFileDialog.FileName;
                 fileName = filePath.Split('\\').Last().Split('.').First().Replace('-', '_');
-
+                
                 if (filePath.Substring(filePath.Length - 3).ToLower() != "xls" &&
                     filePath.Substring(filePath.Length - 4).ToLower() != "xlsx")
                 {
@@ -120,27 +119,27 @@ namespace Turner_Seattle_VDC_Server
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
-                string[] nameParts = fileName.ToLower().Split('_');
+                //string[] nameParts = fileName.ToLower().Split('_');
 
-                string databaseName = "";
+                string databaseName = "concrete_" + fileName.ToLower();
+                string tableName = fileName.ToLower();
 
-                if (nameParts.Length > 2)
-                {
-                    for (int i = 0; i < nameParts.Length; i++) {
-                        databaseName += nameParts[i] + "_";
-                    }
+                //if (nameParts.Length > 2)
+                //{
+                //    for (int i = 0; i < nameParts.Length; i++)
+                //    {
+                //        databaseName += nameParts[i] + "_";
+                //    }
 
-                    databaseName = databaseName.Remove(databaseName.Length - 1);
-                }
-                else
-                {
-                    databaseName = "concrete_" + nameParts.First();
-                }
-                
-                string tableName = nameParts.Last();
+                //    databaseName = databaseName.Remove(databaseName.Length - 1);
+                //}
+                //else
+                //{
+                //    databaseName = "concrete_" + nameParts.First();
+                //}
 
                 string connectionResult = MySqlMethods.CreateConcreteMySqlDatabase(databaseName, this.connStr, this.conn);
-                
+
                 connectionResult += MySqlMethods.CreateMySqlTable(databaseName, tableName, this.conn, range);
 
                 if (connectionResult == "")
