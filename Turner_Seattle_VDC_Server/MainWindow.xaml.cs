@@ -39,9 +39,9 @@ namespace Turner_Seattle_VDC_Server
 
             string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
-            Dictionary<string, List<string>> concreteDataTable = MySqlMethods.GenerateConcreteDataTable(this.connStr, this.conn, "ConcreteAnalyticsTab");
+            MySqlMethods.CreateConcreteDataTable(this.connStr, this.conn, this.ConcreteDataTable);
 
-                //MessageBox.Show(concreteDataTable[concreteDataTable.Keys.ToList()[0]][1]);
+       
 
             
             if (connectionResult == "success")

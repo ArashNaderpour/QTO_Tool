@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -123,7 +124,7 @@ namespace Turner_Seattle_VDC_Server
             return connectionResult;
         }
 
-        public static Dictionary<string, List<string>> GenerateConcreteDataTable(string connStr, MySqlConnection conn, string databaseFilter)
+        public static void CreateConcreteDataTable(string connStr, MySqlConnection conn, Border concreteDataTableWrapper)
         {
             Dictionary<string, List<string>> dataTable = new Dictionary<string, List<string>>();
 
@@ -138,7 +139,9 @@ namespace Turner_Seattle_VDC_Server
                 MySqlDataReader MySqlReader = MySqlCommand.ExecuteReader();
                 while (MySqlReader.Read())
                 {
-                    dataTable.Add(MySqlReader.GetString(0), new List<string>());
+                    if (MySqlReader.GetString(0).Contains("concrete_")) {
+                        dataTable.Add(MySqlReader.GetString(0), new List<string>());
+                    }
                 }
                 MySqlReader.Close();
 
@@ -155,14 +158,48 @@ namespace Turner_Seattle_VDC_Server
                     MySqlReader.Close();
                 }
             }
-
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
                 //connectionResult = ex.ToString() + "\n";
             }
+            finally
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
 
-            return dataTable;
+            TreeView concreteDataTable = new TreeView();
+            
+            concreteDataTable.FontSize = 40;
+            concreteDataTable.Margin = new Thickness(10, 10, 10, 0);
+            concreteDataTable.HorizontalAlignment = HorizontalAlignment.Stretch;
+            concreteDataTable.VerticalAlignment = VerticalAlignment.Top;
+
+            TreeViewItem ParentItem = new TreeViewItem();
+            ParentItem.Header = "Concrete Data";
+            concreteDataTable.Items.Add(ParentItem);
+
+            foreach (string databaseName in dataTable.Keys)
+            {
+                TreeViewItem project = new TreeViewItem();
+                project.Header = databaseName.Replace("concrete_", "");
+                ParentItem.Items.Add(project);
+                project.FontSize = 30;
+                project.Foreground = System.Windows.Media.Brushes.MidnightBlue;
+
+                foreach (string tableName in dataTable[databaseName])
+                {
+                    TreeViewItem tableItem = new TreeViewItem();
+                    tableItem.Header = tableName.Replace("concrete_", "");
+                    tableItem.Items.Add(tableItem);
+                    tableItem.FontSize = 20;
+                }
+            }
+
+            concreteDataTableWrapper.Child = concreteDataTable;
         }
     }
 }

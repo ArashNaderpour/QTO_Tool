@@ -56,18 +56,29 @@
 
                 </TabItem>
                 <TabItem x:Name="ConcreteTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="CONCRETE">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="ConcreteDataTable" Grid.Column="0" HorizontalAlignment="Stretch" 
+                                BorderThickness="2" BorderBrush="Black"/>
+
+
+                        <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
+                            <TreeViewItem Header="Cold Drinks" FontSize="20">
+                                <TreeViewItem Header="Coke"></TreeViewItem>
+                                <TreeViewItem Header="Pepsi"></TreeViewItem>
+                                <TreeViewItem Header="Orange Juice"></TreeViewItem>
+                                <TreeViewItem Header="Milk"></TreeViewItem>
+                                <TreeViewItem Header="Iced Tea"></TreeViewItem>
+                                <TreeViewItem Header="Mango Shake"></TreeViewItem>
+                            </TreeViewItem>
+                        </TreeView>-->
+
+                    </Grid>
                     
-                    
-                    <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
-                        <TreeViewItem Header="Cold Drinks">
-                            <TreeViewItem Header="Coke"></TreeViewItem>
-                            <TreeViewItem Header="Pepsi"></TreeViewItem>
-                            <TreeViewItem Header="Orange Juice"></TreeViewItem>
-                            <TreeViewItem Header="Milk"></TreeViewItem>
-                            <TreeViewItem Header="Iced Tea"></TreeViewItem>
-                            <TreeViewItem Header="Mango Shake"></TreeViewItem>
-                        </TreeViewItem>
-                    </TreeView>-->
+
                 </TabItem>
                 <TabItem x:Name="ExteriorTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="EXTERIOR">abc</TabItem>
                 <TabItem x:Name="ConcreteAnalyticsTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="CONCRETE ANALYTICS">xyz</TabItem>
