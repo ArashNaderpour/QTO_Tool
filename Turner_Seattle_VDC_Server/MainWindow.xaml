@@ -63,7 +63,7 @@
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <ScrollViewer x:Name="ConcreteDataTable" Grid.Column="0" 
-                                      HorizontalAlignment="Stretch" MaxHeight="530"/>
+                                      HorizontalAlignment="Stretch" Height="535"/>
 
                         <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
                             <TreeViewItem Header="Cold Drinks" FontSize="20">
