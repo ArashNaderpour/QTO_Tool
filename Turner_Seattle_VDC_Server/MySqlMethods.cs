@@ -124,7 +124,7 @@ namespace Turner_Seattle_VDC_Server
             return connectionResult;
         }
 
-        public static void CreateConcreteDataTable(string connStr, MySqlConnection conn, Border concreteDataTableWrapper)
+        public static void CreateConcreteDataTable(string connStr, MySqlConnection conn, ScrollViewer concreteDataTableWrapper)
         {
             Dictionary<string, List<string>> dataTable = new Dictionary<string, List<string>>();
 
@@ -199,7 +199,7 @@ namespace Turner_Seattle_VDC_Server
                 }
             }
 
-            concreteDataTableWrapper.Child = concreteDataTable;
+            concreteDataTableWrapper.Content = concreteDataTable;
         }
     }
 }

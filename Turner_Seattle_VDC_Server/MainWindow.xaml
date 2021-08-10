@@ -48,7 +48,7 @@
                         </Grid>
                         <Border x:Name="ConnectionResultWrapper" BorderThickness="2" BorderBrush="Black" 
                                     Visibility="Collapsed">
-                                <TextBox x:Name="ConnectionResult" FontSize="15" Height="350" Padding="5"
+                                <TextBox x:Name="ConnectionResult" FontSize="15" Height="360" Padding="5"
                                    HorizontalAlignment="Stretch" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                                    VerticalAlignment="Stretch"></TextBox>
                             </Border>
@@ -56,14 +56,14 @@
 
                 </TabItem>
                 <TabItem x:Name="ConcreteTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="CONCRETE">
-                    <Grid>
+                    <Border BorderThickness="2" BorderBrush="Black">
+                    <Grid Margin="0 0 0 10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="ConcreteDataTable" Grid.Column="0" HorizontalAlignment="Stretch" 
-                                BorderThickness="2" BorderBrush="Black"/>
-
+                        <ScrollViewer x:Name="ConcreteDataTable" Grid.Column="0" 
+                                      HorizontalAlignment="Stretch" MaxHeight="530"/>
 
                         <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
                             <TreeViewItem Header="Cold Drinks" FontSize="20">
@@ -77,7 +77,7 @@
                         </TreeView>-->
 
                     </Grid>
-                    
+                    </Border>
 
                 </TabItem>
                 <TabItem x:Name="ExteriorTab" IsEnabled="False" Width="155" Height="75" FontSize="12" Header="EXTERIOR">abc</TabItem>
