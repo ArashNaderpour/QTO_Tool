@@ -106,7 +106,7 @@ namespace QTO_Tool
                         //this.boundingBox = tempBoundingBox;
                     }
 
-                    double dotProduct = Vector3d.Multiply(normal, Vector3d.ZAxis);
+                    double dotProduct = Math.Round(Vector3d.Multiply(normal, Vector3d.ZAxis), 2);
 
                     if (dotProduct > angleThreshold && dotProduct <= 1)
                     {
