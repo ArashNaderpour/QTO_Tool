@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:local="clr-namespace:Turner_Seattle_VDC_Server"
         mc:Ignorable="d"
         Title="VDC SEATTLE" MinHeight="1000" MinWidth="800">
@@ -62,10 +63,19 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
-                        <ScrollViewer x:Name="ConcreteDataTable" Grid.Column="0" 
-                                      HorizontalAlignment="Stretch" Height="535"/>
+                            <ScrollViewer x:Name="ConcreteDataTreeWrapper" Grid.Column="0" 
+                                      HorizontalAlignment="Stretch" Height="535">
 
-                        <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
+                                <WindowsFormsHost>
+
+                                    <wf:TreeView x:Name="ConcreteDataTree" CheckBoxes="True"
+                                                 Font="Ariel, 12"/>
+
+                                </WindowsFormsHost>
+                                
+                            </ScrollViewer>
+
+                                <!--<TreeView Margin="10,10,0,13" Name="TreeView1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="194">
                             <TreeViewItem Header="Cold Drinks" FontSize="20">
                                 <TreeViewItem Header="Coke"></TreeViewItem>
                                 <TreeViewItem Header="Pepsi"></TreeViewItem>
@@ -76,7 +86,9 @@
                             </TreeViewItem>
                         </TreeView>-->
 
-                    </Grid>
+
+
+                        </Grid>
                     </Border>
 
                 </TabItem>

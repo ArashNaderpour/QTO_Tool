@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WindowsForms = System.Windows.Forms;
+using System.Windows.Forms.Integration;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -40,7 +42,7 @@ namespace Turner_Seattle_VDC_Server
 
             string connectionResult = MySqlMethods.ConnectToServer(this.connStr, this.conn);
 
-            MySqlMethods.CreateConcreteDataTable(this.connStr, this.conn, this.ConcreteDataTable);
+            MySqlMethods.CreateConcreteDataTable(this.connStr, this.conn, this.ConcreteDataTree);
 
 
             if (connectionResult == "success")

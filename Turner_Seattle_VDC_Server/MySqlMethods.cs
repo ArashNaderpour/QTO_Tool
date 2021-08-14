@@ -3,9 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Drawing;
+using System.Windows.Forms.Integration;
 using System.Windows.Media;
 using System.Windows.Controls;
 using Excel = Microsoft.Office.Interop.Excel;
+using Color = System.Drawing.Color;
+using WindowsForms = System.Windows.Forms;
+
 
 namespace Turner_Seattle_VDC_Server
 {
@@ -124,7 +129,7 @@ namespace Turner_Seattle_VDC_Server
             return connectionResult;
         }
 
-        public static void CreateConcreteDataTable(string connStr, MySqlConnection conn, ScrollViewer concreteDataTableWrapper)
+        public static void CreateConcreteDataTable(string connStr, MySqlConnection conn, WindowsForms.TreeView dataTree)
         {
             Dictionary<string, List<string>> dataTable = new Dictionary<string, List<string>>();
 
@@ -170,36 +175,30 @@ namespace Turner_Seattle_VDC_Server
                     conn.Close();
                 }
             }
-
-            TreeView concreteDataTable = new TreeView();
             
-            concreteDataTable.FontSize = 35;
-            concreteDataTable.Margin = new Thickness(10, 10, 10, 0);
-            concreteDataTable.HorizontalAlignment = HorizontalAlignment.Stretch;
-            concreteDataTable.VerticalAlignment = VerticalAlignment.Top;
-
-            TreeViewItem ParentItem = new TreeViewItem();
-            ParentItem.Header = "Concrete Data";
-            concreteDataTable.Items.Add(ParentItem);
-
-            foreach (string databaseName in dataTable.Keys)
+            try
             {
-                TreeViewItem project = new TreeViewItem();
-                project.Header = databaseName.Replace("concrete_", "");
-                project.Foreground = System.Windows.Media.Brushes.MidnightBlue;
-                project.FontSize = 25;
-                ParentItem.Items.Add(project);
-
-                foreach (string tableName in dataTable[databaseName])
+                string projectName;
+                string tableName;
+                foreach (string databaseName in dataTable.Keys)
                 {
-                    TreeViewItem tableItem = new TreeViewItem();
-                    tableItem.Header = tableName.Replace("concrete_", "");
-                    tableItem.FontSize = 20;
-                    project.Items.Add(tableItem);
+                    projectName = databaseName.Replace("concrete_", "");
+                    
+                    dataTree.Nodes.Add(projectName, projectName);
+
+                    foreach (string table in dataTable[databaseName])
+                    {
+                        tableName = table.Replace("concrete_", "");
+
+                        dataTree.Nodes[projectName].Nodes.Add(tableName, tableName);
+                        dataTree.Nodes[projectName].Nodes[tableName].ForeColor = Color.FromArgb(200);
+                    }
                 }
             }
-
-            concreteDataTableWrapper.Content = concreteDataTable;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }
