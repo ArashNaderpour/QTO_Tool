@@ -69,7 +69,7 @@
                                 <WindowsFormsHost>
 
                                     <wf:TreeView x:Name="ConcreteDataTree" CheckBoxes="True"
-                                                 Font="Ariel, 12"/>
+                                                 Font="Ariel, 12" AfterCheck="node_AfterCheck"/>
 
                                 </WindowsFormsHost>
                                 

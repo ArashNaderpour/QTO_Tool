@@ -173,5 +173,21 @@ namespace Turner_Seattle_VDC_Server
                 }
             }
         }
+
+        // NOTE   This code can be added to the BeforeCheck event handler instead of the AfterCheck event.
+        // After a tree node's Checked property is changed, all its child nodes are updated to the same value.
+        private void node_AfterCheck(object sender, WindowsForms.TreeViewEventArgs e)
+        {
+            // The code only executes if the user caused the checked state to change.
+            if (e.Action != WindowsForms.TreeViewAction.Unknown)
+            {
+                if (e.Node.Nodes.Count > 0)
+                {
+                    /* Calls the CheckAllChildNodes method, passing in the current 
+                    Checked value of the TreeNode whose checked state changed. */
+                    UIMethods.CheckAllChildNodes(e.Node, e.Node.Checked);
+                }
+            }
+        }
     }
 }
