@@ -669,7 +669,7 @@ namespace QTO_Tool
 
             try
             {
-                string mySqlTableName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", ""));
+                string mySqlTableName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", "")).Replace('-', '_');
 
                 if (mySqlTableName == string.Empty)
                 {
