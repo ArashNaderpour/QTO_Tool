@@ -108,16 +108,16 @@ namespace Turner_Seattle_VDC_Server
                 return;
             }
 
-            xlApp = new Excel.Application();
-            xlWorkBook = xlApp.Workbooks.Open(filePath, 0, true, 5, "", "", true,
-                Excel.XlPlatform.xlWindows, "\t", false,
-                false, 0, true, 1, 0);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-
-            range = xlWorkSheet.UsedRange;
-
             try
             {
+                xlApp = new Excel.Application();
+                xlWorkBook = xlApp.Workbooks.Open(filePath, 0, true, 5, "", "", true,
+                    Excel.XlPlatform.xlWindows, "\t", false,
+                    false, 0, true, 1, 0);
+                xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+
+                range = xlWorkSheet.UsedRange;
+
                 conn = new MySqlConnection(connStr);
                 conn.Open();
 
