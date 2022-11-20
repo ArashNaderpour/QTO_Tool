@@ -38,6 +38,8 @@ namespace QTO_Tool
 
         List<string> quantityValues = new List<string>();
 
+        List<string> layerPropertyColumnHeaders = new List<string>();
+
         List<RhinoObject> selectedObjects = new List<RhinoObject>();
 
         // Save/Load Dictionary
@@ -92,6 +94,8 @@ namespace QTO_Tool
             // Start the thread
             newWindowThread.Start();
 
+            this.layerPropertyColumnHeaders.Clear();
+
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
 
@@ -101,7 +105,7 @@ namespace QTO_Tool
 
                 if (this.ConcreteTemplateGrid.Children.Count == 0)
                 {
-                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid, this.layerPropertyColumnHeaders);
 
                     CalculateQuantitiesButton.IsEnabled = true;
                     AngleThresholdLabel.IsEnabled = true;
@@ -113,7 +117,7 @@ namespace QTO_Tool
                 {
                     this.ConcreteTemplateGrid.Children.Clear();
                     this.ConcreteTemplateGrid.RowDefinitions.Clear();
-                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid);
+                    UIMethods.GenerateLayerTemplate(this.ConcreteTemplateGrid, this.layerPropertyColumnHeaders);
                     this.DissipatedConcreteTablePanel.Children.Clear();
 
                     this.ExportExcelButton.IsEnabled = false;
@@ -175,7 +179,6 @@ namespace QTO_Tool
 
         private void Calculate_Concrete_Clicked(object sender, RoutedEventArgs e)
         {
-
             Thread newWindowThread = new Thread(new ThreadStart(() =>
             {
                 // Create our context, and install it:
@@ -203,18 +206,18 @@ namespace QTO_Tool
 
             try
             {
-                allBeams.Clear();
-                allColumns.Clear();
-                allCurbs.Clear();
-                allFootings.Clear();
-                allWalls.Clear();
-                allContinuousFootings.Clear();
-                allSlabs.Clear();
-                allStyrofoams.Clear();
+                this.allBeams.Clear();
+                this.allColumns.Clear();
+                this.allCurbs.Clear();
+                this.allFootings.Clear();
+                this.allWalls.Clear();
+                this.allContinuousFootings.Clear();
+                this.allSlabs.Clear();
+                this.allStyrofoams.Clear();
 
                 this.allSelectedTemplates.Clear();
                 this.allSelectedTemplateValues.Clear();
-
+             
                 this.selectedConcreteTemplatesForLayers.Clear();
 
                 this.saveData.Clear();
@@ -375,9 +378,14 @@ namespace QTO_Tool
                             quantityValues = new List<string>() { "COUNT", "NAME", "VOLUME", "ISOLATE" };
                         }
 
+                        if (quantityValues.Count > 0)
+                        {
+                            quantityValues.InsertRange(1, this.layerPropertyColumnHeaders);
+                        }
+                        
                         // Generate Dissipated Value Table
                         UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
-                            layerTemplates, quantityValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+                            layerTemplates, quantityValues, this.layerPropertyColumnHeaders, ObjectSelection_Activated, ObjectDeselection_Activated);
 
                         quantityValues.Clear();
 
@@ -449,6 +457,7 @@ namespace QTO_Tool
             this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
             this.saveData.Add("DissipatedConcreteTablePanel", this.DissipatedConcreteTablePanel);
             this.saveData.Add("CombinedConcreteTablePanel", this.CombinedConcreteTablePanel);
+            this.saveData.Add("LayerPropertyColumnHeaders", this.layerPropertyColumnHeaders);
 
             // Json String Of The Save Data
             string projectData = JsonConvert.SerializeObject(saveData, Formatting.Indented);

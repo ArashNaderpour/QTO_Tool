@@ -13,6 +13,8 @@ namespace QTO_Tool
     {
         public string name { get; set; }
         public string id { get; set; }
+
+        public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
         public double volume { get; set; }
         public double topArea { get; set; }
         public double bottomArea { get; set; }
@@ -31,6 +33,11 @@ namespace QTO_Tool
             name = rhobj.Name;
 
             id = rhobj.Id.ToString();
+
+            for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
+            {
+                parsedLayerName.Add("C" + i.ToString(), layerName.Split('_').ToList()[i]);
+            }
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);

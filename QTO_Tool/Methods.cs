@@ -101,7 +101,6 @@ namespace QTO_Tool
                                 newBreps.Add(tempBreps[i], "Bad");
                                 newObjectAttributes.Add(obj.Attributes);
                             }
-
                         }
                     }
                 }
@@ -168,7 +167,6 @@ namespace QTO_Tool
 
             foreach (RhinoObject subObj in subObjs)
             {
-
                 Methods.PrepareObject(subObj, _mainObjectAttributes, _surfaceList, _badGeometryCount, _blockLevel);
             }
         }
@@ -321,7 +319,6 @@ namespace QTO_Tool
                     w.Close();
                     break;
                 }
-
             }
         }
 

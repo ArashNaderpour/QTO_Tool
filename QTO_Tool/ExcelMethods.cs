@@ -50,7 +50,7 @@ namespace QTO_Tool
 
                 string messageBoxText = "Do you want to save \"Project Based\" results?";
                 string caption = "Save Project Based";
-                MessageBoxButton button = MessageBoxButton.YesNo;
+                MessageBoxButton button = MessageBoxButton.YesNoCancel;
                 MessageBoxImage icon = MessageBoxImage.Warning;
 
                 MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);

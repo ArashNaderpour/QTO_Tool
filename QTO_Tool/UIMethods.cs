@@ -10,10 +10,14 @@ namespace QTO_Tool
 {
     class UIMethods
     {
-        public static void GenerateLayerTemplate(Grid grid)
+        public static void GenerateLayerTemplate(Grid grid, List<string> layerPropertyColumnHeaders)
         {
-            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continuous Footing", "Slab", "Column", "Beam", "Wall", "Curb", "Styrofoam" };
+            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continuous Footing", "Slab", "Column", "Non-Rectangular Column", "Beam", "Wall", "Curb", "Styrofoam" };
             int layerCounter = 0;
+
+            int layerPropertyColumnCount = -1;
+
+            layerPropertyColumnHeaders.Add("C0");
 
             foreach (Rhino.DocObjects.Layer layer in RunQTO.doc.Layers)
             {
@@ -21,17 +25,24 @@ namespace QTO_Tool
                 {
                     if (!String.IsNullOrWhiteSpace(layer.Name))
                     {
+                        if (layer.Name.Split('_').Length > layerPropertyColumnCount)
+                        {
+                            layerPropertyColumnCount = layer.Name.Split('_').Length;
+
+                            layerPropertyColumnHeaders.Add("C" + layerPropertyColumnHeaders.Count.ToString());
+                        }
+
                         //Dynamically adding Rows to the Grid
                         RowDefinition rowDef = new RowDefinition();
                         rowDef.Height = new GridLength(60, GridUnitType.Pixel);
                         grid.RowDefinitions.Add(rowDef);
-
+                       
                         // Layer Name
-                        Label layerName = new Label();
+                        TextBlock layerName = new TextBlock();
                         layerName.Name = "Layer_" + layer.Index.ToString();
-                        layerName.Content = RunQTO.doc.Layers[layer.Index].Name;
+                        layerName.Text = layer.Name;
                         layerName.HorizontalAlignment = HorizontalAlignment.Left;
-                        layerName.HorizontalContentAlignment = HorizontalAlignment.Center;
+                        layerName.TextAlignment = TextAlignment.Center;
                         layerName.VerticalAlignment = VerticalAlignment.Center;
                         layerName.Margin = new Thickness(0, 5, 10, 0);
 
@@ -44,7 +55,7 @@ namespace QTO_Tool
                         rect.Height = 1;
                         rect.HorizontalAlignment = HorizontalAlignment.Stretch;
                         rect.Margin = new Thickness(10, 5, 10, 0);
-
+                        
                         panel.Children.Add(layerName);
                         panel.Children.Add(rect);
 
@@ -78,7 +89,7 @@ namespace QTO_Tool
         }
 
         public static void GenerateDissipatedTableExpander(StackPanel stackPanel,
-            string layerName, string templateType, List<object> layerTemplate, List<string> values,
+            string layerName, string templateType, List<object> layerTemplate, List<string> values, List<string> layerPropertyColumnHeaders,
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             Expander layerEstimateExpander = new Expander();
@@ -93,8 +104,9 @@ namespace QTO_Tool
             layerEstimateGrid.Margin = new Thickness(2, 5, 2, 0);
             layerEstimateGrid.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0f0f0"));
 
+            TextBlock quantityName;
+
             RowDefinition rowDef = new RowDefinition();
-            rowDef.Height = new GridLength(1, GridUnitType.Star);
             layerEstimateGrid.RowDefinitions.Add(rowDef);
 
             for (int i = 0; i < values.Count; i++)
@@ -103,16 +115,16 @@ namespace QTO_Tool
                 ColumnDefinition colDef = new ColumnDefinition();
                 layerEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                Label quantityLabel = new Label();
-                quantityLabel.Content = values[i];
-                quantityLabel.FontSize = 20;
-                quantityLabel.FontWeight = FontWeights.Bold;
-                quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                quantityName = new TextBlock();
+                quantityName.Text = values[i];
+                quantityName.FontSize = 20;
+                quantityName.FontWeight = FontWeights.Bold;
+                quantityName.Margin = new Thickness(0, 0, 2, 0);
+                quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                layerEstimateGrid.Children.Add(quantityLabel);
-                Grid.SetColumn(quantityLabel, i);
-                Grid.SetRow(quantityLabel, 0);
+                layerEstimateGrid.Children.Add(quantityName);
+                Grid.SetColumn(quantityName, i);
+                Grid.SetRow(quantityName, 0);
             }
 
             int counter = 0;
@@ -129,8 +141,8 @@ namespace QTO_Tool
 
                 if (templateType == "Slab")
                 {
-                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid,
-                        valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -141,7 +153,7 @@ namespace QTO_Tool
                 else if (templateType == "Footing")
                 {
                     UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -152,7 +164,7 @@ namespace QTO_Tool
                 else if (templateType == "Column")
                 {
                     UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -163,7 +175,7 @@ namespace QTO_Tool
                 else if (templateType == "Beam")
                 {
                     UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -174,7 +186,7 @@ namespace QTO_Tool
                 else if (templateType == "Wall")
                 {
                     UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -185,7 +197,7 @@ namespace QTO_Tool
                 else if (templateType == "Curb")
                 {
                     UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -196,7 +208,7 @@ namespace QTO_Tool
                 else if (templateType == "ContinuousFooting")
                 {
                     UIMethods.GenerateContinuousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -207,7 +219,7 @@ namespace QTO_Tool
                 else if (templateType == "Styrofoam")
                 {
                     UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        SelectObjectActivated, DeselectObjectActivated);
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
 
                     if (counter == 0)
                     {
@@ -258,7 +270,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Beam";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -270,16 +282,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (BeamTemplate obj in (List<BeamTemplate>)selectedTemplates[template])
@@ -288,8 +300,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateBeamTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateBeamTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -302,7 +314,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Column";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -314,16 +326,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (ColumnTemplate obj in (List<ColumnTemplate>)selectedTemplates[template])
@@ -332,8 +344,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateColumnTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateColumnTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -346,7 +358,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Curb";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -358,16 +370,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (CurbTemplate obj in (List<CurbTemplate>)selectedTemplates[template])
@@ -376,8 +388,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateCurbTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateCurbTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -390,7 +402,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "ContinuousFooting";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -402,16 +414,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (ContinuousFootingTemplate obj in (List<ContinuousFootingTemplate>)selectedTemplates[template])
@@ -420,8 +432,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateContinuousFootingTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateContinuousFootingTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -434,7 +446,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Footing";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -446,16 +458,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (FootingTemplate obj in (List<FootingTemplate>)selectedTemplates[template])
@@ -464,8 +476,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateFootingTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateFootingTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -478,7 +490,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Wall";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -490,16 +502,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (WallTemplate obj in (List<WallTemplate>)selectedTemplates[template])
@@ -508,8 +520,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateWallTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateWallTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -522,7 +534,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Slab";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -534,16 +546,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (SlabTemplate obj in (List<SlabTemplate>)selectedTemplates[template])
@@ -552,8 +564,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateSlabTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                       // UIMethods.GenerateSlabTableExpander(obj, count, combinedEstimateGrid,
+                           // valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -566,7 +578,7 @@ namespace QTO_Tool
                     combinedEstimateExpander.Name += "Styrofoam";
 
                     ColumnDefinition colDef;
-                    Label quantityLabel;
+                    TextBlock quantityName;
 
                     rowDef = new RowDefinition();
                     rowDef.Height = new GridLength(1, GridUnitType.Star);
@@ -578,16 +590,16 @@ namespace QTO_Tool
                         colDef = new ColumnDefinition();
                         combinedEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                        quantityLabel = new Label();
-                        quantityLabel.Content = values[template][i];
-                        quantityLabel.FontSize = 20;
-                        quantityLabel.FontWeight = FontWeights.Bold;
-                        quantityLabel.Margin = new Thickness(0, 0, 2, 0);
-                        quantityLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                        quantityName = new TextBlock();
+                        quantityName.Text = values[template][i];
+                        quantityName.FontSize = 20;
+                        quantityName.FontWeight = FontWeights.Bold;
+                        quantityName.Margin = new Thickness(0, 0, 2, 0);
+                        quantityName.HorizontalAlignment = HorizontalAlignment.Center;
 
-                        combinedEstimateGrid.Children.Add(quantityLabel);
-                        Grid.SetColumn(quantityLabel, i);
-                        Grid.SetRow(quantityLabel, 0);
+                        combinedEstimateGrid.Children.Add(quantityName);
+                        Grid.SetColumn(quantityName, i);
+                        Grid.SetRow(quantityName, 0);
                     }
 
                     foreach (StyrofoamTemplate obj in (List<StyrofoamTemplate>)selectedTemplates[template])
@@ -596,8 +608,8 @@ namespace QTO_Tool
                         rowDef.Height = new GridLength(1, GridUnitType.Star);
                         combinedEstimateGrid.RowDefinitions.Add(rowDef);
 
-                        UIMethods.GenerateStyrofoamTableExpander(obj, count, combinedEstimateGrid,
-                            valueFontSize, SelectObjectActivated, DeselectObjectActivated);
+                        //UIMethods.GenerateStyrofoamTableExpander(obj, count, combinedEstimateGrid,
+                        //    valueFontSize, SelectObjectActivated, DeselectObjectActivated);
 
                         count++;
                     }
@@ -610,80 +622,104 @@ namespace QTO_Tool
         }
 
         static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             SlabTemplate slab = (SlabTemplate)_obj;
-
-            Label slabCount = new Label();
-            slabCount.Content = _count;
+            
+            TextBlock slabCount = new TextBlock();
+            slabCount.Text = _count.ToString();
             slabCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabCount);
             slabCount.FontSize = _valueFontSize;
             Grid.SetColumn(slabCount, 0);
             Grid.SetRow(slabCount, _count);
 
-            Label slabName = new Label();
-            slabName.Content = slab.name;
+            for(int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = slab.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock slabName = new TextBlock();
+            slabName.Text = slab.name;
             slabName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabName);
             slabName.FontSize = _valueFontSize;
-            Grid.SetColumn(slabName, 1);
+            Grid.SetColumn(slabName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabName, _count);
 
-            Label slabGrossVolume = new Label();
-            slabGrossVolume.Content = slab.grossVolume.ToString();
+            TextBlock slabGrossVolume = new TextBlock();
+            slabGrossVolume.Text = slab.grossVolume.ToString();
             slabGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabGrossVolume);
             slabGrossVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(slabGrossVolume, 2);
+            Grid.SetColumn(slabGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabGrossVolume, _count);
 
-            Label slabNetVolume = new Label();
-            slabNetVolume.Content = slab.netVolume.ToString();
+            TextBlock slabNetVolume = new TextBlock();
+            slabNetVolume.Text = slab.netVolume.ToString();
             slabNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabNetVolume);
             slabNetVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(slabNetVolume, 3);
+            Grid.SetColumn(slabNetVolume, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabNetVolume, _count);
 
-            Label slabTopArea = new Label();
-            slabTopArea.Content = slab.topArea.ToString();
+            TextBlock slabTopArea = new TextBlock();
+            slabTopArea.Text = slab.topArea.ToString();
             slabTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabTopArea);
             slabTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabTopArea, 4);
+            Grid.SetColumn(slabTopArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabTopArea, _count);
 
-            Label slabBottomArea = new Label();
-            slabBottomArea.Content = slab.bottomArea.ToString();
+            TextBlock slabBottomArea = new TextBlock();
+            slabBottomArea.Text = slab.bottomArea.ToString();
             slabBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabBottomArea);
             slabBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabBottomArea, 5);
+            Grid.SetColumn(slabBottomArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabBottomArea, _count);
 
-            Label slabEdgeArea = new Label();
-            slabEdgeArea.Content = slab.edgeArea.ToString();
+            TextBlock slabEdgeArea = new TextBlock();
+            slabEdgeArea.Text = slab.edgeArea.ToString();
             slabEdgeArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabEdgeArea);
             slabEdgeArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabEdgeArea, 6);
+            Grid.SetColumn(slabEdgeArea, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabEdgeArea, _count);
 
-            Label slabPerimeter = new Label();
-            slabPerimeter.Content = slab.perimeter.ToString();
+            TextBlock slabPerimeter = new TextBlock();
+            slabPerimeter.Text = slab.perimeter.ToString();
             slabPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabPerimeter);
             slabPerimeter.FontSize = _valueFontSize;
-            Grid.SetColumn(slabPerimeter, 7);
+            Grid.SetColumn(slabPerimeter, 7 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabPerimeter, _count);
 
-            Label slabOpeningPerimeter = new Label();
-            slabOpeningPerimeter.Content = slab.openingPerimeter.ToString();
+            TextBlock slabOpeningPerimeter = new TextBlock();
+            slabOpeningPerimeter.Text = slab.openingPerimeter.ToString();
             slabOpeningPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabOpeningPerimeter);
             slabOpeningPerimeter.FontSize = _valueFontSize;
-            Grid.SetColumn(slabOpeningPerimeter, 8);
+            Grid.SetColumn(slabOpeningPerimeter, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabOpeningPerimeter, _count);
 
             ToggleButton slabSelectObject = new ToggleButton();
@@ -695,61 +731,85 @@ namespace QTO_Tool
             slabSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(slabSelectObject);
             slabSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(slabSelectObject, 9);
+            Grid.SetColumn(slabSelectObject, 9 + slab.parsedLayerName.Count);
             Grid.SetRow(slabSelectObject, _count);
         }
 
         static void GenerateFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             FootingTemplate footing = (FootingTemplate)_obj;
 
-            Label footingCount = new Label();
-            footingCount.Content = _count;
+            TextBlock footingCount = new TextBlock();
+            footingCount.Text = _count.ToString();
             footingCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingCount);
             footingCount.FontSize = _valueFontSize;
             Grid.SetColumn(footingCount, 0);
             Grid.SetRow(footingCount, _count);
 
-            Label footingName = new Label();
-            footingName.Content = footing.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = footing.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock footingName = new TextBlock();
+            footingName.Text = footing.name;
             footingName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingName);
             footingName.FontSize = _valueFontSize;
-            Grid.SetColumn(footingName, 1);
+            Grid.SetColumn(footingName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingName, _count);
 
-            Label footingVolume = new Label();
-            footingVolume.Content = footing.volume.ToString();
+            TextBlock footingVolume = new TextBlock();
+            footingVolume.Text = footing.volume.ToString();
             footingVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingVolume);
             footingVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(footingVolume, 2);
+            Grid.SetColumn(footingVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingVolume, _count);
 
-            Label footingTopArea = new Label();
-            footingTopArea.Content = footing.topArea.ToString();
+            TextBlock footingTopArea = new TextBlock();
+            footingTopArea.Text = footing.topArea.ToString();
             footingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingTopArea);
             footingTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(footingTopArea, 3);
+            Grid.SetColumn(footingTopArea, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingTopArea, _count);
 
-            Label footingBottomArea = new Label();
-            footingBottomArea.Content = footing.bottomArea.ToString();
+            TextBlock footingBottomArea = new TextBlock();
+            footingBottomArea.Text = footing.bottomArea.ToString();
             footingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingBottomArea);
             footingBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(footingBottomArea, 4);
+            Grid.SetColumn(footingBottomArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingBottomArea, _count);
 
-            Label footingSideArea = new Label();
-            footingSideArea.Content = footing.sideArea.ToString();
+            TextBlock footingSideArea = new TextBlock();
+            footingSideArea.Text = footing.sideArea.ToString();
             footingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingSideArea);
             footingSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(footingSideArea, 5);
+            Grid.SetColumn(footingSideArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingSideArea, _count);
 
             ToggleButton footingSelectObject = new ToggleButton();
@@ -761,53 +821,77 @@ namespace QTO_Tool
             footingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(footingSelectObject);
             footingSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(footingSelectObject, 6);
+            Grid.SetColumn(footingSelectObject, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(footingSelectObject, _count);
         }
 
         static void GenerateColumnTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             ColumnTemplate column = (ColumnTemplate)_obj;
 
-            Label columnCount = new Label();
-            columnCount.Content = _count;
+            TextBlock columnCount = new TextBlock();
+            columnCount.Text = _count.ToString();
             columnCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnCount);
             columnCount.FontSize = _valueFontSize;
             Grid.SetColumn(columnCount, 0);
             Grid.SetRow(columnCount, _count);
 
-            Label columnName = new Label();
-            columnName.Content = column.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = column.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock columnName = new TextBlock();
+            columnName.Text = column.name;
             columnName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnName);
             columnName.FontSize = _valueFontSize;
-            Grid.SetColumn(columnName, 1);
+            Grid.SetColumn(columnName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(columnName, _count);
 
-            Label columnVolume = new Label();
-            columnVolume.Content = column.volume.ToString();
+            TextBlock columnVolume = new TextBlock();
+            columnVolume.Text = column.volume.ToString();
             columnVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnVolume);
             columnVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(columnVolume, 2);
+            Grid.SetColumn(columnVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(columnVolume, _count);
 
-            Label columnHeight = new Label();
-            columnHeight.Content = column.height.ToString();
+            TextBlock columnHeight = new TextBlock();
+            columnHeight.Text = column.height.ToString();
             columnHeight.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnHeight);
             columnHeight.FontSize = _valueFontSize;
-            Grid.SetColumn(columnHeight, 3);
+            Grid.SetColumn(columnHeight, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(columnHeight, _count);
 
-            Label columnSideArea = new Label();
-            columnSideArea.Content = column.sideArea.ToString();
+            TextBlock columnSideArea = new TextBlock();
+            columnSideArea.Text = column.sideArea.ToString();
             columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnSideArea);
             columnSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(columnSideArea, 4);
+            Grid.SetColumn(columnSideArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(columnSideArea, _count);
 
             ToggleButton columnSelectObject = new ToggleButton();
@@ -819,61 +903,85 @@ namespace QTO_Tool
             columnSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(columnSelectObject);
             columnSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(columnSelectObject, 5);
+            Grid.SetColumn(columnSelectObject, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(columnSelectObject, _count);
         }
 
         static void GenerateBeamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             BeamTemplate beam = (BeamTemplate)_obj;
 
-            Label beamCount = new Label();
-            beamCount.Content = _count;
+            TextBlock beamCount = new TextBlock();
+            beamCount.Text = _count.ToString();
             beamCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamCount);
             beamCount.FontSize = _valueFontSize;
             Grid.SetColumn(beamCount, 0);
             Grid.SetRow(beamCount, _count);
 
-            Label beamName = new Label();
-            beamName.Content = beam.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = beam.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock beamName = new TextBlock();
+            beamName.Text = beam.name;
             beamName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamName);
             beamName.FontSize = _valueFontSize;
-            Grid.SetColumn(beamName, 1);
+            Grid.SetColumn(beamName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamName, _count);
 
-            Label beamVolume = new Label();
-            beamVolume.Content = beam.volume.ToString();
+            TextBlock beamVolume = new TextBlock();
+            beamVolume.Text = beam.volume.ToString();
             beamVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamVolume);
             beamVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(beamVolume, 2);
+            Grid.SetColumn(beamVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamVolume, _count);
 
-            Label beamBottomArea = new Label();
-            beamBottomArea.Content = beam.bottomArea.ToString();
+            TextBlock beamBottomArea = new TextBlock();
+            beamBottomArea.Text = beam.bottomArea.ToString();
             beamBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamBottomArea);
             beamBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(beamBottomArea, 3);
+            Grid.SetColumn(beamBottomArea, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamBottomArea, _count);
 
-            Label beamSideArea = new Label();
-            beamSideArea.Content = beam.sideArea.ToString();
+            TextBlock beamSideArea = new TextBlock();
+            beamSideArea.Text = beam.sideArea.ToString();
             beamSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamSideArea);
             beamSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(beamSideArea, 4);
+            Grid.SetColumn(beamSideArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamSideArea, _count);
 
-            Label beamLength = new Label();
-            beamLength.Content = beam.length.ToString();
+            TextBlock beamLength = new TextBlock();
+            beamLength.Text = beam.length.ToString();
             beamLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamLength);
             beamLength.FontSize = _valueFontSize;
-            Grid.SetColumn(beamLength, 5);
+            Grid.SetColumn(beamLength, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamLength, _count);
 
             ToggleButton beamSelectObject = new ToggleButton();
@@ -885,93 +993,117 @@ namespace QTO_Tool
             beamSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(beamSelectObject);
             beamSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(beamSelectObject, 6);
+            Grid.SetColumn(beamSelectObject, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamSelectObject, _count);
         }
 
         static void GenerateWallTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             WallTemplate wall = (WallTemplate)_obj;
 
-            Label wallCount = new Label();
-            wallCount.Content = _count;
+            TextBlock wallCount = new TextBlock();
+            wallCount.Text = _count.ToString();
             wallCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallCount);
             wallCount.FontSize = _valueFontSize;
             Grid.SetColumn(wallCount, 0);
             Grid.SetRow(wallCount, _count);
 
-            Label wallName = new Label();
-            wallName.Content = wall.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = wall.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock wallName = new TextBlock();
+            wallName.Text = wall.name;
             wallName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallName);
             wallName.FontSize = _valueFontSize;
-            Grid.SetColumn(wallName, 1);
+            Grid.SetColumn(wallName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallName, _count);
 
-            Label wallGrossVolume = new Label();
-            wallGrossVolume.Content = wall.grossVolume.ToString();
+            TextBlock wallGrossVolume = new TextBlock();
+            wallGrossVolume.Text = wall.grossVolume.ToString();
             wallGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallGrossVolume);
             wallGrossVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(wallGrossVolume, 2);
+            Grid.SetColumn(wallGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallGrossVolume, _count);
 
-            Label wallNetVolume = new Label();
-            wallNetVolume.Content = wall.netVolume.ToString();
+            TextBlock wallNetVolume = new TextBlock();
+            wallNetVolume.Text = wall.netVolume.ToString();
             wallNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallNetVolume);
             wallNetVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(wallNetVolume, 3);
+            Grid.SetColumn(wallNetVolume, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallNetVolume, _count);
 
-            Label wallTopArea = new Label();
-            wallTopArea.Content = wall.topArea.ToString();
+            TextBlock wallTopArea = new TextBlock();
+            wallTopArea.Text = wall.topArea.ToString();
             wallTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallTopArea);
             wallTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(wallTopArea, 4);
+            Grid.SetColumn(wallTopArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallTopArea, _count);
 
-            Label wallEndArea = new Label();
-            wallEndArea.Content = wall.endArea.ToString();
+            TextBlock wallEndArea = new TextBlock();
+            wallEndArea.Text = wall.endArea.ToString();
             wallEndArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallEndArea);
             wallEndArea.FontSize = _valueFontSize;
-            Grid.SetColumn(wallEndArea, 5);
+            Grid.SetColumn(wallEndArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallEndArea, _count);
 
-            Label wallSideArea_1 = new Label();
-            wallSideArea_1.Content = wall.sideArea_1.ToString();
+            TextBlock wallSideArea_1 = new TextBlock();
+            wallSideArea_1.Text = wall.sideArea_1.ToString();
             wallSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallSideArea_1);
             wallSideArea_1.FontSize = _valueFontSize;
-            Grid.SetColumn(wallSideArea_1, 6);
+            Grid.SetColumn(wallSideArea_1, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallSideArea_1, _count);
 
-            Label wallSideArea_2 = new Label();
-            wallSideArea_2.Content = wall.sideArea_2.ToString();
+            TextBlock wallSideArea_2 = new TextBlock();
+            wallSideArea_2.Text = wall.sideArea_2.ToString();
             wallSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallSideArea_2);
             wallSideArea_2.FontSize = _valueFontSize;
-            Grid.SetColumn(wallSideArea_2, 7);
+            Grid.SetColumn(wallSideArea_2, 7 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallSideArea_2, _count);
 
-            Label wallLength = new Label();
-            wallLength.Content = wall.length.ToString();
+            TextBlock wallLength = new TextBlock();
+            wallLength.Text = wall.length.ToString();
             wallLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallLength);
             wallLength.FontSize = _valueFontSize;
-            Grid.SetColumn(wallLength, 8);
+            Grid.SetColumn(wallLength, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallLength, _count);
 
-            Label wallOpeningArea = new Label();
-            wallOpeningArea.Content = wall.openingArea.ToString();
+            TextBlock wallOpeningArea = new TextBlock();
+            wallOpeningArea.Text = wall.openingArea.ToString();
             wallOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallOpeningArea);
             wallOpeningArea.FontSize = _valueFontSize;
-            Grid.SetColumn(wallOpeningArea, 9);
+            Grid.SetColumn(wallOpeningArea, 9 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallOpeningArea, _count);
 
             ToggleButton wallSelectObject = new ToggleButton();
@@ -983,61 +1115,85 @@ namespace QTO_Tool
             wallSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(wallSelectObject);
             wallSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(wallSelectObject, 10);
+            Grid.SetColumn(wallSelectObject, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(wallSelectObject, _count);
         }
 
         static void GenerateCurbTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             CurbTemplate curb = (CurbTemplate)_obj;
 
-            Label curbCount = new Label();
-            curbCount.Content = _count;
+            TextBlock curbCount = new TextBlock();
+            curbCount.Text = _count.ToString();
             curbCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbCount);
             curbCount.FontSize = _valueFontSize;
             Grid.SetColumn(curbCount, 0);
             Grid.SetRow(curbCount, _count);
 
-            Label curbName = new Label();
-            curbName.Content = curb.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = curb.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock curbName = new TextBlock();
+            curbName.Text = curb.name;
             curbName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbName);
             curbName.FontSize = _valueFontSize;
-            Grid.SetColumn(curbName, 1);
+            Grid.SetColumn(curbName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbName, _count);
 
-            Label curbVolume = new Label();
-            curbVolume.Content = curb.volume.ToString();
+            TextBlock curbVolume = new TextBlock();
+            curbVolume.Text = curb.volume.ToString();
             curbVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbVolume);
             curbVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(curbVolume, 2);
+            Grid.SetColumn(curbVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbVolume, _count);
 
-            Label curbTopArea = new Label();
-            curbTopArea.Content = curb.topArea.ToString();
+            TextBlock curbTopArea = new TextBlock();
+            curbTopArea.Text = curb.topArea.ToString();
             curbTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbTopArea);
             curbTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(curbTopArea, 3);
+            Grid.SetColumn(curbTopArea, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbTopArea, _count);
 
-            Label curbSideArea = new Label();
-            curbSideArea.Content = curb.sideArea.ToString();
+            TextBlock curbSideArea = new TextBlock();
+            curbSideArea.Text = curb.sideArea.ToString();
             curbSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbSideArea);
             curbSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(curbSideArea, 4);
+            Grid.SetColumn(curbSideArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbSideArea, _count);
 
-            Label curbLength = new Label();
-            curbLength.Content = curb.length.ToString();
+            TextBlock curbLength = new TextBlock();
+            curbLength.Text = curb.length.ToString();
             curbLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbLength);
             curbLength.FontSize = _valueFontSize;
-            Grid.SetColumn(curbLength, 5);
+            Grid.SetColumn(curbLength, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbLength, _count);
 
             ToggleButton curbSelectObject = new ToggleButton();
@@ -1049,69 +1205,93 @@ namespace QTO_Tool
             curbSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(curbSelectObject);
             curbSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(curbSelectObject, 6);
+            Grid.SetColumn(curbSelectObject, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbSelectObject, _count);
         }
 
         static void GenerateContinuousFootingTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             ContinuousFootingTemplate continuousFooting = (ContinuousFootingTemplate)_obj;
 
-            Label continuousFootingCount = new Label();
-            continuousFootingCount.Content = _count;
+            TextBlock continuousFootingCount = new TextBlock();
+            continuousFootingCount.Text = _count.ToString();
             continuousFootingCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingCount);
             continuousFootingCount.FontSize = _valueFontSize;
             Grid.SetColumn(continuousFootingCount, 0);
             Grid.SetRow(continuousFootingCount, _count);
 
-            Label continuousFootingName = new Label();
-            continuousFootingName.Content = continuousFooting.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = continuousFooting.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock continuousFootingName = new TextBlock();
+            continuousFootingName.Text = continuousFooting.name;
             continuousFootingName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingName);
             continuousFootingName.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingName, 1);
+            Grid.SetColumn(continuousFootingName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingName, _count);
 
-            Label continuousFootingVolume = new Label();
-            continuousFootingVolume.Content = continuousFooting.volume.ToString();
+            TextBlock continuousFootingVolume = new TextBlock();
+            continuousFootingVolume.Text = continuousFooting.volume.ToString();
             continuousFootingVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingVolume);
             continuousFootingVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingVolume, 2);
+            Grid.SetColumn(continuousFootingVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingVolume, _count);
 
-            Label continuousFootingTopArea = new Label();
-            continuousFootingTopArea.Content = continuousFooting.topArea.ToString();
+            TextBlock continuousFootingTopArea = new TextBlock();
+            continuousFootingTopArea.Text = continuousFooting.topArea.ToString();
             continuousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingTopArea);
             continuousFootingTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingTopArea, 3);
+            Grid.SetColumn(continuousFootingTopArea, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingTopArea, _count);
 
-            Label continuousFootingBottomArea = new Label();
-            continuousFootingBottomArea.Content = continuousFooting.bottomArea.ToString();
+            TextBlock continuousFootingBottomArea = new TextBlock();
+            continuousFootingBottomArea.Text = continuousFooting.bottomArea.ToString();
             continuousFootingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingBottomArea);
             continuousFootingBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingBottomArea, 4);
+            Grid.SetColumn(continuousFootingBottomArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingBottomArea, _count);
 
-            Label continuousFootingSideArea = new Label();
-            continuousFootingSideArea.Content = continuousFooting.sideArea.ToString();
+            TextBlock continuousFootingSideArea = new TextBlock();
+            continuousFootingSideArea.Text = continuousFooting.sideArea.ToString();
             continuousFootingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingSideArea);
             continuousFootingSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSideArea, 5);
+            Grid.SetColumn(continuousFootingSideArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSideArea, _count);
 
-            Label continuousFootingLength = new Label();
-            continuousFootingLength.Content = continuousFooting.length.ToString();
+            TextBlock continuousFootingLength = new TextBlock();
+            continuousFootingLength.Text = continuousFooting.length.ToString();
             continuousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingLength);
             continuousFootingLength.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingLength, 6);
+            Grid.SetColumn(continuousFootingLength, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingLength, _count);
 
             ToggleButton continuousFootingSelectObject = new ToggleButton();
@@ -1123,37 +1303,61 @@ namespace QTO_Tool
             continuousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(continuousFootingSelectObject);
             continuousFootingSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSelectObject, 7);
+            Grid.SetColumn(continuousFootingSelectObject, 7 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSelectObject, _count);
         }
 
         static void GenerateStyrofoamTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
-            RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+            List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             StyrofoamTemplate styrofoam = (StyrofoamTemplate)_obj;
-
-            Label styrofoamCount = new Label();
-            styrofoamCount.Content = _count;
+            
+            TextBlock styrofoamCount = new TextBlock();
+            styrofoamCount.Text = _count.ToString();
             styrofoamCount.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(styrofoamCount);
             styrofoamCount.FontSize = _valueFontSize;
             Grid.SetColumn(styrofoamCount, 0);
             Grid.SetRow(styrofoamCount, _count);
 
-            Label styrofoamName = new Label();
-            styrofoamName.Content = styrofoam.name;
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = styrofoam.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock styrofoamName = new TextBlock();
+            styrofoamName.Text = styrofoam.name;
             styrofoamName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(styrofoamName);
             styrofoamName.FontSize = _valueFontSize;
-            Grid.SetColumn(styrofoamName, 1);
+            Grid.SetColumn(styrofoamName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(styrofoamName, _count);
 
-            Label styrofoamVolume = new Label();
-            styrofoamVolume.Content = styrofoam.volume.ToString();
+            TextBlock styrofoamVolume = new TextBlock();
+            styrofoamVolume.Text = styrofoam.volume.ToString();
             styrofoamVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(styrofoamVolume);
             styrofoamVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(styrofoamVolume, 2);
+            Grid.SetColumn(styrofoamVolume, 2 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(styrofoamVolume, _count);
 
             ToggleButton styrofoamSelectObject = new ToggleButton();
@@ -1165,7 +1369,7 @@ namespace QTO_Tool
             styrofoamSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(styrofoamSelectObject);
             styrofoamSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(styrofoamSelectObject, 3);
+            Grid.SetColumn(styrofoamSelectObject, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(styrofoamSelectObject, _count);
         }
     }
