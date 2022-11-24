@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Controls.Primitives;
 
 namespace QTO_Tool
 {
@@ -94,7 +94,10 @@ namespace QTO_Tool
         {
             Expander layerEstimateExpander = new Expander();
             layerEstimateExpander.Name = "LayerEstimateExpader_";
-            layerEstimateExpander.Header = layerName;
+            TextBlock expanderHeader = new TextBlock();
+            expanderHeader.Text = layerName;
+            expanderHeader.Foreground = Brushes.Black;
+            layerEstimateExpander.Header = expanderHeader;
             layerEstimateExpander.FontWeight = FontWeights.DemiBold;
             layerEstimateExpander.Background = Brushes.DarkOrange;
             layerEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
@@ -118,6 +121,7 @@ namespace QTO_Tool
                 quantityName = new TextBlock();
                 quantityName.Text = values[i];
                 quantityName.FontSize = 20;
+                quantityName.Foreground = Brushes.Black;
                 quantityName.FontWeight = FontWeights.Bold;
                 quantityName.Margin = new Thickness(0, 0, 2, 0);
                 quantityName.HorizontalAlignment = HorizontalAlignment.Center;
@@ -247,12 +251,14 @@ namespace QTO_Tool
             RowDefinition rowDef;
 
             //int counter = 0;
-            int valueFontSize = 18;
+            //int valueFontSize = 18;
 
             foreach (string template in selectedTemplates.Keys)
             {
                 combinedEstimateExpander = new Expander();
                 combinedEstimateExpander.Name = "CombinedEstimateExpader_";
+                TextBlock expanderHeader = new TextBlock();
+                expanderHeader.Foreground = Brushes.Black;
                 combinedEstimateExpander.FontWeight = FontWeights.DemiBold;
                 combinedEstimateExpander.Background = Brushes.DarkOrange;
                 combinedEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
@@ -265,7 +271,8 @@ namespace QTO_Tool
 
                 if (template == "Beam")
                 {
-                    combinedEstimateExpander.Header = "BEAMS";
+                    expanderHeader.Text = "BEAMS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Beam";
 
@@ -309,7 +316,8 @@ namespace QTO_Tool
 
                 if (template == "Column")
                 {
-                    combinedEstimateExpander.Header = "COLUMNS";
+                    expanderHeader.Text = "COLUMNS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Column";
 
@@ -353,7 +361,8 @@ namespace QTO_Tool
 
                 if (template == "Curb")
                 {
-                    combinedEstimateExpander.Header = "CURBS";
+                    expanderHeader.Text = "CURBS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Curb";
 
@@ -397,7 +406,8 @@ namespace QTO_Tool
 
                 if (template == "Continuous Footing")
                 {
-                    combinedEstimateExpander.Header = "CONTINUOUS FOOTINGS";
+                    expanderHeader.Text = "CONTINUOUS FOOTINGS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "ContinuousFooting";
 
@@ -441,7 +451,8 @@ namespace QTO_Tool
 
                 if (template == "Footing")
                 {
-                    combinedEstimateExpander.Header = "FOOTINGS";
+                    expanderHeader.Text = "FOOTINGS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Footing";
 
@@ -485,7 +496,8 @@ namespace QTO_Tool
 
                 if (template == "Wall")
                 {
-                    combinedEstimateExpander.Header = "WALLS";
+                    expanderHeader.Text = "WALLS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Wall";
 
@@ -529,7 +541,8 @@ namespace QTO_Tool
 
                 if (template == "Slab")
                 {
-                    combinedEstimateExpander.Header = "SLABS";
+                    expanderHeader.Text = "SLABS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Slab";
 
@@ -573,7 +586,8 @@ namespace QTO_Tool
 
                 if (template == "Styrofoam")
                 {
-                    combinedEstimateExpander.Header = "STYROFOAMS";
+                    expanderHeader.Text = "STYROFOAMS";
+                    combinedEstimateExpander.Header = expanderHeader;
 
                     combinedEstimateExpander.Name += "Styrofoam";
 
