@@ -143,11 +143,16 @@ namespace QTO_Tool
                     foreach (string header in sSHeaders)
                     {
                         workSheet.Cells[1, colCount] = header;
-
                         workSheet.Cells[1, colCount].Interior.Color = 
                             System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
 
                         workSheet.Cells[2, colCount] = "N/A";
+
+                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
+                            "=Sum(" + workSheet.Cells[2, colCount].Address + ":" + workSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
+
+                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
+                            System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
 
                         colCount++;
                     }
@@ -212,10 +217,10 @@ namespace QTO_Tool
 
                         else
                         {
-                            Label errorElement = contentGrid.Children.Cast<Label>().
+                            TextBlock errorElement = contentGrid.Children.Cast<TextBlock>().
                             FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == 0);
 
-                            string err = errorElement.Content.ToString();
+                            string err = errorElement.Text;
 
                             MessageBox.Show(String.Format("An error apeared in exporting {0} value of number {1}. Please repair model and export later.",
                                 err, j.ToString()));
