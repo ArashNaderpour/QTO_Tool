@@ -24,14 +24,14 @@ namespace QTO_Tool
     {
         Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
 
-        List<BeamTemplate> allBeams = new List<BeamTemplate>();
-        List<ColumnTemplate> allColumns = new List<ColumnTemplate>();
-        List<ContinuousFootingTemplate> allContinuousFootings = new List<ContinuousFootingTemplate>();
-        List<CurbTemplate> allCurbs = new List<CurbTemplate>();
-        List<FootingTemplate> allFootings = new List<FootingTemplate>();
-        List<SlabTemplate> allSlabs = new List<SlabTemplate>();
-        List<WallTemplate> allWalls = new List<WallTemplate>();
-        List<StyrofoamTemplate> allStyrofoams = new List<StyrofoamTemplate>();
+        AllBeams allBeams = new AllBeams();
+        AllColumns allColumns = new AllColumns();
+        AllContinousFootings allContinuousFootings = new AllContinousFootings();
+        AllCurbs allCurbs = new AllCurbs();
+        AllFootings allFootings = new AllFootings();
+        AllSlabs allSlabs = new AllSlabs();
+        AllWalls allWalls = new AllWalls();
+        AllStyrofoams allStyrofoams = new AllStyrofoams();
 
         Dictionary<string, object> allSelectedTemplates = new Dictionary<string, object>();
         Dictionary<string, List<string>> allSelectedTemplateValues = new Dictionary<string, List<string>>();
@@ -217,7 +217,7 @@ namespace QTO_Tool
 
                 this.allSelectedTemplates.Clear();
                 this.allSelectedTemplateValues.Clear();
-             
+
                 this.selectedConcreteTemplatesForLayers.Clear();
 
                 this.saveData.Clear();
@@ -236,6 +236,8 @@ namespace QTO_Tool
 
                 string layerName;
 
+                string objFloor;
+
                 string objType;
 
                 List<object> layerTemplates;
@@ -251,6 +253,8 @@ namespace QTO_Tool
 
                         layerName = RunQTO.doc.Layers[i].Name;
 
+                        objFloor = layerName.Split('_')[2];
+
                         this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
 
                         layerTemplates = new List<object>();
@@ -263,8 +267,29 @@ namespace QTO_Tool
                             {
                                 BeamTemplate beam = new BeamTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allBeams.Add(beam);
+                                if (allBeams.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allBeams.allTemplates[objFloor].Add(beam);
+                                }
+                                else
+                                {
+                                    allBeams.allTemplates.Add(objFloor, new List<object> { beam });
+                                }
+
                                 layerTemplates.Add(beam);
+
+                                if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                {
+                                    foreach (var item in allSlabs.allTemplates[objFloor])
+                                    {
+                                        SlabTemplate slabTemplate = (SlabTemplate)item;
+
+                                        if (!slabTemplate.beams.ContainsKey(beam.id))
+                                        {
+                                            slabTemplate.beams.Add(beam.id, beam);
+                                        }
+                                    }
+                                }
                             }
 
                             quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
@@ -278,7 +303,15 @@ namespace QTO_Tool
                             {
                                 ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName);
 
-                                allColumns.Add(column);
+                                if (allColumns.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allColumns.allTemplates[objFloor].Add(column);
+                                }
+                                else
+                                {
+                                    allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                }
+
                                 layerTemplates.Add(column);
                             }
 
@@ -293,7 +326,15 @@ namespace QTO_Tool
                             {
                                 ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allContinuousFootings.Add(continuousFooting);
+                                if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allContinuousFootings.allTemplates[objFloor].Add(continuousFooting);
+                                }
+                                else
+                                {
+                                    allContinuousFootings.allTemplates.Add(objFloor, new List<object> { continuousFooting });
+                                }
+
                                 layerTemplates.Add(continuousFooting);
                             }
 
@@ -308,7 +349,15 @@ namespace QTO_Tool
                             {
                                 CurbTemplate curb = new CurbTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allCurbs.Add(curb);
+                                if (allCurbs.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allCurbs.allTemplates[objFloor].Add(curb);
+                                }
+                                else
+                                {
+                                    allCurbs.allTemplates.Add(objFloor, new List<object> { curb });
+                                }
+
                                 layerTemplates.Add(curb);
                             }
 
@@ -323,7 +372,15 @@ namespace QTO_Tool
                             {
                                 FootingTemplate footing = new FootingTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allFootings.Add(footing);
+                                if (allFootings.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allFootings.allTemplates[objFloor].Add(footing);
+                                }
+                                else
+                                {
+                                    allFootings.allTemplates.Add(objFloor, new List<object> { footing });
+                                }
+
                                 layerTemplates.Add(footing);
                             }
 
@@ -338,7 +395,15 @@ namespace QTO_Tool
                             {
                                 WallTemplate wall = new WallTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allWalls.Add(wall);
+                                if (allWalls.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allWalls.allTemplates[objFloor].Add(wall);
+                                }
+                                else
+                                {
+                                    allWalls.allTemplates.Add(objFloor, new List<object> { wall });
+                                }
+
                                 layerTemplates.Add(wall);
                             }
 
@@ -356,8 +421,29 @@ namespace QTO_Tool
 
                                 SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                allSlabs.Add(slab);
+                                if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allSlabs.allTemplates[objFloor].Add(slab);
+                                }
+                                else
+                                {
+                                    allSlabs.allTemplates.Add(objFloor, new List<object> { slab });
+                                }
+
                                 layerTemplates.Add(slab);
+
+                                if (allBeams.allTemplates.ContainsKey(objFloor))
+                                {
+                                    foreach (var item in allBeams.allTemplates[objFloor])
+                                    {
+                                        BeamTemplate beamTemplate = (BeamTemplate)item;
+
+                                        if (!slab.beams.ContainsKey(beamTemplate.id))
+                                        {
+                                            slab.beams.Add(beamTemplate.id, beamTemplate);
+                                        }
+                                    }
+                                }
                             }
 
                             quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
@@ -371,7 +457,15 @@ namespace QTO_Tool
                             {
                                 StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobjs[j], layerName);
 
-                                allStyrofoams.Add(styrofoam);
+                                if (allStyrofoams.allTemplates.ContainsKey(objFloor))
+                                {
+                                    allStyrofoams.allTemplates[objFloor].Add(styrofoam);
+                                }
+                                else
+                                {
+                                    allStyrofoams.allTemplates.Add(objFloor, new List<object> { styrofoam });
+                                }
+
                                 layerTemplates.Add(styrofoam);
                             }
 
@@ -382,7 +476,7 @@ namespace QTO_Tool
                         {
                             quantityValues.InsertRange(1, this.layerPropertyColumnHeaders);
                         }
-                        
+
                         // Generate Dissipated Value Table
                         UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
                             layerTemplates, quantityValues, this.layerPropertyColumnHeaders, ObjectSelection_Activated, ObjectDeselection_Activated);
@@ -415,8 +509,8 @@ namespace QTO_Tool
                 this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "ISOLATE" });
 
                 // Generate Combined Value Table
-                UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,
-                    this.allSelectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+                //UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,
+                //    this.allSelectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
 
                 if (CombinedValuesToggle.IsChecked == true)
                 {

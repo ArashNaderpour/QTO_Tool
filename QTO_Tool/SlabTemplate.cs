@@ -27,6 +27,9 @@ namespace QTO_Tool
         private Brep topBrepFace;
         private List<double> brepBoundaryCurveLengths = new List<double>();
 
+        public Dictionary<string, BeamTemplate> beams = new Dictionary<string, BeamTemplate>();
+        //public List<BeamTemplate> beams = new List<BeamTemplate>();
+
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
         public SlabTemplate(RhinoObject rhobj, string layerName, double angleThreshold)

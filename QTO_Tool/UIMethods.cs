@@ -639,7 +639,7 @@ namespace QTO_Tool
             List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             SlabTemplate slab = (SlabTemplate)_obj;
-            
+
             TextBlock slabCount = new TextBlock();
             slabCount.Text = _count.ToString();
             slabCount.HorizontalAlignment = HorizontalAlignment.Center;

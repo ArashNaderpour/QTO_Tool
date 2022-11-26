@@ -118,6 +118,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllBeams.cs" />
+    <Compile Include="AllColumns.cs" />
+    <Compile Include="AllContinousFootings.cs" />
+    <Compile Include="AllCurbs.cs" />
+    <Compile Include="AllFootings.cs" />
+    <Compile Include="AllSlabs.cs" />
+    <Compile Include="AllStyrofoams.cs" />
+    <Compile Include="AllTemplates.cs" />
+    <Compile Include="AllWalls.cs" />
     <Compile Include="BeamTemplate.cs" />
     <Compile Include="ColumnTemplate.cs" />
     <Compile Include="ContinuousFootingTemplate.cs" />
