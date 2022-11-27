@@ -11,6 +11,7 @@ namespace QTO_Tool
 {
     class BeamTemplate
     {
+        public Brep originalGeometry;
         public string name { get; set; }
         public string id { get; set; }
 
@@ -30,7 +31,8 @@ namespace QTO_Tool
 
         public BeamTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            //Brep tempBrep = (Brep)rhobj.Geometry;
+            originalGeometry = (Brep)rhobj.Geometry;
 
             name = rhobj.Name;
 
@@ -41,12 +43,12 @@ namespace QTO_Tool
                 parsedLayerName.Add("C" + i.ToString(), layerName.Split('_').ToList()[i]);
             }
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            var mass_properties = VolumeMassProperties.Compute(originalGeometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            bottomArea = BottomArea(tempBrep, angleThreshold);
+            bottomArea = BottomArea(originalGeometry, angleThreshold);
 
-            sideArea = SideArea(tempBrep, angleThreshold);
+            sideArea = SideArea(originalGeometry, angleThreshold);
 
             length = Length();
 

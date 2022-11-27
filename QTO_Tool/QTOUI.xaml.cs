@@ -139,7 +139,7 @@ namespace QTO_Tool
 
             if (this.ConcreteIsIncluded.IsChecked == false && this.ExteriorIsIncluded.IsChecked == false)
             {
-                MessageBox.Show("Please select atleast one of the methods.");
+                MessageBox.Show("Please select at least one of the methods.");
             }
 
             RhinoDoc.SelectObjects += OnSelectObjects;
@@ -253,240 +253,255 @@ namespace QTO_Tool
 
                         layerName = RunQTO.doc.Layers[i].Name;
 
-                        objFloor = layerName.Split('_')[2];
-
-                        this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
-
-                        layerTemplates = new List<object>();
-
-                        if (selectedTemplate == "Beam")
+                        if (layerName.Split('_').Length >= 3)
                         {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
+                            objFloor = layerName.Split('_')[2];
 
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
+
+                            layerTemplates = new List<object>();
+
+                            if (selectedTemplate == "Beam")
                             {
-                                BeamTemplate beam = new BeamTemplate(rhobjs[j], layerName, angleThreshold);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allBeams.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allBeams.allTemplates[objFloor].Add(beam);
-                                }
-                                else
-                                {
-                                    allBeams.allTemplates.Add(objFloor, new List<object> { beam });
-                                }
+                                    BeamTemplate beam = new BeamTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                layerTemplates.Add(beam);
-
-                                if (allSlabs.allTemplates.ContainsKey(objFloor))
-                                {
-                                    foreach (var item in allSlabs.allTemplates[objFloor])
+                                    if (allBeams.allTemplates.ContainsKey(objFloor))
                                     {
-                                        SlabTemplate slabTemplate = (SlabTemplate)item;
+                                        allBeams.allTemplates[objFloor].Add(beam);
+                                    }
+                                    else
+                                    {
+                                        allBeams.allTemplates.Add(objFloor, new List<object> { beam });
+                                    }
 
-                                        if (!slabTemplate.beams.ContainsKey(beam.id))
+                                    layerTemplates.Add(beam);
+
+                                    if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        foreach (var item in allSlabs.allTemplates[objFloor])
                                         {
-                                            slabTemplate.beams.Add(beam.id, beam);
+                                            SlabTemplate slabTemplate = (SlabTemplate)item;
+
+                                            if (!slabTemplate.beams.ContainsKey(beam.id))
+                                            {
+                                                slabTemplate.beams.Add(beam.id, beam);
+                                            }
                                         }
                                     }
                                 }
+
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "Column")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Column")
                             {
-                                ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allColumns.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allColumns.allTemplates[objFloor].Add(column);
-                                }
-                                else
-                                {
-                                    allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName);
+
+                                    if (allColumns.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allColumns.allTemplates[objFloor].Add(column);
+                                    }
+                                    else
+                                    {
+                                        allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                    }
+
+                                    layerTemplates.Add(column);
                                 }
 
-                                layerTemplates.Add(column);
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "ContinuousFooting")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "ContinuousFooting")
                             {
-                                ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobjs[j], layerName, angleThreshold);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allContinuousFootings.allTemplates[objFloor].Add(continuousFooting);
-                                }
-                                else
-                                {
-                                    allContinuousFootings.allTemplates.Add(objFloor, new List<object> { continuousFooting });
+                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobjs[j], layerName, angleThreshold);
+
+                                    if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allContinuousFootings.allTemplates[objFloor].Add(continuousFooting);
+                                    }
+                                    else
+                                    {
+                                        allContinuousFootings.allTemplates.Add(objFloor, new List<object> { continuousFooting });
+                                    }
+
+                                    layerTemplates.Add(continuousFooting);
                                 }
 
-                                layerTemplates.Add(continuousFooting);
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "Curb")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Curb")
                             {
-                                CurbTemplate curb = new CurbTemplate(rhobjs[j], layerName, angleThreshold);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allCurbs.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allCurbs.allTemplates[objFloor].Add(curb);
-                                }
-                                else
-                                {
-                                    allCurbs.allTemplates.Add(objFloor, new List<object> { curb });
+                                    CurbTemplate curb = new CurbTemplate(rhobjs[j], layerName, angleThreshold);
+
+                                    if (allCurbs.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allCurbs.allTemplates[objFloor].Add(curb);
+                                    }
+                                    else
+                                    {
+                                        allCurbs.allTemplates.Add(objFloor, new List<object> { curb });
+                                    }
+
+                                    layerTemplates.Add(curb);
                                 }
 
-                                layerTemplates.Add(curb);
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "Footing")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Footing")
                             {
-                                FootingTemplate footing = new FootingTemplate(rhobjs[j], layerName, angleThreshold);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allFootings.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allFootings.allTemplates[objFloor].Add(footing);
-                                }
-                                else
-                                {
-                                    allFootings.allTemplates.Add(objFloor, new List<object> { footing });
+                                    FootingTemplate footing = new FootingTemplate(rhobjs[j], layerName, angleThreshold);
+
+                                    if (allFootings.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allFootings.allTemplates[objFloor].Add(footing);
+                                    }
+                                    else
+                                    {
+                                        allFootings.allTemplates.Add(objFloor, new List<object> { footing });
+                                    }
+
+                                    layerTemplates.Add(footing);
                                 }
 
-                                layerTemplates.Add(footing);
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "Wall")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Wall")
                             {
-                                WallTemplate wall = new WallTemplate(rhobjs[j], layerName, angleThreshold);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allWalls.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allWalls.allTemplates[objFloor].Add(wall);
-                                }
-                                else
-                                {
-                                    allWalls.allTemplates.Add(objFloor, new List<object> { wall });
+                                    WallTemplate wall = new WallTemplate(rhobjs[j], layerName, angleThreshold);
+
+                                    if (allWalls.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allWalls.allTemplates[objFloor].Add(wall);
+                                    }
+                                    else
+                                    {
+                                        allWalls.allTemplates.Add(objFloor, new List<object> { wall });
+                                    }
+
+                                    layerTemplates.Add(wall);
                                 }
 
-                                layerTemplates.Add(wall);
-                            }
-
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
-                        }
+                            }
 
-                        if (selectedTemplate == "Slab")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Slab")
                             {
-                                objType = rhobjs[j].GetType().ToString().Split('.').Last<string>();
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
-
-                                if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allSlabs.allTemplates[objFloor].Add(slab);
-                                }
-                                else
-                                {
-                                    allSlabs.allTemplates.Add(objFloor, new List<object> { slab });
-                                }
+                                    objType = rhobjs[j].GetType().ToString().Split('.').Last<string>();
 
-                                layerTemplates.Add(slab);
+                                    SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
 
-                                if (allBeams.allTemplates.ContainsKey(objFloor))
-                                {
-                                    foreach (var item in allBeams.allTemplates[objFloor])
+                                    if (allSlabs.allTemplates.ContainsKey(objFloor))
                                     {
-                                        BeamTemplate beamTemplate = (BeamTemplate)item;
+                                        allSlabs.allTemplates[objFloor].Add(slab);
+                                    }
+                                    else
+                                    {
+                                        allSlabs.allTemplates.Add(objFloor, new List<object> { slab });
+                                    }
 
-                                        if (!slab.beams.ContainsKey(beamTemplate.id))
+                                    layerTemplates.Add(slab);
+
+                                    if (allBeams.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        foreach (var item in allBeams.allTemplates[objFloor])
                                         {
-                                            slab.beams.Add(beamTemplate.id, beamTemplate);
+                                            BeamTemplate beamTemplate = (BeamTemplate)item;
+
+                                            if (!slab.beams.ContainsKey(beamTemplate.id))
+                                            {
+                                                slab.beams.Add(beamTemplate.id, beamTemplate);
+                                            }
                                         }
                                     }
                                 }
+
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
-                        }
-
-                        if (selectedTemplate == "Styrofoam")
-                        {
-                            rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
-
-                            for (int j = 0; j < rhobjs.Length; j++)
+                            if (selectedTemplate == "Styrofoam")
                             {
-                                StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobjs[j], layerName);
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
-                                if (allStyrofoams.allTemplates.ContainsKey(objFloor))
+                                for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    allStyrofoams.allTemplates[objFloor].Add(styrofoam);
-                                }
-                                else
-                                {
-                                    allStyrofoams.allTemplates.Add(objFloor, new List<object> { styrofoam });
+                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobjs[j], layerName);
+
+                                    if (allStyrofoams.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allStyrofoams.allTemplates[objFloor].Add(styrofoam);
+                                    }
+                                    else
+                                    {
+                                        allStyrofoams.allTemplates.Add(objFloor, new List<object> { styrofoam });
+                                    }
+
+                                    layerTemplates.Add(styrofoam);
                                 }
 
-                                layerTemplates.Add(styrofoam);
+                                quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "ISOLATE" };
                             }
 
-                            quantityValues = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "ISOLATE" };
+                            if (quantityValues.Count > 0)
+                            {
+                                quantityValues.InsertRange(1, this.layerPropertyColumnHeaders);
+                            }
+
+                            // Generate Dissipated Value Table
+                            UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
+                                layerTemplates, quantityValues, this.layerPropertyColumnHeaders, ObjectSelection_Activated, ObjectDeselection_Activated);
+
+                            quantityValues.Clear();
+
+                            if (selectedTemplate == "N/A")
+                            {
+                                continue;
+                            }
                         }
+                    }
+                }
 
-                        if (quantityValues.Count > 0)
-                        {
-                            quantityValues.InsertRange(1, this.layerPropertyColumnHeaders);
-                        }
+                foreach (var item in allSlabs.allTemplates)
+                {
+                    foreach (SlabTemplate slab in item.Value)
+                    {
+                        slab.UpdateNetVolumeAndBottomAreaWithBeams();
 
-                        // Generate Dissipated Value Table
-                        UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
-                            layerTemplates, quantityValues, this.layerPropertyColumnHeaders, ObjectSelection_Activated, ObjectDeselection_Activated);
+                        ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_NetVolume"))).Text = slab.netVolume.ToString();
 
-                        quantityValues.Clear();
-
-                        if (selectedTemplate == "N/A")
-                        {
-                            continue;
-                        }
+                        ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_BottomArea"))).Text = slab.bottomArea.ToString();
                     }
                 }
 
@@ -535,7 +550,7 @@ namespace QTO_Tool
             {
                 Dispatcher.FromThread(newWindowThread).InvokeShutdown();
 
-                MessageBox.Show("Something went Wrong!");
+                MessageBox.Show("Something went wrong!");
 
                 MessageBox.Show(ex.ToString());
             }
@@ -593,7 +608,7 @@ namespace QTO_Tool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could Not Read File From Disk. Original Error: " + ex.Message);
+                    MessageBox.Show("Error: Could not read file from disk. original error: " + ex.Message);
                     return;
                 }
 
@@ -607,7 +622,7 @@ namespace QTO_Tool
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: Could Not Open The File. Original error: " + ex.Message);
+                        MessageBox.Show("Error: Could not open the file. original error: " + ex.Message);
                         return;
                     }
 
@@ -642,14 +657,14 @@ namespace QTO_Tool
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error: Data is Corupted, " + ex.Message);
+                        MessageBox.Show("Error: Data is corupted, " + ex.Message);
                     }
                 }
 
                 // Handeling Selected File Not Exist.
                 else
                 {
-                    MessageBox.Show("Error: File Not Found.");
+                    MessageBox.Show("Error: File not found.");
                     return;
                 }
             }

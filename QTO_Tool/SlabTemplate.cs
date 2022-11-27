@@ -11,6 +11,7 @@ namespace QTO_Tool
 {
     class SlabTemplate
     {
+        public Brep originalGeometry;
         public string name { get; set; }
         public string id { get; set; }
 
@@ -34,7 +35,8 @@ namespace QTO_Tool
 
         public SlabTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            //Brep tempBrep = (Brep)rhobj.Geometry;
+            originalGeometry = (Brep)rhobj.Geometry;
 
             name = rhobj.Name;
 
@@ -45,17 +47,17 @@ namespace QTO_Tool
                 parsedLayerName.Add("C" + i.ToString(), layerName.Split('_').ToList()[i]);
             }
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            var mass_properties = VolumeMassProperties.Compute(originalGeometry);
             netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
+            mass_properties = VolumeMassProperties.Compute(originalGeometry.RemoveHoles(0.01));
             grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            topArea = TopArea(tempBrep, angleThreshold);
+            topArea = TopArea(originalGeometry, angleThreshold);
 
-            bottomArea = BottomArea(tempBrep, angleThreshold);
+            bottomArea = BottomArea(originalGeometry, angleThreshold);
 
-            edgeArea = EdgeArea(tempBrep);
+            edgeArea = EdgeArea(originalGeometry);
 
             perimeter = Perimeter(topBrepFace);
 
@@ -241,6 +243,41 @@ namespace QTO_Tool
                 result = Math.Round(result, 2);
 
                 return result;
+            }
+        }
+
+        public void UpdateNetVolumeAndBottomAreaWithBeams()
+        {
+            if (this.beams.Count > 0)
+            {
+                Double intersectionVolume = 0;
+                Double intersectedBeamBottomArea = 0;
+
+                foreach (var item in this.beams)
+                {
+                    Brep[] intersectionBreps = Brep.CreateBooleanIntersection(this.originalGeometry, item.Value.originalGeometry, RunQTO.doc.ModelAbsoluteTolerance);
+
+                    if (intersectionBreps != null && intersectionBreps.Length > 0)
+                    {
+                        foreach (Brep intersectionBrep in intersectionBreps)
+                        {
+                            var intersection_mass_properties = VolumeMassProperties.Compute(intersectionBrep);
+                            var beam_mass_properties = VolumeMassProperties.Compute(item.Value.originalGeometry);
+
+                            if (intersection_mass_properties != null && intersection_mass_properties.Volume > 5 && intersection_mass_properties.Volume < beam_mass_properties.Volume)
+                            {
+                                intersectionVolume += intersection_mass_properties.Volume * 0.037037;
+
+                                intersectedBeamBottomArea += item.Value.bottomArea;
+                            }
+                        }
+                    }
+                }
+
+                this.netVolume -= intersectionVolume;
+                Math.Round(this.netVolume, 2);
+
+                this.bottomArea -= intersectedBeamBottomArea;
             }
         }
     }

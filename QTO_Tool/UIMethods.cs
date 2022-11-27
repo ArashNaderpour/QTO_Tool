@@ -689,6 +689,7 @@ namespace QTO_Tool
             Grid.SetRow(slabGrossVolume, _count);
 
             TextBlock slabNetVolume = new TextBlock();
+            slabNetVolume.Uid = slab.id + "_NetVolume";
             slabNetVolume.Text = slab.netVolume.ToString();
             slabNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabNetVolume);
@@ -705,6 +706,7 @@ namespace QTO_Tool
             Grid.SetRow(slabTopArea, _count);
 
             TextBlock slabBottomArea = new TextBlock();
+            slabBottomArea.Uid = slab.id + "_BottomArea";
             slabBottomArea.Text = slab.bottomArea.ToString();
             slabBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabBottomArea);
