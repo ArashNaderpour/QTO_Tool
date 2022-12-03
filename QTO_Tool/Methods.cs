@@ -37,6 +37,21 @@ namespace QTO_Tool
             helper.Owner = ownerForm.Handle;
         }
 
+        public static double CalculateAngleThreshold(double angleThresholdSlider)
+        {
+            double result = 1;
+
+            Vector2d baseVector = new Vector2d(1, 0);
+
+            Vector2d rotatedVector = new Vector2d(1, 0);
+
+            rotatedVector.Rotate(angleThresholdSlider * (Math.PI/180));
+
+            result = (baseVector.X * rotatedVector.X) + (baseVector.Y * rotatedVector.Y);
+
+            return result;
+        }
+
         static void setOwner(IntPtr ownerPtr, Window window)
         {
             WindowInteropHelper helper = new WindowInteropHelper(window);

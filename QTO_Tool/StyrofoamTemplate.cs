@@ -32,7 +32,7 @@ namespace QTO_Tool
 
             for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
             {
-                parsedLayerName.Add("C" + i.ToString(), layerName.Split('_').ToList()[i]);
+                parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
             }
 
             var mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));

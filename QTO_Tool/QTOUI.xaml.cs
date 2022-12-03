@@ -226,8 +226,8 @@ namespace QTO_Tool
                 this.DissipatedConcreteTablePanel.Children.Clear();
                 this.CombinedConcreteTablePanel.Children.Clear();
 
-                double angleThreshold = Math.Cos(this.AngleThresholdSlider.Value * (Math.PI / 180));
-
+                double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
+                
                 ComboBox selectedConcreteTemplate;
 
                 RhinoObject[] rhobjs;
@@ -480,7 +480,7 @@ namespace QTO_Tool
                             }
 
                             // Generate Dissipated Value Table
-                            UIMethods.GenerateDissipatedTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
+                            UIMethods.GenerateConcreteTableExpander(this.DissipatedConcreteTablePanel, layerName, selectedTemplate,
                                 layerTemplates, quantityValues, this.layerPropertyColumnHeaders, ObjectSelection_Activated, ObjectDeselection_Activated);
 
                             quantityValues.Clear();

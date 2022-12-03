@@ -157,7 +157,7 @@
                                             AutoToolTipPlacement="TopLeft"
                                             AutoToolTipPrecision="1"
                                             IsEnabled="False" 
-                                            Minimum="0" Value="0.70" Maximum="1"/>
+                                            Minimum="0" Value="70" Maximum="90"/>
 
                                     <Label Name="CombineValuesLabel" 
                                            Content="Estimation Method" 
