@@ -146,13 +146,15 @@ namespace QTO_Tool
                         workSheet.Cells[1, colCount].Interior.Color = 
                             System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
 
-                        workSheet.Cells[2, colCount] = "N/A";
+                        workSheet.Cells[2, colCount] = "0";
 
                         workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
                             "=Sum(" + workSheet.Cells[2, colCount].Address + ":" + workSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
 
                         workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
                             System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+
+                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
 
                         colCount++;
                     }
@@ -161,7 +163,7 @@ namespace QTO_Tool
                 {
                     foreach (string header in sSHeaders)
                     {
-                        workSheet.Cells[2 + layerCount, colCount] = "N/A";
+                        workSheet.Cells[2 + layerCount, colCount] = "0";
 
                         colCount++;
                     }
@@ -236,6 +238,7 @@ namespace QTO_Tool
                     if (textValue == string.Empty)
                     {
                         workSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
+                        workSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
                     }
                     else
                     {
