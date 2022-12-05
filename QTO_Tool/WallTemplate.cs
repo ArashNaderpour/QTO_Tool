@@ -192,7 +192,7 @@ namespace QTO_Tool
                 Plane frame;
                 bigSideFace.FrameAt(u, v, out frame);
 
-                BoundingBox bigSideFaceBoundingBox = bigSideFace.GetMesh(new MeshType()).GetBoundingBox(true);
+                BoundingBox bigSideFaceBoundingBox = bigSideFace.GetMesh(new MeshType()).GetBoundingBox(frame);
 
                 this.sideArea_1 = Math.Round(bigSideFaceBoundingBox.Area/2, 2);
 
