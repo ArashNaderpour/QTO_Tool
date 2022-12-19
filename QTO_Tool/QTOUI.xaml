@@ -221,6 +221,12 @@
                                 IsEnabled="False" Margin="10 15 35 0" FontSize="26" 
                                  Height ="60" VerticalAlignment="Stretch" 
                                     Background="#52a0d1" Click="Send_To_MySql"/>
+
+                                <Button Name="ExportIFC" Content="IFC" 
+                                Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" 
+                                IsEnabled="False" Margin="10 15 35 0" FontSize="26" 
+                                 Height ="60" VerticalAlignment="Stretch" 
+                                    Background="#52a0d1" Click="Export_IFC_Clicked"/>
                             </Grid>
                         </Grid>
                         <Rectangle HorizontalAlignment="Stretch" Fill="Black" Height="4"

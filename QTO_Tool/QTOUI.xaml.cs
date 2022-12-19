@@ -819,5 +819,10 @@ namespace QTO_Tool
                 }
             }
         }
+
+        private void Export_IFC_Clicked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

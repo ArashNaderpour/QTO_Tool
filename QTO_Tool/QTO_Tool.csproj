@@ -133,6 +133,7 @@
     <Compile Include="CurbTemplate.cs" />
     <Compile Include="ExcelMethods.cs" />
     <Compile Include="FootingTemplate.cs" />
+    <Compile Include="IFCMethods.cs" />
     <Compile Include="Methods.cs" />
     <Compile Include="MySqlMethods.cs" />
     <Compile Include="ProgressWindow.xaml.cs">
