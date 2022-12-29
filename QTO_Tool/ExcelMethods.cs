@@ -117,7 +117,7 @@ namespace QTO_Tool
 
             else
             {
-                MessageBox.Show("Something went wrong, please try again.");
+                MessageBox.Show("Export was canceled.");
             }
         }
 
