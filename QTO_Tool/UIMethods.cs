@@ -275,7 +275,7 @@ namespace QTO_Tool
             }
 
             TextBlock slabName = new TextBlock();
-            slabName.Text = slab.name;
+            slabName.Text = slab.nameAbb;
             slabName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabName);
             slabName.FontSize = _valueFontSize;
@@ -391,7 +391,7 @@ namespace QTO_Tool
             }
 
             TextBlock footingName = new TextBlock();
-            footingName.Text = footing.name;
+            footingName.Text = footing.nameAbb;
             footingName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(footingName);
             footingName.FontSize = _valueFontSize;
@@ -481,7 +481,7 @@ namespace QTO_Tool
             }
 
             TextBlock columnName = new TextBlock();
-            columnName.Text = column.name;
+            columnName.Text = column.nameAbb;
             columnName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(columnName);
             columnName.FontSize = _valueFontSize;
@@ -563,7 +563,7 @@ namespace QTO_Tool
             }
 
             TextBlock beamName = new TextBlock();
-            beamName.Text = beam.name;
+            beamName.Text = beam.nameAbb;
             beamName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamName);
             beamName.FontSize = _valueFontSize;
@@ -653,7 +653,7 @@ namespace QTO_Tool
             }
 
             TextBlock wallName = new TextBlock();
-            wallName.Text = wall.name;
+            wallName.Text = wall.nameAbb;
             wallName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(wallName);
             wallName.FontSize = _valueFontSize;
@@ -775,7 +775,7 @@ namespace QTO_Tool
             }
 
             TextBlock curbName = new TextBlock();
-            curbName.Text = curb.name;
+            curbName.Text = curb.nameAbb;
             curbName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbName);
             curbName.FontSize = _valueFontSize;
@@ -865,7 +865,7 @@ namespace QTO_Tool
             }
 
             TextBlock continuousFootingName = new TextBlock();
-            continuousFootingName.Text = continuousFooting.name;
+            continuousFootingName.Text = continuousFooting.nameAbb;
             continuousFootingName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingName);
             continuousFootingName.FontSize = _valueFontSize;
@@ -963,7 +963,7 @@ namespace QTO_Tool
             }
 
             TextBlock styrofoamName = new TextBlock();
-            styrofoamName.Text = styrofoam.name;
+            styrofoamName.Text = styrofoam.nameAbb;
             styrofoamName.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(styrofoamName);
             styrofoamName.FontSize = _valueFontSize;

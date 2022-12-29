@@ -57,60 +57,62 @@ namespace QTO_Tool
 
                 Dispatcher.FromThread(newWindowThread).InvokeShutdown();
 
-                string messageBoxText = "Do you want to save \"Project Based\" results?";
-                string caption = "Save Project Based";
-                MessageBoxButton button = MessageBoxButton.YesNoCancel;
-                MessageBoxImage icon = MessageBoxImage.Warning;
+                //string messageBoxText = "Do you want to save \"Project Based\" results?";
+                //string caption = "Save Project Based";
+                //MessageBoxButton button = MessageBoxButton.YesNoCancel;
+                //MessageBoxImage icon = MessageBoxImage.Warning;
 
-                MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
+                //MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
 
-                Thread newWindowThread_1 = new Thread(new ThreadStart(() =>
-                {
-                    // Create our context, and install it:
-                    SynchronizationContext.SetSynchronizationContext(
-                        new DispatcherSynchronizationContext(
-                            Dispatcher.CurrentDispatcher));
+                //Thread newWindowThread_1 = new Thread(new ThreadStart(() =>
+                //{
+                //    // Create our context, and install it:
+                //    SynchronizationContext.SetSynchronizationContext(
+                //        new DispatcherSynchronizationContext(
+                //            Dispatcher.CurrentDispatcher));
 
-                    // Create and configure the window
-                    ProgressWindow progressWindow = new ProgressWindow();
+                //    // Create and configure the window
+                //    ProgressWindow progressWindow = new ProgressWindow();
 
-                    // When the window closes, shut down the dispatcher
-                    progressWindow.Closed += (s, eventArg) =>
-                       Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
+                //    // When the window closes, shut down the dispatcher
+                //    progressWindow.Closed += (s, eventArg) =>
+                //       Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
 
-                    progressWindow.Show();
-                    // Start the Dispatcher Processing
-                    Dispatcher.Run();
-                }));
+                //    progressWindow.Show();
+                //    // Start the Dispatcher Processing
+                //    Dispatcher.Run();
+                //}));
 
-                newWindowThread_1.SetApartmentState(ApartmentState.STA);
-                // Make the thread a background thread
-                newWindowThread_1.IsBackground = true;
-                // Start the thread
-                newWindowThread_1.Start();
+                //newWindowThread_1.SetApartmentState(ApartmentState.STA);
+                //// Make the thread a background thread
+                //newWindowThread_1.IsBackground = true;
+                //// Start the thread
+                //newWindowThread_1.Start();
 
-                switch (userDecision)
-                {
-                    case MessageBoxResult.Yes:
+                //switch (userDecision)
+                //{
+                //    case MessageBoxResult.Yes:
 
-                        outputPath = outputPath.Replace(".xlsx", "_Project-Based.xlsx");
+                //        outputPath = outputPath.Replace(".xlsx", "_Project-Based.xlsx");
 
-                        ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath, layerPropertyColumnHeaders);
+                //        ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath, layerPropertyColumnHeaders);
 
-                        Dispatcher.FromThread(newWindowThread_1).InvokeShutdown();
+                //        Dispatcher.FromThread(newWindowThread_1).InvokeShutdown();
 
-                        MessageBox.Show("Export was successful.");
+                //        MessageBox.Show("Export was successful.");
 
-                        return;
+                //        return;
 
-                    case MessageBoxResult.No:
+                //    case MessageBoxResult.No:
 
-                        newWindowThread_1.Abort();
+                //        newWindowThread_1.Abort();
 
-                        MessageBox.Show("Export was successful.");
+                //        MessageBox.Show("Export was successful.");
 
-                        return;
-                }
+                //        return;
+                //}
+
+                MessageBox.Show("Export was successful.");
             }
 
             else
@@ -121,7 +123,7 @@ namespace QTO_Tool
 
         static void PrepareExel(StackPanel ConcreteTable, string savePath, List<string> _layerPropertyColumnHeaders)
         {
-            List<string> sSHeaders = new List<string>() { "COUNT", "NAME", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
+            List<string> sSHeaders = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
                 "TOP AREA", "SIDE AREA", "END AREA", "SIDE-1", "SIDE-2", "EDGE AREA", "LENGTH", "HEIGHT", "PERIMETER", "OPENING PERIMETER" };
 
             Dictionary<string, string> dataColumns = new Dictionary<string, string>();
@@ -194,7 +196,6 @@ namespace QTO_Tool
                             if (j == 0)
                             {
                                 columnIndex = sSHeaders.IndexOf(value);
-                                //MessageBox.Show(value + "------>" + columnIndex.ToString());
                             }
 
                             else

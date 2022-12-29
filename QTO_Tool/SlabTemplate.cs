@@ -12,7 +12,7 @@ namespace QTO_Tool
     class SlabTemplate
     {
         public Brep originalGeometry;
-        public string name { get; set; }
+        public string nameAbb { get; set; }
         public string id { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
@@ -38,14 +38,14 @@ namespace QTO_Tool
             //Brep tempBrep = (Brep)rhobj.Geometry;
             originalGeometry = (Brep)rhobj.Geometry;
 
-            name = rhobj.Name;
-
             id = rhobj.Id.ToString();
 
             for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
             {
                 parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
             }
+
+            nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
             var mass_properties = VolumeMassProperties.Compute(originalGeometry);
             netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
