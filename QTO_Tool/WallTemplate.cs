@@ -19,15 +19,16 @@ namespace QTO_Tool
         public double grossVolume = double.MaxValue;
         public double netVolume { get; set; }
         public double topArea { get; set; }
+        public double bottomArea { get; set; }
         public double endArea { get; set; }
         public double sideArea_1 { get; set; }
         public double sideArea_2 { get; set; }
         public double length { get; set; }
         public double openingArea { get; set; }
 
-        private double bottomArea;
+        public Brep geometry { get; set; }
 
-        static string type = "WallTemplate";
+        public string type = "WallTemplate";
         private Brep topBrepFace;
         private Brep bottomBrepFace;
         //private Brep boundingBox;
@@ -41,7 +42,7 @@ namespace QTO_Tool
 
         public WallTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            geometry = (Brep)rhobj.Geometry;
 
             this.id = rhobj.Id.ToString();
 
@@ -52,10 +53,10 @@ namespace QTO_Tool
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            var mass_properties = VolumeMassProperties.Compute(geometry);
             this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(tempBrep, angleThreshold);
+            Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(geometry, angleThreshold);
 
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 

@@ -13,6 +13,8 @@ using System.Threading;
 using System.Windows.Threading;
 using MySql.Data.MySqlClient;
 using Microsoft.VisualBasic;
+using Xbim.Ifc;
+using Xbim.Ifc4.ProductExtension;
 
 namespace QTO_Tool
 {
@@ -822,6 +824,36 @@ namespace QTO_Tool
 
         private void Export_IFC_Clicked(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+                saveFileDialog.Filter = "IFC |*.ifc";
+
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string outputPath = saveFileDialog.FileName;
+
+                    IfcStore testProject = IFCMethods.CreateandInitIFCModel("Test Project");
+
+                    IfcBuilding building = IFCMethods.CreateBuilding(testProject, "Test Building");
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allWalls);
+
+                    testProject.SaveAs(outputPath);
+
+                    MessageBox.Show("Export was successful.");
+
+                }
+
+                else
+                {
+                    MessageBox.Show("Export was canceled.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
 
         }
     }
