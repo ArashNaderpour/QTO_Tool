@@ -28,13 +28,13 @@ namespace QTO_Tool
         {
             var editor = new XbimEditorCredentials
             {
-                ApplicationDevelopersName = "xbim developer",
-                ApplicationFullName = "xbim toolkit",
-                ApplicationIdentifier = "xbim",
-                ApplicationVersion = "4.0",
-                EditorsFamilyName = "Santini Aichel",
-                EditorsGivenName = "Johann Blasius",
-                EditorsOrganisationName = "Independent Architecture"
+                ApplicationDevelopersName = "Digital Charcoal",
+                ApplicationFullName = "QTO_TOOL",
+                ApplicationIdentifier = "QTO",
+                ApplicationVersion = "1.0",
+                EditorsFamilyName = "Naderpour",
+                EditorsGivenName = "Arash",
+                EditorsOrganisationName = "Digital Charcoal"
             };
 
             var model = IfcStore.Create(editor, XbimSchemaVersion.Ifc4, XbimStoreType.InMemoryModel);
@@ -83,7 +83,7 @@ namespace QTO_Tool
 
                         meshGeometry.Append(Mesh.CreateFromBrep(wallTemplate.geometry, MeshingParameters.QualityRenderMesh));
                         //Plane insertPlane = new Plane(Rhino.Geometry.AreaMassProperties.Compute(wallTemplate.geometry).Centroid, Vector3d.ZAxis);
-                        Plane insertPlane = new Plane(wallTemplate.geometry.DuplicateVertices()[0], Vector3d.ZAxis);
+                        Plane insertPlane = Plane.WorldXY;
 
                         //begin a transaction
                         using (var txn = model.BeginTransaction("Add IFC Element"))
