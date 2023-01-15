@@ -839,6 +839,10 @@ namespace QTO_Tool
 
                     IFCMethods.CreateAndAddIFCElement(testProject, building, this.allWalls);
 
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allBeams);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allColumns);
+
                     testProject.SaveAs(outputPath);
 
                     MessageBox.Show("Export was successful.");
