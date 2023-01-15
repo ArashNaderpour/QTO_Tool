@@ -255,14 +255,14 @@ namespace QTO_Tool
 
                 foreach (var item in this.beams)
                 {
-                    Brep[] intersectionBreps = Brep.CreateBooleanIntersection(this.originalGeometry, item.Value.originalGeometry, RunQTO.doc.ModelAbsoluteTolerance);
+                    Brep[] intersectionBreps = Brep.CreateBooleanIntersection(this.originalGeometry, item.Value.geometry, RunQTO.doc.ModelAbsoluteTolerance);
 
                     if (intersectionBreps != null && intersectionBreps.Length > 0)
                     {
                         foreach (Brep intersectionBrep in intersectionBreps)
                         {
                             var intersection_mass_properties = VolumeMassProperties.Compute(intersectionBrep);
-                            var beam_mass_properties = VolumeMassProperties.Compute(item.Value.originalGeometry);
+                            var beam_mass_properties = VolumeMassProperties.Compute(item.Value.geometry);
 
                             if (intersection_mass_properties != null && intersection_mass_properties.Volume > 5 && intersection_mass_properties.Volume < beam_mass_properties.Volume)
                             {

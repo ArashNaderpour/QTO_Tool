@@ -14,6 +14,8 @@ namespace QTO_Tool
         public string nameAbb { get; set; }
         public string id { get; set; }
 
+        public string layerName { get; set; }
+
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
 
         public double grossVolume = double.MaxValue;
@@ -40,15 +42,17 @@ namespace QTO_Tool
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
             "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
-        public WallTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
+        public WallTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
+            this.layerName = _layerName;
+
             geometry = (Brep)rhobj.Geometry;
 
             this.id = rhobj.Id.ToString();
 
-            for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
+            for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
-                parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
+                parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
             }
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];

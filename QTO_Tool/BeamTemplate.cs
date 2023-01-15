@@ -11,7 +11,9 @@ namespace QTO_Tool
 {
     class BeamTemplate
     {
-        public Brep originalGeometry;
+        public Brep geometry { get; set; }
+
+        public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
 
@@ -21,7 +23,7 @@ namespace QTO_Tool
         public double sideArea { get; set; }
         public double length { get; set; }
 
-        static string type = "BeamTemplate";
+        public string type = "BeamTemplate";
 
         private Brep topBrepFace;
 
@@ -29,26 +31,27 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Foot", "N/A" };
 
-        public BeamTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
+        public BeamTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
-            //Brep tempBrep = (Brep)rhobj.Geometry;
-            originalGeometry = (Brep)rhobj.Geometry;
+            this.layerName = _layerName;
+
+            geometry = (Brep)rhobj.Geometry;
 
             id = rhobj.Id.ToString();
 
-            for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
+            for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
-                parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
+                parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
             }
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(originalGeometry);
+            var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            bottomArea = BottomArea(originalGeometry, angleThreshold);
+            bottomArea = BottomArea(geometry, angleThreshold);
 
-            sideArea = SideArea(originalGeometry, angleThreshold);
+            sideArea = SideArea(geometry, angleThreshold);
 
             length = Length();
 

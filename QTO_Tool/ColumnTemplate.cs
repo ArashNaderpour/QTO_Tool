@@ -11,6 +11,9 @@ namespace QTO_Tool
 {
     class ColumnTemplate
     {
+        public Brep geometry { get; set; }
+
+        public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
 
@@ -19,15 +22,17 @@ namespace QTO_Tool
         public double height { get; set; }
         public double sideArea { get; set; }
 
-        static string type = "ColumnTemplate";
+        public string type = "ColumnTemplate";
 
         Dictionary<string, Point3d> topAndBottomFaceCenters = new Dictionary<string, Point3d>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Foot", "Square Foot", "N/A" };
 
-        public ColumnTemplate(RhinoObject rhobj, string layerName)
+        public ColumnTemplate(RhinoObject rhobj, string _layerName)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            this.layerName = _layerName;
+
+            geometry = (Brep)rhobj.Geometry;
 
             id = rhobj.Id.ToString();
 
@@ -38,10 +43,10 @@ namespace QTO_Tool
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            sideArea = SideArea(tempBrep);
+            sideArea = SideArea(geometry);
 
             height = Height(topAndBottomFaceCenters);
         }
