@@ -12,11 +12,9 @@ namespace QTO_Tool
     class ColumnTemplate
     {
         public Brep geometry { get; set; }
-
         public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
-
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
         public double volume { get; set; }
         public double height { get; set; }

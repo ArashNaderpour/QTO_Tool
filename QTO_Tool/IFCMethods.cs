@@ -11,9 +11,11 @@ using Xbim.Ifc4.GeometryResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.MaterialResource;
+using Xbim.Ifc4.MeasureResource;
 using Xbim.Ifc4.PresentationOrganizationResource;
 using Xbim.Ifc4.ProductExtension;
 using Xbim.Ifc4.ProfileResource;
+using Xbim.Ifc4.PropertyResource;
 using Xbim.Ifc4.RepresentationResource;
 using Xbim.Ifc4.SharedBldgElements;
 using Xbim.Ifc4.StructuralElementsDomain;
@@ -79,15 +81,10 @@ namespace QTO_Tool
                 {
                     foreach (WallTemplate wallTemplate in entry.Value)
                     {
-                        Mesh meshGeometry = new Mesh();
-
-                        meshGeometry.Append(Mesh.CreateFromBrep(wallTemplate.geometry, MeshingParameters.QualityRenderMesh));
-                        Plane insertPlane = Plane.WorldXY;
-
                         //begin a transaction
                         using (var txn = model.BeginTransaction("Add IFC Element"))
                         {
-                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, meshGeometry, wallTemplate.type, wallTemplate.nameAbb, insertPlane, wallTemplate.layerName);
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, wallTemplate);
 
                             building.AddElement(buildingElements[0]);
 
@@ -103,15 +100,10 @@ namespace QTO_Tool
                 {
                     foreach (BeamTemplate beamTemplate in entry.Value)
                     {
-                        Mesh meshGeometry = new Mesh();
-
-                        meshGeometry.Append(Mesh.CreateFromBrep(beamTemplate.geometry, MeshingParameters.QualityRenderMesh));
-                        Plane insertPlane = Plane.WorldXY;
-
                         //begin a transaction
                         using (var txn = model.BeginTransaction("Add IFC Element"))
                         {
-                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, meshGeometry, beamTemplate.type, beamTemplate.nameAbb, insertPlane, beamTemplate.layerName);
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, beamTemplate);
 
                             building.AddElement(buildingElements[0]);
 
@@ -127,15 +119,105 @@ namespace QTO_Tool
                 {
                     foreach (ColumnTemplate columnTemplate in entry.Value)
                     {
-                        Mesh meshGeometry = new Mesh();
-
-                        meshGeometry.Append(Mesh.CreateFromBrep(columnTemplate.geometry, MeshingParameters.QualityRenderMesh));
-                        Plane insertPlane = Plane.WorldXY;
-
                         //begin a transaction
                         using (var txn = model.BeginTransaction("Add IFC Element"))
                         {
-                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, meshGeometry, columnTemplate.type, columnTemplate.nameAbb, insertPlane, columnTemplate.layerName);
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, columnTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllFootings))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllFootings)templates).allTemplates)
+                {
+                    foreach (FootingTemplate footingTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, footingTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllContinousFootings))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllContinousFootings)templates).allTemplates)
+                {
+                    foreach (ContinuousFootingTemplate continousFootingTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, continousFootingTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllCurbs))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllCurbs)templates).allTemplates)
+                {
+                    foreach (CurbTemplate curbTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, curbTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllSlabs))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllSlabs)templates).allTemplates)
+                {
+                    foreach (SlabTemplate slabTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, slabTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllStyrofoams))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllStyrofoams)templates).allTemplates)
+                {
+                    foreach (StyrofoamTemplate styrofoamTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, styrofoamTemplate);
 
                             building.AddElement(buildingElements[0]);
 
@@ -146,56 +228,244 @@ namespace QTO_Tool
             }
         }
 
-        public static List<IfcBuildingElement> ToBuildingElementIfc(IfcStore model, Mesh meshGeometry, string elementType, string nameAbb, Plane insertPlane, string layerName)
+        public static List<IfcBuildingElement> ToBuildingElementIfc(IfcStore model, object template)
         {
-            MeshFaceList faces = meshGeometry.Faces;
-            MeshVertexList vertices = meshGeometry.Vertices;
-
-            List<IfcCartesianPoint> ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
-
-            IfcFaceBasedSurfaceModel faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
-
-            IfcShapeRepresentation shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", layerName);
-            shape.Items.Add(faceBasedSurfaceModel);
             IfcRelAssociatesMaterial ifcRelAssociatesMaterial = IFCMethods.CreateIfcRelAssociatesMaterial(model, "Concrete", "Undefined");
 
-            List<IfcBuildingElement> buildingElements = IFCMethods.CreateBuildingElements(model, elementType, nameAbb, shape, insertPlane,
-                ifcRelAssociatesMaterial);
+            List<IfcBuildingElement> buildingElements = IFCMethods.CreateBuildingElements(model, template, ifcRelAssociatesMaterial);
 
             return buildingElements;
         }
 
-        public static List<IfcBuildingElement> CreateBuildingElements(IfcStore model, string type, string nameAbb,
-            IfcShapeRepresentation shape, Plane insertPlane, IfcRelAssociatesMaterial relAssociatesMaterial)
+        public static List<IfcBuildingElement> CreateBuildingElements(IfcStore model, object template, IfcRelAssociatesMaterial relAssociatesMaterial)
         {
-            var buildingElements = new List<IfcBuildingElement>();
+            List<IfcBuildingElement> buildingElements = new List<IfcBuildingElement>();
 
-            if (type == "WallTemplate")
+            List<IfcCartesianPoint> ifcVertices = new List<IfcCartesianPoint>();
+
+            Plane insertPlane = Plane.WorldXY;
+
+            Mesh meshGeometry = new Mesh();
+
+            MeshFaceList faces;
+
+            MeshVertexList vertices;
+
+            IfcShapeRepresentation shape;
+
+            IfcFaceBasedSurfaceModel faceBasedSurfaceModel;
+
+            if (template.GetType() == typeof(QTO_Tool.WallTemplate))
             {
-                var ifcWall = IFCMethods.CreateWall(model, nameAbb, shape, insertPlane);
+                meshGeometry.Append(Mesh.CreateFromBrep(((WallTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((WallTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                IfcWall ifcWall = IFCMethods.CreateWall(model, (WallTemplate)template, shape, insertPlane);
                 relAssociatesMaterial.RelatedObjects.Add(ifcWall);
                 buildingElements.Add(ifcWall);
             }
-            else if (type == "BeamTemplate")
+            else if (template.GetType() == typeof(QTO_Tool.BeamTemplate))
             {
-                var ifcBeam = IFCMethods.CreateBeam(model, nameAbb, shape, insertPlane);
+                meshGeometry.Append(Mesh.CreateFromBrep(((BeamTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((BeamTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                IfcBeam ifcBeam = IFCMethods.CreateBeam(model, (BeamTemplate)template, shape, insertPlane);
                 relAssociatesMaterial.RelatedObjects.Add(ifcBeam);
                 buildingElements.Add(ifcBeam);
             }
-            else if (type == "ColumnTemplate")
+            else if (template.GetType() == typeof(QTO_Tool.ColumnTemplate))
             {
-                var column = IFCMethods.CreateColumn(model, nameAbb, shape, insertPlane);
+                meshGeometry.Append(Mesh.CreateFromBrep(((ColumnTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((ColumnTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                IfcColumn column = IFCMethods.CreateColumn(model, (ColumnTemplate)template, shape, insertPlane);
                 relAssociatesMaterial.RelatedObjects.Add(column);
                 buildingElements.Add(column);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.FootingTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((FootingTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((FootingTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                IfcFooting footing = IFCMethods.CreateFooting(model, (FootingTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(footing);
+                buildingElements.Add(footing);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.ContinuousFootingTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((ContinuousFootingTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((ContinuousFootingTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                IfcFooting continuousFooting = IFCMethods.CreateContinuousFooting(model, (ContinuousFootingTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(continuousFooting);
+                buildingElements.Add(continuousFooting);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.CurbTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((CurbTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((CurbTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                var curb = IFCMethods.CreateCurb(model, (CurbTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(curb);
+                buildingElements.Add(curb);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.SlabTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((SlabTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((SlabTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                var slab = IFCMethods.CreateSlab(model, (SlabTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(slab);
+                buildingElements.Add(slab);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.StyrofoamTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((StyrofoamTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((StyrofoamTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                var styrofoam = IFCMethods.CreateStyrofoam(model, (StyrofoamTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(styrofoam);
+                buildingElements.Add(styrofoam);
             }
 
             return buildingElements;
         }
 
-        private static IfcWall CreateWall(IfcStore model, string nameAbb, IfcShapeRepresentation shape, Plane insertPlane)
+        private static IfcWall CreateWall(IfcStore model, WallTemplate wallTemplate, IfcShapeRepresentation shape, Plane insertPlane)
         {
             var wall = model.Instances.New<IfcWall>();
-            wall.Name = nameAbb;
+            wall.Name = wallTemplate.nameAbb;
+
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(wall);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(wall.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.grossVolume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NET VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.netVolume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "OPENING AREA";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.openingArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.topArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "END AREA";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.endArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE-1";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.sideArea_1);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE-2";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.sideArea_2);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "LENGTH";
+                        p.NominalValue = new IfcNumericMeasure(wallTemplate.length);
+                    }),
+                    });
+                });
+            });
 
             wall.PredefinedType = IfcWallTypeEnum.STANDARD;
 
@@ -204,10 +474,10 @@ namespace QTO_Tool
             return wall;
         }
 
-        private static IfcBeam CreateBeam(IfcStore model, string nameAbb, IfcShapeRepresentation shape, Plane insertPlane)
+        private static IfcBeam CreateBeam(IfcStore model, BeamTemplate beamTemplate, IfcShapeRepresentation shape, Plane insertPlane)
         {
             var beam = model.Instances.New<IfcBeam>();
-            beam.Name = nameAbb;
+            beam.Name = beamTemplate.nameAbb;
 
             beam.PredefinedType = IfcBeamTypeEnum.BEAM;
 
@@ -216,16 +486,76 @@ namespace QTO_Tool
             return beam;
         }
 
-        private static IfcColumn CreateColumn(IfcStore model, string nameAbb, IfcShapeRepresentation shape, Plane insertPlane)
+        private static IfcColumn CreateColumn(IfcStore model, ColumnTemplate columnTemplate, IfcShapeRepresentation shape, Plane insertPlane)
         {
             var column = model.Instances.New<IfcColumn>();
-            column.Name = nameAbb;
+            column.Name = columnTemplate.nameAbb;
 
             column.PredefinedType = IfcColumnTypeEnum.COLUMN;
 
             IFCMethods.ApplyRepresentationAndPlacement(model, column, shape, insertPlane);
 
             return column;
+        }
+
+        private static IfcWall CreateCurb(IfcStore model, CurbTemplate curbTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var curb = model.Instances.New<IfcWall>();
+            curb.Name = curbTemplate.nameAbb;
+
+            curb.PredefinedType = IfcWallTypeEnum.STANDARD;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, curb, shape, insertPlane);
+
+            return curb;
+        }
+
+        private static IfcFooting CreateFooting(IfcStore model, FootingTemplate footingTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var footing = model.Instances.New<IfcFooting>();
+            footing.Name = footingTemplate.nameAbb;
+
+            footing.PredefinedType = IfcFootingTypeEnum.PAD_FOOTING;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, footing, shape, insertPlane);
+
+            return footing;
+        }
+
+        private static IfcFooting CreateContinuousFooting(IfcStore model, ContinuousFootingTemplate continuousFootingTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var footing = model.Instances.New<IfcFooting>();
+            footing.Name = continuousFootingTemplate.nameAbb;
+
+            footing.PredefinedType = IfcFootingTypeEnum.STRIP_FOOTING;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, footing, shape, insertPlane);
+
+            return footing;
+        }
+
+        private static IfcSlab CreateSlab(IfcStore model, SlabTemplate slabTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var slab = model.Instances.New<IfcSlab>();
+            slab.Name = slabTemplate.nameAbb;
+
+            slab.PredefinedType = IfcSlabTypeEnum.FLOOR;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, slab, shape, insertPlane);
+
+            return slab;
+        }
+
+        private static IfcSlab CreateStyrofoam(IfcStore model, StyrofoamTemplate styrofoamTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var styrofoam = model.Instances.New<IfcSlab>();
+            styrofoam.Name = styrofoamTemplate.nameAbb;
+
+            styrofoam.PredefinedType = IfcSlabTypeEnum.NOTDEFINED;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, styrofoam, shape, insertPlane);
+
+            return styrofoam;
         }
 
         public static List<IfcCartesianPoint> VerticesToIfcCartesianPoints(IfcStore model, MeshVertexList vertices)

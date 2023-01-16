@@ -544,6 +544,7 @@ namespace QTO_Tool
                 this.ExportExcelButton.IsEnabled = true;
                 this.ConcreteSaveButton.IsEnabled = true;
                 this.SendToMySql.IsEnabled = true;
+                this.ExportIFC.IsEnabled = true;
 
                 Dispatcher.FromThread(newWindowThread).InvokeShutdown();
             }
@@ -842,6 +843,16 @@ namespace QTO_Tool
                     IFCMethods.CreateAndAddIFCElement(testProject, building, this.allBeams);
 
                     IFCMethods.CreateAndAddIFCElement(testProject, building, this.allColumns);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allContinuousFootings);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allFootings);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allSlabs);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allCurbs);
+
+                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allStyrofoams);
 
                     testProject.SaveAs(outputPath);
 

@@ -11,6 +11,8 @@ namespace QTO_Tool
 {
     class CurbTemplate
     {
+        public Brep geometry { get; set; }
+        public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
 
@@ -20,32 +22,34 @@ namespace QTO_Tool
         public double sideArea { get; set; }
         public double length { get; set; }
 
-        static string type = "CurbTemplate";
+        public string type = "CurbTemplate";
         private Brep topBrepFace;
         private double bottomArea;
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Foot", "N/A" };
 
-        public CurbTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
+        public CurbTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            this.geometry = (Brep)rhobj.Geometry;
+
+            this.layerName = _layerName;
 
             id = rhobj.Id.ToString();
 
-            for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
+            for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
-                parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
+                parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
             }
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep.RemoveHoles(0.01));
+            var mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(0.01));
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            topArea = TopArea(tempBrep, angleThreshold);
-            bottomArea = BottomArea(tempBrep, angleThreshold);
+            topArea = TopArea(geometry, angleThreshold);
+            bottomArea = BottomArea(geometry, angleThreshold);
 
-            sideArea = SideArea(tempBrep);
+            sideArea = SideArea(geometry);
 
             length = Length();
         }

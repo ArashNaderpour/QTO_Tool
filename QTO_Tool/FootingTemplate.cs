@@ -11,6 +11,8 @@ namespace QTO_Tool
 {
     class FootingTemplate
     {
+        public Brep geometry { get; set; }
+        public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
 
@@ -20,32 +22,35 @@ namespace QTO_Tool
         public double bottomArea { get; set; }
         public double sideArea { get; set; }
 
-        static string type = "FootingTemplate";
+        public string type = "FootingTemplate";
+
         private Brep topBrepFace;
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "N/A" };
 
-        public FootingTemplate(RhinoObject rhobj, string layerName, double angleThreshold)
+        public FootingTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
-            Brep tempBrep = (Brep)rhobj.Geometry;
+            this.geometry = (Brep)rhobj.Geometry;
 
             id = rhobj.Id.ToString();
 
-            for (int i = 0; i < layerName.Split('_').ToList().Count; i++)
+            this.layerName = _layerName;
+
+            for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
-                parsedLayerName.Add("C" + (1 + i).ToString(), layerName.Split('_').ToList()[i]);
+                parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
             }
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(tempBrep);
+            var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            this.topArea = TopArea(tempBrep, angleThreshold);
+            this.topArea = TopArea(geometry, angleThreshold);
            
-            this.bottomArea = BottomArea(tempBrep, angleThreshold);
+            this.bottomArea = BottomArea(geometry, angleThreshold);
 
-            this.sideArea = SideArea(tempBrep);
+            this.sideArea = SideArea(geometry);
         }
 
         double TopArea(Brep brep, double angleThreshold)
