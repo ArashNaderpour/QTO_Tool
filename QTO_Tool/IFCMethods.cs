@@ -462,7 +462,7 @@ namespace QTO_Tool
                     {
                         p.Name = "LENGTH";
                         p.NominalValue = new IfcNumericMeasure(wallTemplate.length);
-                    }),
+                    })
                     });
                 });
             });
@@ -479,6 +479,45 @@ namespace QTO_Tool
             var beam = model.Instances.New<IfcBeam>();
             beam.Name = beamTemplate.nameAbb;
 
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(beam);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(beam.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(beamTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "BOTTOM AREA";
+                        p.NominalValue = new IfcNumericMeasure(beamTemplate.bottomArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(beamTemplate.sideArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "LENGTH";
+                        p.NominalValue = new IfcNumericMeasure(beamTemplate.length);
+                    })
+                    });
+                });
+            });
+
             beam.PredefinedType = IfcBeamTypeEnum.BEAM;
 
             IFCMethods.ApplyRepresentationAndPlacement(model, beam, shape, insertPlane);
@@ -490,6 +529,40 @@ namespace QTO_Tool
         {
             var column = model.Instances.New<IfcColumn>();
             column.Name = columnTemplate.nameAbb;
+
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(column);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(column.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(columnTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(columnTemplate.sideArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "HEIGHT";
+                        p.NominalValue = new IfcNumericMeasure(columnTemplate.height);
+                    })
+                    });
+                });
+            });
 
             column.PredefinedType = IfcColumnTypeEnum.COLUMN;
 
@@ -503,6 +576,45 @@ namespace QTO_Tool
             var curb = model.Instances.New<IfcWall>();
             curb.Name = curbTemplate.nameAbb;
 
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(curb);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(curb.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(curbTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(curbTemplate.topArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(curbTemplate.sideArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "LENGTH";
+                        p.NominalValue = new IfcNumericMeasure(curbTemplate.length);
+                    })
+                    });
+                });
+            });
+
             curb.PredefinedType = IfcWallTypeEnum.STANDARD;
 
             IFCMethods.ApplyRepresentationAndPlacement(model, curb, shape, insertPlane);
@@ -515,6 +627,45 @@ namespace QTO_Tool
             var footing = model.Instances.New<IfcFooting>();
             footing.Name = footingTemplate.nameAbb;
 
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(footing);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(footing.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(footingTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(footingTemplate.topArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "BOTTOM AREA";
+                        p.NominalValue = new IfcNumericMeasure(footingTemplate.bottomArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(footingTemplate.sideArea);
+                    })
+                    });
+                });
+            });
+
             footing.PredefinedType = IfcFootingTypeEnum.PAD_FOOTING;
 
             IFCMethods.ApplyRepresentationAndPlacement(model, footing, shape, insertPlane);
@@ -524,20 +675,118 @@ namespace QTO_Tool
 
         private static IfcFooting CreateContinuousFooting(IfcStore model, ContinuousFootingTemplate continuousFootingTemplate, IfcShapeRepresentation shape, Plane insertPlane)
         {
-            var footing = model.Instances.New<IfcFooting>();
-            footing.Name = continuousFootingTemplate.nameAbb;
+            var continuousFooting = model.Instances.New<IfcFooting>();
+            continuousFooting.Name = continuousFootingTemplate.nameAbb;
 
-            footing.PredefinedType = IfcFootingTypeEnum.STRIP_FOOTING;
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(continuousFooting);
 
-            IFCMethods.ApplyRepresentationAndPlacement(model, footing, shape, insertPlane);
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
 
-            return footing;
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(continuousFooting.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(continuousFootingTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(continuousFootingTemplate.topArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "BOTTOM AREA";
+                        p.NominalValue = new IfcNumericMeasure(continuousFootingTemplate.bottomArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "LENGTH";
+                        p.NominalValue = new IfcNumericMeasure(continuousFootingTemplate.length);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(continuousFootingTemplate.sideArea);
+                    })
+                    });
+                });
+            });
+
+            continuousFooting.PredefinedType = IfcFootingTypeEnum.STRIP_FOOTING;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, continuousFooting, shape, insertPlane);
+
+            return continuousFooting;
         }
 
         private static IfcSlab CreateSlab(IfcStore model, SlabTemplate slabTemplate, IfcShapeRepresentation shape, Plane insertPlane)
         {
             var slab = model.Instances.New<IfcSlab>();
             slab.Name = slabTemplate.nameAbb;
+
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(slab);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(slab.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.grossVolume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NET VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.netVolume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.topArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "BOTTOM AREA";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.bottomArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "EDGE AREA";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.edgeArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "PERIMETER";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.perimeter);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "OPENING PERIMETER";
+                        p.NominalValue = new IfcNumericMeasure(slabTemplate.openingPerimeter);
+                    })
+                    });
+                });
+            });
 
             slab.PredefinedType = IfcSlabTypeEnum.FLOOR;
 
@@ -550,6 +799,30 @@ namespace QTO_Tool
         {
             var styrofoam = model.Instances.New<IfcSlab>();
             styrofoam.Name = styrofoamTemplate.nameAbb;
+
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(styrofoam);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(styrofoam.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(styrofoamTemplate.volume);
+                    })
+                    });
+                });
+            });
 
             styrofoam.PredefinedType = IfcSlabTypeEnum.NOTDEFINED;
 
