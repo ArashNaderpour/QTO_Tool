@@ -305,7 +305,30 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName);
+                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName, true);
+
+                                    if (allColumns.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allColumns.allTemplates[objFloor].Add(column);
+                                    }
+                                    else
+                                    {
+                                        allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                    }
+
+                                    layerTemplates.Add(column);
+                                }
+
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
+                            }
+
+                            if (selectedTemplate == "Non-Rectangular Column")
+                            {
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
+
+                                for (int j = 0; j < rhobjs.Length; j++)
+                                {
+                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName, false);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {

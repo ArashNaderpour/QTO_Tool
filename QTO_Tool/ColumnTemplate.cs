@@ -19,6 +19,7 @@ namespace QTO_Tool
         public double volume { get; set; }
         public double height { get; set; }
         public double sideArea { get; set; }
+        public bool rectangular = true;
 
         public string type = "ColumnTemplate";
 
@@ -26,9 +27,11 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Foot", "Square Foot", "N/A" };
 
-        public ColumnTemplate(RhinoObject rhobj, string _layerName)
+        public ColumnTemplate(RhinoObject rhobj, string _layerName, bool _rectangular)
         {
             this.layerName = _layerName;
+
+            this.rectangular = _rectangular;
 
             geometry = (Brep)rhobj.Geometry;
 
@@ -44,9 +47,16 @@ namespace QTO_Tool
             var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            sideArea = SideArea(geometry);
-
-            height = Height(topAndBottomFaceCenters);
+            if (this.rectangular)
+            {
+                this.sideArea = this.SideArea(geometry);
+            }
+            else
+            {
+                this.sideArea = 0;
+            }
+            
+            this.height = this.Height(topAndBottomFaceCenters);
         }
 
         double SideArea(Brep brep)

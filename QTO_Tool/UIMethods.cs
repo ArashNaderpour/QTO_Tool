@@ -163,7 +163,7 @@ namespace QTO_Tool
                     }
                 }
 
-                else if (templateType == "Column")
+                else if (templateType.Contains("Column"))
                 {
                     UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize,
                         layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
@@ -505,12 +505,25 @@ namespace QTO_Tool
             Grid.SetRow(columnHeight, _count);
 
             TextBlock columnSideArea = new TextBlock();
-            columnSideArea.Text = column.sideArea.ToString();
-            columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(columnSideArea);
-            columnSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(columnSideArea, 4 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(columnSideArea, _count);
+
+            if (column.rectangular)
+            {
+                columnSideArea.Text = column.sideArea.ToString();
+                columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+                _layerEstimateGrid.Children.Add(columnSideArea);
+                columnSideArea.FontSize = _valueFontSize;
+                Grid.SetColumn(columnSideArea, 4 + _layerPropertyColumnHeaders.Count);
+                Grid.SetRow(columnSideArea, _count);
+            }
+            else
+            {
+                columnSideArea.Text = "N/A";
+                columnSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+                _layerEstimateGrid.Children.Add(columnSideArea);
+                columnSideArea.FontSize = _valueFontSize;
+                Grid.SetColumn(columnSideArea, 4 + _layerPropertyColumnHeaders.Count);
+                Grid.SetRow(columnSideArea, _count);
+            }
 
             ToggleButton columnSelectObject = new ToggleButton();
             columnSelectObject.Uid = column.id;
