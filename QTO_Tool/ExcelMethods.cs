@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Collections.Generic;
+using System.IO;
 
 namespace QTO_Tool
 {
@@ -44,73 +45,22 @@ namespace QTO_Tool
                 newWindowThread.IsBackground = true;
                 // Start the thread
                 newWindowThread.Start();
+
+                Excel.Application excel = new Excel.Application();
+
                 try
                 {
-                    ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath, layerPropertyColumnHeaders);
+                    ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath, layerPropertyColumnHeaders,  excel);
                 }
 
                 catch (Exception ex)
                 {
+                    excel.Quit();
                     MessageBox.Show(ex.ToString());
                 }
 
 
                 Dispatcher.FromThread(newWindowThread).InvokeShutdown();
-
-                //string messageBoxText = "Do you want to save \"Project Based\" results?";
-                //string caption = "Save Project Based";
-                //MessageBoxButton button = MessageBoxButton.YesNoCancel;
-                //MessageBoxImage icon = MessageBoxImage.Warning;
-
-                //MessageBoxResult userDecision = MessageBox.Show(messageBoxText, caption, button, icon);
-
-                //Thread newWindowThread_1 = new Thread(new ThreadStart(() =>
-                //{
-                //    // Create our context, and install it:
-                //    SynchronizationContext.SetSynchronizationContext(
-                //        new DispatcherSynchronizationContext(
-                //            Dispatcher.CurrentDispatcher));
-
-                //    // Create and configure the window
-                //    ProgressWindow progressWindow = new ProgressWindow();
-
-                //    // When the window closes, shut down the dispatcher
-                //    progressWindow.Closed += (s, eventArg) =>
-                //       Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
-
-                //    progressWindow.Show();
-                //    // Start the Dispatcher Processing
-                //    Dispatcher.Run();
-                //}));
-
-                //newWindowThread_1.SetApartmentState(ApartmentState.STA);
-                //// Make the thread a background thread
-                //newWindowThread_1.IsBackground = true;
-                //// Start the thread
-                //newWindowThread_1.Start();
-
-                //switch (userDecision)
-                //{
-                //    case MessageBoxResult.Yes:
-
-                //        outputPath = outputPath.Replace(".xlsx", "_Project-Based.xlsx");
-
-                //        ExcelMethods.PrepareExel(projectBasedConcreteTable, outputPath, layerPropertyColumnHeaders);
-
-                //        Dispatcher.FromThread(newWindowThread_1).InvokeShutdown();
-
-                //        MessageBox.Show("Export was successful.");
-
-                //        return;
-
-                //    case MessageBoxResult.No:
-
-                //        newWindowThread_1.Abort();
-
-                //        MessageBox.Show("Export was successful.");
-
-                //        return;
-                //}
 
                 MessageBox.Show("Export was successful.");
             }
@@ -121,138 +71,150 @@ namespace QTO_Tool
             }
         }
 
-        static void PrepareExel(StackPanel ConcreteTable, string savePath, List<string> _layerPropertyColumnHeaders)
+        static void PrepareExel(StackPanel ConcreteTable, string savePath, List<string> _layerPropertyColumnHeaders, Excel.Application excel)
         {
             List<string> sSHeaders = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
                 "TOP AREA", "SIDE AREA", "END AREA", "SIDE-1", "SIDE-2", "EDGE AREA", "LENGTH", "HEIGHT", "PERIMETER", "OPENING PERIMETER" };
+
+            string tempExcelTemplate = @"c:\Temp\QTO_Template.xlsx";
+
+            File.WriteAllBytes(tempExcelTemplate, Resources.template);
 
             Dictionary<string, string> dataColumns = new Dictionary<string, string>();
 
             sSHeaders.InsertRange(0, _layerPropertyColumnHeaders);
 
-            Excel.Application excel = new Excel.Application();
-            Excel.Workbook workBook = excel.Workbooks.Add(Type.Missing);
-            Excel.Worksheet workSheet = (Excel.Worksheet)workBook.ActiveSheet;
+            excel.DisplayAlerts = false;
+            Excel.Workbook workBook = (Excel.Workbook)(excel.Workbooks._Open(tempExcelTemplate, System.Reflection.Missing.Value,
+                System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
+                System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
+                System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
+                System.Reflection.Missing.Value, System.Reflection.Missing.Value));
 
-            int layerCount = 0;
+            Excel.Sheets sheets = workBook.Worksheets;
 
-            foreach (UIElement container in ConcreteTable.Children)
-            {
-                int colCount = 1;
+            Excel.Worksheet summarySheet = (Excel.Worksheet)sheets.get_Item(1);
+            Excel.Worksheet projectSheet = (Excel.Worksheet)sheets.get_Item(2);
+            MessageBox.Show(projectSheet.Name);
+            //int layerCount = 0;
 
-                if (layerCount == 0)
-                {
-                    foreach (string header in sSHeaders)
-                    {
-                        workSheet.Cells[1, colCount] = header;
-                        workSheet.Cells[1, colCount].Interior.Color = 
-                            System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
+            //foreach (UIElement container in ConcreteTable.Children)
+            //{
+            //    int colCount = 1;
 
-                        workSheet.Cells[2, colCount] = "0";
+            //    if (layerCount == 0)
+            //    {
+            //        foreach (string header in sSHeaders)
+            //        {
+            //            workSheet.Cells[1, colCount] = header;
+            //            workSheet.Cells[1, colCount].Interior.Color =
+            //                System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
 
-                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
-                            "=Sum(" + workSheet.Cells[2, colCount].Address + ":" + workSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
+            //            workSheet.Cells[2, colCount] = "0";
 
-                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
-                            System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
+            //                "=Sum(" + workSheet.Cells[2, colCount].Address + ":" + workSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
 
-                        workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
+            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
+            //                System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
 
-                        colCount++;
-                    }
-                }
-                else
-                {
-                    foreach (string header in sSHeaders)
-                    {
-                        workSheet.Cells[2 + layerCount, colCount] = "0";
+            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
 
-                        colCount++;
-                    }
-                }
+            //            colCount++;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        foreach (string header in sSHeaders)
+            //        {
+            //            workSheet.Cells[2 + layerCount, colCount] = "0";
 
-                Expander expander = (Expander)container;
+            //            colCount++;
+            //        }
+            //    }
 
-                string template = expander.Name.Split('_')[1];
+            //    Expander expander = (Expander)container;
 
-                Grid contentGrid = (Grid)expander.Content;
+            //    string template = expander.Name.Split('_')[1];
 
-                for (int i = 0; i < contentGrid.ColumnDefinitions.Count - 1; i++)
-                {
-                    double numberValue = 0;
-                    string textValue = string.Empty;
+            //    Grid contentGrid = (Grid)expander.Content;
 
-                    int columnIndex = 0;
+            //    for (int i = 0; i < contentGrid.ColumnDefinitions.Count - 1; i++)
+            //    {
+            //        double numberValue = 0;
+            //        string textValue = string.Empty;
 
-                    for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
-                    {
-                        UIElement element = contentGrid.Children.Cast<UIElement>().
-                            FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
+            //        int columnIndex = 0;
 
-                        if (element != null)
-                        {
-                            string value = ((TextBlock)element).Text;
+            //        for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
+            //        {
+            //            UIElement element = contentGrid.Children.Cast<UIElement>().
+            //                FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
 
-                            if (j == 0)
-                            {
-                                columnIndex = sSHeaders.IndexOf(value);
-                            }
+            //            if (element != null)
+            //            {
+            //                string value = ((TextBlock)element).Text;
 
-                            else
-                            {
-                                try
-                                {
-                                    if (i == 0)
-                                    {
-                                        numberValue++;
-                                    }
-                                    else
-                                    {
-                                        numberValue += Convert.ToDouble(value);
-                                    }
-                                }
-                                catch
-                                {
-                                    textValue = value;
-                                }
-                            }
-                        }
+            //                if (j == 0)
+            //                {
+            //                    columnIndex = sSHeaders.IndexOf(value);
+            //                }
 
-                        else
-                        {
-                            TextBlock errorElement = contentGrid.Children.Cast<TextBlock>().
-                            FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == 0);
+            //                else
+            //                {
+            //                    try
+            //                    {
+            //                        if (i == 0)
+            //                        {
+            //                            numberValue++;
+            //                        }
+            //                        else
+            //                        {
+            //                            numberValue += Convert.ToDouble(value);
+            //                        }
+            //                    }
+            //                    catch
+            //                    {
+            //                        textValue = value;
+            //                    }
+            //                }
+            //            }
 
-                            string err = errorElement.Text;
+            //            else
+            //            {
+            //                TextBlock errorElement = contentGrid.Children.Cast<TextBlock>().
+            //                FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == 0);
 
-                            MessageBox.Show(String.Format("An error apeared in exporting {0} value of number {1}. Please repair model and export later.",
-                                err, j.ToString()));
+            //                string err = errorElement.Text;
 
-                            workBook.SaveAs(savePath);
-                            workBook.Close();
-                            excel.Quit();
+            //                MessageBox.Show(String.Format("An error apeared in exporting {0} value of number {1}. Please repair model and export later.",
+            //                    err, j.ToString()));
 
-                            return;
-                        }
-                    }
+            //                workBook.SaveAs(savePath);
+            //                workBook.Close();
+            //                excel.Quit();
 
-                    if (textValue == string.Empty)
-                    {
-                        workSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
-                        workSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
-                    }
-                    else
-                    {
-                        workSheet.Cells[2 + layerCount, 1 + columnIndex] = textValue;
-                    }
-                }
+            //                return;
+            //            }
+            //        }
 
-                layerCount++;
-            }
+            //        if (textValue == string.Empty)
+            //        {
+            //            workSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
+            //            workSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
+            //        }
+            //        else
+            //        {
+            //            workSheet.Cells[2 + layerCount, 1 + columnIndex] = textValue;
+            //        }
+            //    }
 
-            Excel.Range formatRange = workSheet.UsedRange;
-            formatRange.EntireColumn.AutoFit();
-            formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            //    layerCount++;
+            //}
+
+            //Excel.Range formatRange = workSheet.UsedRange;
+            //formatRange.EntireColumn.AutoFit();
+            //formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
 
             workBook.SaveAs(savePath);
             workBook.Close();

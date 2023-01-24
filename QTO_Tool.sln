@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTO_Tool", "QTO_Tool\QTO_Tool.csproj", "{0311C318-FF40-410E-B697-BEF1F903BCE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turner_Seattle_VDC_Server", "Turner_Seattle_VDC_Server\Turner_Seattle_VDC_Server.csproj", "{EACF0B33-3741-4F5B-88E9-F79EC38536E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turner_Seattle_VDC_Server", "Turner_Seattle_VDC_Server\Turner_Seattle_VDC_Server.csproj", "{EACF0B33-3741-4F5B-88E9-F79EC38536E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

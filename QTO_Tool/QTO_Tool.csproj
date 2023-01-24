@@ -197,6 +197,11 @@
     <Compile Include="QTOUI.xaml.cs">
       <DependentUpon>QTOUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RunQTO.cs" />
     <Compile Include="QTOToolPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -207,6 +212,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedResources\plugin-utility.ico" />
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Page Include="ProgressWindow.xaml">
@@ -247,6 +256,7 @@ Erase "$(TargetPath)"</PostBuildEvent>
     <StartArguments>
     </StartArguments>
     <StartAction>Program</StartAction>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <Import Project="..\packages\RhinoCommon.7.4.21078.1001\build\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.7.4.21078.1001\build\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
