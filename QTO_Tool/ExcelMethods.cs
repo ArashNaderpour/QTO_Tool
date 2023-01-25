@@ -95,126 +95,134 @@ namespace QTO_Tool
 
             Excel.Worksheet summarySheet = (Excel.Worksheet)sheets.get_Item(1);
             Excel.Worksheet projectSheet = (Excel.Worksheet)sheets.get_Item(2);
-            MessageBox.Show(projectSheet.Name);
-            //int layerCount = 0;
 
-            //foreach (UIElement container in ConcreteTable.Children)
-            //{
-            //    int colCount = 1;
+            int projectRowCount = ConcreteTable.Children.Count + 1;
 
-            //    if (layerCount == 0)
-            //    {
-            //        foreach (string header in sSHeaders)
-            //        {
-            //            workSheet.Cells[1, colCount] = header;
-            //            workSheet.Cells[1, colCount].Interior.Color =
-            //                System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
+            Excel.ListObject summaryTable = summarySheet.ListObjects[1];
+            Excel.ListObject projectTable = projectSheet.ListObjects[1];
 
-            //            workSheet.Cells[2, colCount] = "0";
+            projectTable.Resize(summarySheet.Range["A1", "V" + projectRowCount.ToString()]);
 
-            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
-            //                "=Sum(" + workSheet.Cells[2, colCount].Address + ":" + workSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
 
-            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
-            //                System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            int layerCount = 0;
 
-            //            workSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
+            foreach (UIElement container in ConcreteTable.Children)
+            {
+                int colCount = 1;
 
-            //            colCount++;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        foreach (string header in sSHeaders)
-            //        {
-            //            workSheet.Cells[2 + layerCount, colCount] = "0";
+                if (layerCount == 0)
+                {
+                    foreach (string header in sSHeaders)
+                    {
+                        projectSheet.Cells[1, colCount] = header;
+                        projectSheet.Cells[1, colCount].Interior.Color =
+                            System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
 
-            //            colCount++;
-            //        }
-            //    }
+                        projectSheet.Cells[2, colCount] = "0";
 
-            //    Expander expander = (Expander)container;
+                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
+                            "=Sum(" + projectSheet.Cells[2, colCount].Address + ":" + projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
 
-            //    string template = expander.Name.Split('_')[1];
+                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
+                            System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
 
-            //    Grid contentGrid = (Grid)expander.Content;
+                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
 
-            //    for (int i = 0; i < contentGrid.ColumnDefinitions.Count - 1; i++)
-            //    {
-            //        double numberValue = 0;
-            //        string textValue = string.Empty;
+                        colCount++;
+                    }
+                }
+                else
+                {
+                    foreach (string header in sSHeaders)
+                    {
+                        projectSheet.Cells[2 + layerCount, colCount] = "0";
 
-            //        int columnIndex = 0;
+                        colCount++;
+                    }
+                }
 
-            //        for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
-            //        {
-            //            UIElement element = contentGrid.Children.Cast<UIElement>().
-            //                FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
+                Expander expander = (Expander)container;
 
-            //            if (element != null)
-            //            {
-            //                string value = ((TextBlock)element).Text;
+                string template = expander.Name.Split('_')[1];
 
-            //                if (j == 0)
-            //                {
-            //                    columnIndex = sSHeaders.IndexOf(value);
-            //                }
+                Grid contentGrid = (Grid)expander.Content;
 
-            //                else
-            //                {
-            //                    try
-            //                    {
-            //                        if (i == 0)
-            //                        {
-            //                            numberValue++;
-            //                        }
-            //                        else
-            //                        {
-            //                            numberValue += Convert.ToDouble(value);
-            //                        }
-            //                    }
-            //                    catch
-            //                    {
-            //                        textValue = value;
-            //                    }
-            //                }
-            //            }
+                for (int i = 0; i < contentGrid.ColumnDefinitions.Count - 1; i++)
+                {
+                    double numberValue = 0;
+                    string textValue = string.Empty;
 
-            //            else
-            //            {
-            //                TextBlock errorElement = contentGrid.Children.Cast<TextBlock>().
-            //                FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == 0);
+                    int columnIndex = 0;
 
-            //                string err = errorElement.Text;
+                    for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
+                    {
+                        UIElement element = contentGrid.Children.Cast<UIElement>().
+                            FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
 
-            //                MessageBox.Show(String.Format("An error apeared in exporting {0} value of number {1}. Please repair model and export later.",
-            //                    err, j.ToString()));
+                        if (element != null)
+                        {
+                            string value = ((TextBlock)element).Text;
 
-            //                workBook.SaveAs(savePath);
-            //                workBook.Close();
-            //                excel.Quit();
+                            if (j == 0)
+                            {
+                                columnIndex = sSHeaders.IndexOf(value);
+                            }
 
-            //                return;
-            //            }
-            //        }
+                            else
+                            {
+                                try
+                                {
+                                    if (i == 0)
+                                    {
+                                        numberValue++;
+                                    }
+                                    else
+                                    {
+                                        numberValue += Convert.ToDouble(value);
+                                    }
+                                }
+                                catch
+                                {
+                                    textValue = value;
+                                }
+                            }
+                        }
 
-            //        if (textValue == string.Empty)
-            //        {
-            //            workSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
-            //            workSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
-            //        }
-            //        else
-            //        {
-            //            workSheet.Cells[2 + layerCount, 1 + columnIndex] = textValue;
-            //        }
-            //    }
+                        else
+                        {
+                            TextBlock errorElement = contentGrid.Children.Cast<TextBlock>().
+                            FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == 0);
 
-            //    layerCount++;
-            //}
+                            string err = errorElement.Text;
 
-            //Excel.Range formatRange = workSheet.UsedRange;
-            //formatRange.EntireColumn.AutoFit();
-            //formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+                            MessageBox.Show(String.Format("An error apeared in exporting {0} value of number {1}. Please repair model and export later.",
+                                err, j.ToString()));
+
+                            workBook.SaveAs(savePath);
+                            workBook.Close();
+                            excel.Quit();
+
+                            return;
+                        }
+                    }
+
+                    if (textValue == string.Empty)
+                    {
+                        projectSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
+                        projectSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
+                    }
+                    else
+                    {
+                        projectSheet.Cells[2 + layerCount, 1 + columnIndex] = textValue;
+                    }
+                }
+
+                layerCount++;
+            }
+
+            Excel.Range formatRange = projectSheet.UsedRange;
+            formatRange.EntireColumn.AutoFit();
+            formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
 
             workBook.SaveAs(savePath);
             workBook.Close();
