@@ -87,7 +87,7 @@ namespace QTO_Tool
 
             Dictionary<string, string> dataColumns = new Dictionary<string, string>();
 
-            projectSheetHeaders.InsertRange(0, _layerPropertyColumnHeaders);
+            projectSheetHeaders.InsertRange(2, _layerPropertyColumnHeaders);
 
             excel.DisplayAlerts = false;
             Excel.Workbook workBook = (Excel.Workbook)(excel.Workbooks._Open(tempExcelTemplate, System.Reflection.Missing.Value,
@@ -106,7 +106,7 @@ namespace QTO_Tool
             Excel.ListObject summaryTable = summarySheet.ListObjects[1];
             Excel.ListObject projectTable = projectSheet.ListObjects[1];
 
-            projectTable.Resize(projectSheet.Range["A1", ExcelMethods.alphabet[projectSheetHeaders.Count] + projectRowCount.ToString()]);
+            projectTable.Resize(projectSheet.Range["A1", ExcelMethods.alphabet[projectSheetHeaders.Count - 1] + projectRowCount.ToString()]);
 
             List<string> uniqueNameAbbs = new List<string>();
 
@@ -124,7 +124,7 @@ namespace QTO_Tool
                         projectSheet.Cells[1, colCount].Interior.Color =
                             System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.YellowGreen);
 
-                        projectSheet.Cells[2, colCount] = "0";
+                        projectSheet.Cells[2, colCount] = "-";
 
                         projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
                             "=Sum(" + projectSheet.Cells[2, colCount].Address + ":" + projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
@@ -141,7 +141,7 @@ namespace QTO_Tool
                 {
                     foreach (string header in projectSheetHeaders)
                     {
-                        projectSheet.Cells[2 + layerCount, colCount] = "0";
+                        projectSheet.Cells[2 + layerCount, colCount] = "-";
 
                         colCount++;
                     }
@@ -238,11 +238,20 @@ namespace QTO_Tool
 
             int summaryRowCount = uniqueNameAbbs.Count + 1;
 
-            summaryTable.Resize(summarySheet.Range["A1", ExcelMethods.alphabet[summarySheetHeaders.Count] + summaryRowCount.ToString()]);
+            summaryTable.Resize(summarySheet.Range["A1", ExcelMethods.alphabet[summarySheetHeaders.Count - 1] + summaryRowCount.ToString()]);
 
-            Excel.Range formatRange = projectSheet.UsedRange;
-            formatRange.EntireColumn.AutoFit();
-            formatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+            for (int i = 0; i < uniqueNameAbbs.Count; i++)
+            {
+                summarySheet.Cells[2 + i, 2] = uniqueNameAbbs[i];
+            }
+
+            Excel.Range projectFormatRange = projectSheet.UsedRange;
+            projectFormatRange.EntireColumn.AutoFit();
+            projectFormatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+
+            Excel.Range summaryFormatRange = summarySheet.UsedRange;
+            summaryFormatRange.EntireColumn.AutoFit();
+            summaryFormatRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
 
             workBook.SaveAs(savePath);
             workBook.Close();

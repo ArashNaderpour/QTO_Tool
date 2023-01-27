@@ -427,42 +427,42 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.grossVolume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.grossVolume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "NET VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.netVolume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.netVolume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "OPENING AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.openingArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.openingArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "TOP AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.topArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.topArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "END AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.endArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.endArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE-1";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.sideArea_1, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.sideArea_1, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE-2";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.sideArea_2, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.sideArea_2, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "LENGTH";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.length, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.length, 2).ToString());
                     })
                     });
                 });
@@ -498,22 +498,22 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.volume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "BOTTOM AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.bottomArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.bottomArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.sideArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.sideArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "LENGTH";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.length, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(beamTemplate.length, 2).ToString());
                     })
                     });
                 });
@@ -549,17 +549,17 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.volume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.sideArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.sideArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "HEIGHT";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.height, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.height, 2).ToString());
                     })
                     });
                 });
@@ -595,22 +595,22 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.volume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "TOP AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.topArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.topArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.sideArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.sideArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "LENGTH";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.length, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.length, 2).ToString());
                     })
                     });
                 });
@@ -646,22 +646,22 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.volume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "TOP AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.topArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.topArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "BOTTOM AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.bottomArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.bottomArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.sideArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.sideArea, 2).ToString());
                     })
                     });
                 });
@@ -697,27 +697,27 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.volume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "TOP AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.topArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.topArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "BOTTOM AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.bottomArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.bottomArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "LENGTH";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.length, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.length, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.sideArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.sideArea, 2).ToString());
                     })
                     });
                 });
@@ -753,37 +753,37 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.grossVolume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.grossVolume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "NET VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.netVolume, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.netVolume, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "TOP AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.topArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.topArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "BOTTOM AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.bottomArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.bottomArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "EDGE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.edgeArea, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.edgeArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "PERIMETER";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.perimeter, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.perimeter, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "OPENING PERIMETER";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.openingPerimeter, 2));
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.openingPerimeter, 2).ToString());
                     })
                     });
                 });
@@ -819,7 +819,7 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(styrofoamTemplate.volume, 2));
+                        p.NominalValue = new IfcNumericMeasure(styrofoamTemplate.volume);
                     })
                     });
                 });
