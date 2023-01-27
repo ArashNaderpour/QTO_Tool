@@ -12,6 +12,8 @@ namespace QTO_Tool
 {
     class ExcelMethods
     {
+        public static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
         public static void ExportExcel(StackPanel layerBasedConcreteTable, StackPanel projectBasedConcreteTable, List<string> layerPropertyColumnHeaders)
         {
             System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -73,7 +75,10 @@ namespace QTO_Tool
 
         static void PrepareExel(StackPanel ConcreteTable, string savePath, List<string> _layerPropertyColumnHeaders, Excel.Application excel)
         {
-            List<string> sSHeaders = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
+            List<string> summarySheetHeaders = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
+                "TOP AREA", "SIDE AREA", "END AREA", "SIDE-1", "SIDE-2", "EDGE AREA", "LENGTH", "HEIGHT", "PERIMETER", "OPENING PERIMETER" };
+
+            List<string> projectSheetHeaders = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "OPENING AREA",
                 "TOP AREA", "SIDE AREA", "END AREA", "SIDE-1", "SIDE-2", "EDGE AREA", "LENGTH", "HEIGHT", "PERIMETER", "OPENING PERIMETER" };
 
             string tempExcelTemplate = @"c:\Temp\QTO_Template.xlsx";
@@ -82,7 +87,7 @@ namespace QTO_Tool
 
             Dictionary<string, string> dataColumns = new Dictionary<string, string>();
 
-            sSHeaders.InsertRange(0, _layerPropertyColumnHeaders);
+            projectSheetHeaders.InsertRange(0, _layerPropertyColumnHeaders);
 
             excel.DisplayAlerts = false;
             Excel.Workbook workBook = (Excel.Workbook)(excel.Workbooks._Open(tempExcelTemplate, System.Reflection.Missing.Value,
@@ -101,8 +106,9 @@ namespace QTO_Tool
             Excel.ListObject summaryTable = summarySheet.ListObjects[1];
             Excel.ListObject projectTable = projectSheet.ListObjects[1];
 
-            projectTable.Resize(summarySheet.Range["A1", "V" + projectRowCount.ToString()]);
+            projectTable.Resize(projectSheet.Range["A1", ExcelMethods.alphabet[projectSheetHeaders.Count] + projectRowCount.ToString()]);
 
+            List<string> uniqueNameAbbs = new List<string>();
 
             int layerCount = 0;
 
@@ -112,7 +118,7 @@ namespace QTO_Tool
 
                 if (layerCount == 0)
                 {
-                    foreach (string header in sSHeaders)
+                    foreach (string header in projectSheetHeaders)
                     {
                         projectSheet.Cells[1, colCount] = header;
                         projectSheet.Cells[1, colCount].Interior.Color =
@@ -133,7 +139,7 @@ namespace QTO_Tool
                 }
                 else
                 {
-                    foreach (string header in sSHeaders)
+                    foreach (string header in projectSheetHeaders)
                     {
                         projectSheet.Cells[2 + layerCount, colCount] = "0";
 
@@ -152,7 +158,8 @@ namespace QTO_Tool
                     double numberValue = 0;
                     string textValue = string.Empty;
 
-                    int columnIndex = 0;
+                    int projectColumnIndex = 0;
+                    int summaryColumnIndex = 0;
 
                     for (int j = 0; j < contentGrid.RowDefinitions.Count; j++)
                     {
@@ -165,7 +172,8 @@ namespace QTO_Tool
 
                             if (j == 0)
                             {
-                                columnIndex = sSHeaders.IndexOf(value);
+                                projectColumnIndex = projectSheetHeaders.IndexOf(value);
+                                summaryColumnIndex = summarySheetHeaders.IndexOf(value);
                             }
 
                             else
@@ -184,6 +192,14 @@ namespace QTO_Tool
                                 catch
                                 {
                                     textValue = value;
+
+                                    if (summaryColumnIndex == 1)
+                                    {
+                                        if (!uniqueNameAbbs.Contains(textValue))
+                                        {
+                                            uniqueNameAbbs.Add(textValue);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -208,17 +224,21 @@ namespace QTO_Tool
 
                     if (textValue == string.Empty)
                     {
-                        projectSheet.Cells[2 + layerCount, 1 + columnIndex] = numberValue;
-                        projectSheet.Cells[2 + layerCount, 1 + columnIndex].NumberFormat = "#,#.00";
+                        projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex] = numberValue;
+                        projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex].NumberFormat = "#,#.00";
                     }
                     else
                     {
-                        projectSheet.Cells[2 + layerCount, 1 + columnIndex] = textValue;
+                        projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex] = textValue;
                     }
                 }
 
                 layerCount++;
             }
+
+            int summaryRowCount = uniqueNameAbbs.Count + 1;
+
+            summaryTable.Resize(summarySheet.Range["A1", ExcelMethods.alphabet[summarySheetHeaders.Count] + summaryRowCount.ToString()]);
 
             Excel.Range formatRange = projectSheet.UsedRange;
             formatRange.EntireColumn.AutoFit();
