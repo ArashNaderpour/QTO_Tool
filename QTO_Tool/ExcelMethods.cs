@@ -238,6 +238,22 @@ namespace QTO_Tool
 
             int summaryRowCount = uniqueNameAbbs.Count + 1;
 
+            summarySheet.Range["A2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[COUNT])";
+            summarySheet.Range["C2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[GROSS VOLUME])";
+            summarySheet.Range["D2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[NET VOLUME])";
+            summarySheet.Range["E2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[BOTTOM AREA])";
+            summarySheet.Range["F2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[OPENING AREA])";
+            summarySheet.Range["G2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[TOP AREA])";
+            summarySheet.Range["H2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE AREA])";
+            summarySheet.Range["I2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[END AREA])";
+            summarySheet.Range["J2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE-1])";
+            summarySheet.Range["K2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE-2])";
+            summarySheet.Range["L2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[EDGE AREA])";
+            summarySheet.Range["M2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[LENGTH])";
+            summarySheet.Range["N2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[HEIGHT])";
+            summarySheet.Range["O2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[PERIMETER])";
+            summarySheet.Range["P2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[OPENING PERIMETER])";
+
             summaryTable.Resize(summarySheet.Range["A1", ExcelMethods.alphabet[summarySheetHeaders.Count - 1] + summaryRowCount.ToString()]);
 
             for (int i = 0; i < uniqueNameAbbs.Count; i++)
