@@ -239,22 +239,86 @@ namespace QTO_Tool
             }
 
             int summaryRowCount = uniqueNameAbbs.Count + 1;
+            int SumCellRowNumber = summaryRowCount + 2;
 
             summarySheet.Range["A2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[COUNT])";
+            summarySheet.Range["A" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'A') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'A') + 1].Address + ")";
+            summarySheet.Range["A" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["A" + SumCellRowNumber.ToString()].Font.Bold = true;
+            summarySheet.Cells[SumCellRowNumber, Array.IndexOf(ExcelMethods.alphabet, 'B') + 1] = "-";
+            summarySheet.Range["B" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["B" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["C2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[GROSS VOLUME])";
+            summarySheet.Range["C" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'C') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'C') + 1].Address + ")";
+            summarySheet.Range["C" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["C" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["D2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[NET VOLUME])";
+            summarySheet.Range["D" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'D') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'D') + 1].Address + ")";
+            summarySheet.Range["D" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["D" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["E2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[BOTTOM AREA])";
+            summarySheet.Range["E" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'E') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'E') + 1].Address + ")";
+            summarySheet.Range["E" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["E" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["F2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[OPENING AREA])";
+            summarySheet.Range["F" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'F') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'F') + 1].Address + ")";
+            summarySheet.Range["F" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["F" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["G2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[TOP AREA])";
+            summarySheet.Range["G" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'G') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'G') + 1].Address + ")";
+            summarySheet.Range["G" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["G" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["H2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE AREA])";
+            summarySheet.Range["H" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'H') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'H') + 1].Address + ")";
+            summarySheet.Range["H" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["H" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["I2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[END AREA])";
+            summarySheet.Range["I" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'I') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'I') + 1].Address + ")";
+            summarySheet.Range["I" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["I" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["J2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE-1])";
+            summarySheet.Range["J" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'J') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'J') + 1].Address + ")";
+            summarySheet.Range["J" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["J" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["K2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[SIDE-2])";
+            summarySheet.Range["K" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'K') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'K') + 1].Address + ")";
+            summarySheet.Range["K" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["K" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["L2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[EDGE AREA])";
+            summarySheet.Range["L" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'L') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'L') + 1].Address + ")";
+            summarySheet.Range["L" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["L" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["M2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[LENGTH])";
+            summarySheet.Range["M" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'M') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'M') + 1].Address + ")";
+            summarySheet.Range["M" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["M" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["N2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[HEIGHT])";
+            summarySheet.Range["N" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'N') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'N') + 1].Address + ")";
+            summarySheet.Range["N" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["N" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["O2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[PERIMETER])";
+            summarySheet.Range["O" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'O') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'O') + 1].Address + ")";
+            summarySheet.Range["O" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["O" + SumCellRowNumber.ToString()].Font.Bold = true;
             summarySheet.Range["P2"].Formula = "=SUMIF(PROJECT!PROJECT_TABLE[NAME ABB.],$B2,PROJECT!PROJECT_TABLE[OPENING PERIMETER])";
+            summarySheet.Range["P" + SumCellRowNumber.ToString()].Formula =
+                "=Sum(" + summarySheet.Cells[2, Array.IndexOf(ExcelMethods.alphabet, 'P') + 1].Address + ":" + summarySheet.Cells[(SumCellRowNumber - 1), Array.IndexOf(ExcelMethods.alphabet, 'P') + 1].Address + ")";
+            summarySheet.Range["P" + SumCellRowNumber.ToString()].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
+            summarySheet.Range["P" + SumCellRowNumber.ToString()].Font.Bold = true;
 
             summaryTable.Resize(summarySheet.Range["A1", ExcelMethods.alphabet[summarySheetHeaders.Count - 1] + summaryRowCount.ToString()]);
 
