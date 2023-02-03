@@ -226,8 +226,15 @@ namespace QTO_Tool
 
                     if (textValue == string.Empty)
                     {
-                        projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex] = numberValue;
-                        projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex].NumberFormat = "#,#.00";
+                        if (numberValue > 0)
+                        {
+                            projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex] = numberValue;
+                            projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex].NumberFormat = "#,#.00";
+                        }
+                        else
+                        {
+                            projectSheet.Cells[2 + layerCount, 1 + projectColumnIndex] = "-";
+                        }
                     }
                     else
                     {
