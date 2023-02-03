@@ -126,13 +126,15 @@ namespace QTO_Tool
 
                         projectSheet.Cells[2, colCount] = "-";
 
-                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Formula =
-                            "=Sum(" + projectSheet.Cells[2, colCount].Address + ":" + projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Address + ")";
+                        projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Formula =
+                            "=Sum(" + projectSheet.Cells[2, colCount].Address + ":" + projectSheet.Cells[2 + ConcreteTable.Children.Count, colCount].Address + ")";
 
-                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].Interior.Color =
+                        projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Interior.Color =
                             System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.CornflowerBlue);
 
-                        projectSheet.Cells[4 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
+                        projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].Font.Bold = true;
+
+                        projectSheet.Cells[3 + ConcreteTable.Children.Count, colCount].NumberFormat = "#,#.00";
 
                         colCount++;
                     }
