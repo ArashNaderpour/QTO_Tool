@@ -267,7 +267,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((WallTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((WallTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 IfcWall ifcWall = IFCMethods.CreateWall(model, (WallTemplate)template, shape, insertPlane);
@@ -285,7 +285,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((BeamTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((BeamTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 IfcBeam ifcBeam = IFCMethods.CreateBeam(model, (BeamTemplate)template, shape, insertPlane);
@@ -303,7 +303,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((ColumnTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((ColumnTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 IfcColumn column = IFCMethods.CreateColumn(model, (ColumnTemplate)template, shape, insertPlane);
@@ -321,7 +321,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((FootingTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((FootingTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 IfcFooting footing = IFCMethods.CreateFooting(model, (FootingTemplate)template, shape, insertPlane);
@@ -339,7 +339,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((ContinuousFootingTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((ContinuousFootingTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 IfcFooting continuousFooting = IFCMethods.CreateContinuousFooting(model, (ContinuousFootingTemplate)template, shape, insertPlane);
@@ -357,7 +357,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((CurbTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((CurbTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 var curb = IFCMethods.CreateCurb(model, (CurbTemplate)template, shape, insertPlane);
@@ -375,7 +375,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((SlabTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((SlabTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 var slab = IFCMethods.CreateSlab(model, (SlabTemplate)template, shape, insertPlane);
@@ -393,7 +393,7 @@ namespace QTO_Tool
 
                 faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
 
-                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Brep", ((StyrofoamTemplate)template).layerName);
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((StyrofoamTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 var styrofoam = IFCMethods.CreateStyrofoam(model, (StyrofoamTemplate)template, shape, insertPlane);
