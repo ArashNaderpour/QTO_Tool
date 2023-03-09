@@ -52,7 +52,7 @@ namespace QTO_Tool
 
                 try
                 {
-                    ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath, layerPropertyColumnHeaders,  excel);
+                    ExcelMethods.PrepareExel(layerBasedConcreteTable, outputPath, layerPropertyColumnHeaders, excel);
                 }
 
                 catch (Exception ex)
@@ -193,7 +193,14 @@ namespace QTO_Tool
                                 }
                                 catch
                                 {
-                                    textValue = value;
+                                    if (value == "N/A")
+                                    {
+                                        textValue = "-";
+                                    }
+                                    else
+                                    {
+                                        textValue = value;
+                                    }
 
                                     if (summaryColumnIndex == 1)
                                     {

@@ -47,15 +47,8 @@ namespace QTO_Tool
             var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            if (this.rectangular)
-            {
-                this.sideArea = this.SideArea(geometry);
-            }
-            else
-            {
-                this.sideArea = 0;
-            }
-            
+            this.sideArea = this.SideArea(geometry);
+
             this.height = this.Height(topAndBottomFaceCenters);
         }
 
@@ -79,7 +72,10 @@ namespace QTO_Tool
                 faceCentersZ.Add(center.Z);
                 faceCenters.Add(center);
 
-                area += area_properties.Area;
+                if (this.rectangular)
+                {
+                    area += area_properties.Area;
+                }
             }
 
             int topFaceIndex = faceCentersZ.IndexOf(faceCentersZ.Max());
@@ -88,9 +84,12 @@ namespace QTO_Tool
             topAndBottomFaceCenters.Add("Top", faceCenters[topFaceIndex]);
             topAndBottomFaceCenters.Add("Bottom", faceCenters[bottomFaceIndex]);
 
-            area -= (faceAreas[topFaceIndex] + faceAreas[bottomFaceIndex]);
+            if (this.rectangular)
+            {
+                area -= (faceAreas[topFaceIndex] + faceAreas[bottomFaceIndex]);
 
-            area = Math.Round(area, 2);
+                area = Math.Round(area, 2);
+            }
 
             return area;
         }
