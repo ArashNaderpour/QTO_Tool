@@ -322,7 +322,7 @@ namespace QTO_Tool
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                             }
 
-                            if (selectedTemplate == "Non-Rectangular Column")
+                            if (selectedTemplate.Contains("Non-Rectangular"))
                             {
                                 rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
 
