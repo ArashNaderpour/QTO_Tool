@@ -60,6 +60,9 @@ namespace QTO_Tool
             var mass_properties = VolumeMassProperties.Compute(geometry);
             this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
+            mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance));
+            this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+
             Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(geometry, angleThreshold);
 
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
@@ -109,15 +112,6 @@ namespace QTO_Tool
                     brep.Faces[i].FrameAt(u, v, out frame);
 
                     Brep tempBoundingBox = brep.GetBoundingBox(frame).ToBrep();
-
-                    var mass_properties = VolumeMassProperties.Compute(tempBoundingBox);
-                    double tempBoundingBoxVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
-
-                    if (tempBoundingBoxVolume < this.grossVolume)
-                    {
-                        this.grossVolume = tempBoundingBoxVolume;
-                        //this.boundingBox = tempBoundingBox;
-                    }
 
                     double dotProduct = Math.Round(Vector3d.Multiply(normal, Vector3d.ZAxis), 2);
 
