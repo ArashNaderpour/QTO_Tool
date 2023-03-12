@@ -262,18 +262,28 @@ namespace QTO_Tool
             double length = 0;
 
             List<double> edgeLengths;
+            List<Curve> edges;
 
             foreach (Brep topFace in this.topFaces)
             {
                 edgeLengths = new List<double>();
+                edges = new List<Curve>();
 
                 for (int i = 0; i < topFace.Edges.Count; i++)
                 {
                     edgeLengths.Add(topFace.Edges[i].GetLength());
+                    edges.Add(topFace.Edges[i]);
                 }
 
-                length += edgeLengths.Max();
+                for (int i = 0; i < 2; i++)
+                {
+                    edges.RemoveAt(edgeLengths.IndexOf(edgeLengths.Min()));
+                    edgeLengths.Remove(edgeLengths.Min());
+                }
 
+                edges = Curve.JoinCurves(edges).ToList<Curve>();
+
+                length += (edges[0].GetLength() + edges[1].GetLength()) / 2;
             }
 
             return length;
