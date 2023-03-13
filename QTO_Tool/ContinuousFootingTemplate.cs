@@ -54,7 +54,7 @@ namespace QTO_Tool
         private List<double> endFaceAreas = new List<double>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
-            "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
+            "Square Foot", "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
         public ContinuousFootingTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {

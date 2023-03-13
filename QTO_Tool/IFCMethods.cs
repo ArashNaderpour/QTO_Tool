@@ -751,6 +751,11 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
+                        p.Name = "TOP AREA";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.topArea, 2).ToString());
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
                         p.Name = "BOTTOM AREA";
                         p.NominalValue = new IfcNumericMeasure(Math.Round(continuousFootingTemplate.bottomArea, 2).ToString());
                     }),

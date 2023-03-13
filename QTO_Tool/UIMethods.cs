@@ -965,12 +965,20 @@ namespace QTO_Tool
             Grid.SetColumn(continuousFootingNetVolume, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingNetVolume, _count);
 
+            TextBlock continuousFootingTopArea = new TextBlock();
+            continuousFootingTopArea.Text = continuousFooting.bottomArea.ToString();
+            continuousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingTopArea);
+            continuousFootingTopArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingTopArea, 4 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingTopArea, _count);
+
             TextBlock continuousFootingBottomArea = new TextBlock();
             continuousFootingBottomArea.Text = continuousFooting.bottomArea.ToString();
             continuousFootingBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingBottomArea);
             continuousFootingBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingBottomArea, 4 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingBottomArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingBottomArea, _count);
 
             TextBlock continuousFootingEndArea = new TextBlock();
@@ -978,7 +986,7 @@ namespace QTO_Tool
             continuousFootingEndArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingEndArea);
             continuousFootingEndArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingEndArea, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingEndArea, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingEndArea, _count);
 
             TextBlock continuousFootingSideArea_1 = new TextBlock();
@@ -986,7 +994,7 @@ namespace QTO_Tool
             continuousFootingSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingSideArea_1);
             continuousFootingSideArea_1.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSideArea_1, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingSideArea_1, 7 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSideArea_1, _count);
 
             TextBlock continuousFootingSideArea_2 = new TextBlock();
@@ -994,7 +1002,7 @@ namespace QTO_Tool
             continuousFootingSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingSideArea_2);
             continuousFootingSideArea_2.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSideArea_2, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingSideArea_2, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSideArea_2, _count);
 
             TextBlock continuousFootingLength = new TextBlock();
@@ -1002,7 +1010,7 @@ namespace QTO_Tool
             continuousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingLength);
             continuousFootingLength.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingLength, 8 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingLength, 9 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingLength, _count);
 
             TextBlock continuousFootingOpeningArea = new TextBlock();
@@ -1010,7 +1018,7 @@ namespace QTO_Tool
             continuousFootingOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingOpeningArea);
             continuousFootingOpeningArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingOpeningArea, 9 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingOpeningArea, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingOpeningArea, _count);
 
             ToggleButton continuousFootingSelectObject = new ToggleButton();
@@ -1022,7 +1030,7 @@ namespace QTO_Tool
             continuousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(continuousFootingSelectObject);
             continuousFootingSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSelectObject, 10 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingSelectObject, 11 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSelectObject, _count);
         }
 

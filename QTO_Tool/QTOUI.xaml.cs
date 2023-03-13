@@ -366,7 +366,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(continuousFooting);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
