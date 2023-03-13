@@ -583,37 +583,69 @@ namespace QTO_Tool
             Grid.SetColumn(beamName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamName, _count);
 
-            TextBlock beamVolume = new TextBlock();
-            beamVolume.Text = beam.volume.ToString();
-            beamVolume.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(beamVolume);
-            beamVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(beamVolume, 2 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(beamVolume, _count);
+            TextBlock beamGrossVolume = new TextBlock();
+            beamGrossVolume.Text = beam.grossVolume.ToString();
+            beamGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamGrossVolume);
+            beamGrossVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(beamGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamGrossVolume, _count);
+
+            TextBlock beamNetVolume = new TextBlock();
+            beamNetVolume.Text = beam.netVolume.ToString();
+            beamNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamNetVolume);
+            beamNetVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(beamNetVolume, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamNetVolume, _count);
 
             TextBlock beamBottomArea = new TextBlock();
             beamBottomArea.Text = beam.bottomArea.ToString();
             beamBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamBottomArea);
             beamBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(beamBottomArea, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(beamBottomArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamBottomArea, _count);
 
-            TextBlock beamSideArea = new TextBlock();
-            beamSideArea.Text = beam.sideArea.ToString();
-            beamSideArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(beamSideArea);
-            beamSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(beamSideArea, 4 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(beamSideArea, _count);
+            TextBlock beamEndArea = new TextBlock();
+            beamEndArea.Text = beam.endArea.ToString();
+            beamEndArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamEndArea);
+            beamEndArea.FontSize = _valueFontSize;
+            Grid.SetColumn(beamEndArea, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamEndArea, _count);
+
+            TextBlock beamSideArea_1 = new TextBlock();
+            beamSideArea_1.Text = beam.sideArea_1.ToString();
+            beamSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamSideArea_1);
+            beamSideArea_1.FontSize = _valueFontSize;
+            Grid.SetColumn(beamSideArea_1, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamSideArea_1, _count);
+
+            TextBlock beamSideArea_2 = new TextBlock();
+            beamSideArea_2.Text = beam.sideArea_2.ToString();
+            beamSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamSideArea_2);
+            beamSideArea_2.FontSize = _valueFontSize;
+            Grid.SetColumn(beamSideArea_2, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamSideArea_2, _count);
 
             TextBlock beamLength = new TextBlock();
             beamLength.Text = beam.length.ToString();
             beamLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(beamLength);
             beamLength.FontSize = _valueFontSize;
-            Grid.SetColumn(beamLength, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(beamLength, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamLength, _count);
+
+            TextBlock beamOpeningArea = new TextBlock();
+            beamOpeningArea.Text = beam.openingArea.ToString();
+            beamOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(beamOpeningArea);
+            beamOpeningArea.FontSize = _valueFontSize;
+            Grid.SetColumn(beamOpeningArea, 9 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(beamOpeningArea, _count);
 
             ToggleButton beamSelectObject = new ToggleButton();
             beamSelectObject.Uid = beam.id;
@@ -624,7 +656,7 @@ namespace QTO_Tool
             beamSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(beamSelectObject);
             beamSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(beamSelectObject, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(beamSelectObject, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(beamSelectObject, _count);
         }
 
@@ -917,21 +949,21 @@ namespace QTO_Tool
             Grid.SetColumn(continuousFootingName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingName, _count);
 
-            TextBlock continuousFootingVolume = new TextBlock();
-            continuousFootingVolume.Text = continuousFooting.volume.ToString();
-            continuousFootingVolume.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continuousFootingVolume);
-            continuousFootingVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingVolume, 2 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(continuousFootingVolume, _count);
+            TextBlock continuousFootingGrossVolume = new TextBlock();
+            continuousFootingGrossVolume.Text = continuousFooting.grossVolume.ToString();
+            continuousFootingGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingGrossVolume);
+            continuousFootingGrossVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingGrossVolume, _count);
 
-            TextBlock continuousFootingTopArea = new TextBlock();
-            continuousFootingTopArea.Text = continuousFooting.topArea.ToString();
-            continuousFootingTopArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continuousFootingTopArea);
-            continuousFootingTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingTopArea, 3 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(continuousFootingTopArea, _count);
+            TextBlock continuousFootingNetVolume = new TextBlock();
+            continuousFootingNetVolume.Text = continuousFooting.netVolume.ToString();
+            continuousFootingNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingNetVolume);
+            continuousFootingNetVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingNetVolume, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingNetVolume, _count);
 
             TextBlock continuousFootingBottomArea = new TextBlock();
             continuousFootingBottomArea.Text = continuousFooting.bottomArea.ToString();
@@ -941,21 +973,45 @@ namespace QTO_Tool
             Grid.SetColumn(continuousFootingBottomArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingBottomArea, _count);
 
-            TextBlock continuousFootingSideArea = new TextBlock();
-            continuousFootingSideArea.Text = continuousFooting.sideArea.ToString();
-            continuousFootingSideArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(continuousFootingSideArea);
-            continuousFootingSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSideArea, 5 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(continuousFootingSideArea, _count);
+            TextBlock continuousFootingEndArea = new TextBlock();
+            continuousFootingEndArea.Text = continuousFooting.endArea.ToString();
+            continuousFootingEndArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingEndArea);
+            continuousFootingEndArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingEndArea, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingEndArea, _count);
+
+            TextBlock continuousFootingSideArea_1 = new TextBlock();
+            continuousFootingSideArea_1.Text = continuousFooting.sideArea_1.ToString();
+            continuousFootingSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingSideArea_1);
+            continuousFootingSideArea_1.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingSideArea_1, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingSideArea_1, _count);
+
+            TextBlock continuousFootingSideArea_2 = new TextBlock();
+            continuousFootingSideArea_2.Text = continuousFooting.sideArea_2.ToString();
+            continuousFootingSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingSideArea_2);
+            continuousFootingSideArea_2.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingSideArea_2, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingSideArea_2, _count);
 
             TextBlock continuousFootingLength = new TextBlock();
             continuousFootingLength.Text = continuousFooting.length.ToString();
             continuousFootingLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(continuousFootingLength);
             continuousFootingLength.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingLength, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingLength, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingLength, _count);
+
+            TextBlock continuousFootingOpeningArea = new TextBlock();
+            continuousFootingOpeningArea.Text = continuousFooting.openingArea.ToString();
+            continuousFootingOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(continuousFootingOpeningArea);
+            continuousFootingOpeningArea.FontSize = _valueFontSize;
+            Grid.SetColumn(continuousFootingOpeningArea, 9 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(continuousFootingOpeningArea, _count);
 
             ToggleButton continuousFootingSelectObject = new ToggleButton();
             continuousFootingSelectObject.Uid = continuousFooting.id;
@@ -966,7 +1022,7 @@ namespace QTO_Tool
             continuousFootingSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(continuousFootingSelectObject);
             continuousFootingSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(continuousFootingSelectObject, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(continuousFootingSelectObject, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(continuousFootingSelectObject, _count);
         }
 

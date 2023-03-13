@@ -296,7 +296,8 @@ namespace QTO_Tool
                                     }
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "END AREA",
+                            "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
                             if (selectedTemplate == "Column")
@@ -365,7 +366,8 @@ namespace QTO_Tool
                                     layerTemplates.Add(continuousFooting);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "END AREA",
+                            "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
                             if (selectedTemplate == "Curb")

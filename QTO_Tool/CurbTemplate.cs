@@ -30,7 +30,7 @@ namespace QTO_Tool
 
         public Brep geometry { get; set; }
 
-        public string type = "WallTemplate";
+        public string type = "CurbTemplate";
 
         private List<double> upfacingFaceElevations = new List<double>();
         private List<double> upfacingFaceAreas = new List<double>();
