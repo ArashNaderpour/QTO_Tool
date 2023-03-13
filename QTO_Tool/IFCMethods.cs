@@ -595,7 +595,17 @@ namespace QTO_Tool
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
                         p.Name = "GROSS VOLUME";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.volume, 2).ToString());
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.grossVolume, 2).ToString());
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NET VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.netVolume, 2).ToString());
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "OPENING AREA";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.openingArea, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
@@ -604,8 +614,18 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
-                        p.Name = "SIDE AREA";
-                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.sideArea, 2).ToString());
+                        p.Name = "END AREA";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.endArea, 2).ToString());
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE-1";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.sideArea_1, 2).ToString());
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE-2";
+                        p.NominalValue = new IfcNumericMeasure(Math.Round(curbTemplate.sideArea_2, 2).ToString());
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {

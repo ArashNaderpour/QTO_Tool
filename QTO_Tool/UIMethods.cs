@@ -795,37 +795,69 @@ namespace QTO_Tool
             Grid.SetColumn(curbName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbName, _count);
 
-            TextBlock curbVolume = new TextBlock();
-            curbVolume.Text = curb.volume.ToString();
-            curbVolume.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(curbVolume);
-            curbVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(curbVolume, 2 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(curbVolume, _count);
+            TextBlock curbGrossVolume = new TextBlock();
+            curbGrossVolume.Text = curb.grossVolume.ToString();
+            curbGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbGrossVolume);
+            curbGrossVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(curbGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbGrossVolume, _count);
+
+            TextBlock curbNetVolume = new TextBlock();
+            curbNetVolume.Text = curb.netVolume.ToString();
+            curbNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbNetVolume);
+            curbNetVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(curbNetVolume, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbNetVolume, _count);
 
             TextBlock curbTopArea = new TextBlock();
             curbTopArea.Text = curb.topArea.ToString();
             curbTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbTopArea);
             curbTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(curbTopArea, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(curbTopArea, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbTopArea, _count);
 
-            TextBlock curbSideArea = new TextBlock();
-            curbSideArea.Text = curb.sideArea.ToString();
-            curbSideArea.HorizontalAlignment = HorizontalAlignment.Center;
-            _layerEstimateGrid.Children.Add(curbSideArea);
-            curbSideArea.FontSize = _valueFontSize;
-            Grid.SetColumn(curbSideArea, 4 + _layerPropertyColumnHeaders.Count);
-            Grid.SetRow(curbSideArea, _count);
+            TextBlock curbEndArea = new TextBlock();
+            curbEndArea.Text = curb.endArea.ToString();
+            curbEndArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbEndArea);
+            curbEndArea.FontSize = _valueFontSize;
+            Grid.SetColumn(curbEndArea, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbEndArea, _count);
+
+            TextBlock curbSideArea_1 = new TextBlock();
+            curbSideArea_1.Text = curb.sideArea_1.ToString();
+            curbSideArea_1.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbSideArea_1);
+            curbSideArea_1.FontSize = _valueFontSize;
+            Grid.SetColumn(curbSideArea_1, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbSideArea_1, _count);
+
+            TextBlock curbSideArea_2 = new TextBlock();
+            curbSideArea_2.Text = curb.sideArea_2.ToString();
+            curbSideArea_2.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbSideArea_2);
+            curbSideArea_2.FontSize = _valueFontSize;
+            Grid.SetColumn(curbSideArea_2, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbSideArea_2, _count);
 
             TextBlock curbLength = new TextBlock();
             curbLength.Text = curb.length.ToString();
             curbLength.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbLength);
             curbLength.FontSize = _valueFontSize;
-            Grid.SetColumn(curbLength, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(curbLength, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbLength, _count);
+
+            TextBlock curbOpeningArea = new TextBlock();
+            curbOpeningArea.Text = curb.openingArea.ToString();
+            curbOpeningArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(curbOpeningArea);
+            curbOpeningArea.FontSize = _valueFontSize;
+            Grid.SetColumn(curbOpeningArea, 9 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(curbOpeningArea, _count);
 
             ToggleButton curbSelectObject = new ToggleButton();
             curbSelectObject.Uid = curb.id;
@@ -836,7 +868,7 @@ namespace QTO_Tool
             curbSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(curbSelectObject);
             curbSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(curbSelectObject, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(curbSelectObject, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbSelectObject, _count);
         }
 

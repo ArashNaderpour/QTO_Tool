@@ -388,7 +388,8 @@ namespace QTO_Tool
                                     layerTemplates.Add(curb);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                            "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
                             if (selectedTemplate == "Footing")
