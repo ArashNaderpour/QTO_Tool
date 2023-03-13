@@ -51,7 +51,6 @@ namespace QTO_Tool
         private List<Brep> sideAndEndFaces = new List<Brep>();
         private List<double> sideAndEndFaceAreas = new List<double>();
         private List<Curve> sideEdges = new List<Curve>();
-        private List<double> brepBoundaryCurveLengths = new List<double>();
         private List<double> endFaceAreas = new List<double>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
@@ -230,6 +229,7 @@ namespace QTO_Tool
             List<Brep> sideFaces = new List<Brep>();
 
             List<Brep> tempSideAndEndFaces = new List<Brep>(this.sideAndEndFaces);
+            List<double> tempSideAndEndFacesAreas = new List<double>(this.sideAndEndFaceAreas);
 
             for (int i = 0; i < this.sideEdges.Count; i++)
             {
@@ -246,6 +246,7 @@ namespace QTO_Tool
                         {
                             sideFaces.Add(this.sideAndEndFaces[j]);
                             tempSideAndEndFaces.Remove(this.sideAndEndFaces[j]);
+                            tempSideAndEndFacesAreas.Remove(this.sideAndEndFaceAreas[j]);
                         }
                     }
                 }
@@ -256,7 +257,9 @@ namespace QTO_Tool
             this.sideArea_1 = Math.Round(sideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(sideFaces[1].GetArea(), 2);
 
-            this.openingArea = Math.Round(sideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2); 
+            this.openingArea = Math.Round(sideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+
+            this.endFaceAreas.AddRange(tempSideAndEndFacesAreas);
         }
 
         double Length()
