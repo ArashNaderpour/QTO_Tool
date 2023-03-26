@@ -226,40 +226,119 @@ namespace QTO_Tool
 
         void SidesAndOpeingArea()
         {
-            List<Brep> sideFaces = new List<Brep>();
+            Plane projectPlane = new Plane(new Point3d(0,0,this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
+            List<Curve> boundaries = new List<Curve>();
 
-            List<Brep> tempSideAndEndFaces = new List<Brep>(this.sideAndEndFaces);
-            List<double> tempSideAndEndFacesAreas = new List<double>(this.sideAndEndFaceAreas);
+            Polyline mergedBoundaryPolyline = new Polyline();
 
-            for (int i = 0; i < this.sideEdges.Count; i++)
+            List<Point3d> corners;
+            List<Point3d> tempPoints;
+
+            List<Point3d> centers = new List<Point3d>();
+
+            List<Curve> centerLines = new List<Curve>();
+
+            for (int i = 0; i < this.topFaces.Count; i++)
             {
-                for (int j = 0; j < this.sideAndEndFaces.Count; j++)
+                Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                boundaries.Add(boundary);
+            }
+
+            Curve mergedBoundary = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance)[0].
+                Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+
+            mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
+
+            corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+            for (int i = 0; i < corners.Count; i++)
+            {
+                tempPoints = new List<Point3d>(corners);
+
+                tempPoints.Remove(tempPoints[i]);
+
+                Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+
+                centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+            }
+
+            centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+            for (int i = 0; i < centers.Count; i++)
+            {
+                tempPoints = new List<Point3d>(centers);
+                tempPoints.Remove(tempPoints[i]);
+
+                for (int j = 0; j < tempPoints.Count; j++)
                 {
-                    Curve[] overlapCurves;
-                    Point3d[] intersectionPoints;
+                    Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
 
-                    Rhino.Geometry.Intersect.Intersection.CurveBrep(this.sideEdges[i], this.sideAndEndFaces[j], RunQTO.doc.ModelAbsoluteTolerance, out overlapCurves, out intersectionPoints);
+                    var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
 
-                    if (overlapCurves.Length > 0 && intersectionPoints.Length == 0)
+                    if (events.Count < 2)
                     {
-                        if (tempSideAndEndFaces.Contains(this.sideAndEndFaces[j]))
+                        if (centerLines.Count > 0)
                         {
-                            sideFaces.Add(this.sideAndEndFaces[j]);
-                            tempSideAndEndFaces.Remove(this.sideAndEndFaces[j]);
-                            tempSideAndEndFacesAreas.Remove(this.sideAndEndFaceAreas[j]);
+                            bool dup = false;
+
+                            for (int k = 0; k < centerLines.Count; k++)
+                            {
+                                if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
+                                {
+                                    dup = true;
+                                    break;
+                                }
+                            }
+
+                            if (!dup)
+                            {
+                                centerLines.Add(centerLine);
+                            }
+                        }
+                        else
+                        {
+                            centerLines.Add(centerLine);
                         }
                     }
                 }
             }
 
-            sideFaces = Brep.JoinBreps(sideFaces, RunQTO.doc.ModelAbsoluteTolerance).ToList<Brep>();
+            Curve joinedCenterLine = Curve.JoinCurves(centerLines)[0];
 
-            this.sideArea_1 = Math.Round(sideFaces[0].GetArea(), 2);
-            this.sideArea_2 = Math.Round(sideFaces[1].GetArea(), 2);
+            //List<Brep> sideFaces = new List<Brep>();
 
-            this.openingArea = Math.Round(sideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+            //List<Brep> tempSideAndEndFaces = new List<Brep>(this.sideAndEndFaces);
+            //List<double> tempSideAndEndFacesAreas = new List<double>(this.sideAndEndFaceAreas);
 
-            this.endFaceAreas.AddRange(tempSideAndEndFacesAreas);
+            //for (int i = 0; i < this.sideEdges.Count; i++)
+            //{
+            //    for (int j = 0; j < this.sideAndEndFaces.Count; j++)
+            //    {
+            //        Curve[] overlapCurves;
+            //        Point3d[] intersectionPoints;
+
+            //        Rhino.Geometry.Intersect.Intersection.CurveBrep(this.sideEdges[i], this.sideAndEndFaces[j], RunQTO.doc.ModelAbsoluteTolerance, out overlapCurves, out intersectionPoints);
+
+            //        if (overlapCurves.Length > 0 && intersectionPoints.Length == 0)
+            //        {
+            //            if (tempSideAndEndFaces.Contains(this.sideAndEndFaces[j]))
+            //            {
+            //                sideFaces.Add(this.sideAndEndFaces[j]);
+            //                tempSideAndEndFaces.Remove(this.sideAndEndFaces[j]);
+            //                tempSideAndEndFacesAreas.Remove(this.sideAndEndFaceAreas[j]);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //sideFaces = Brep.JoinBreps(sideFaces, RunQTO.doc.ModelAbsoluteTolerance).ToList<Brep>();
+
+            //this.sideArea_1 = Math.Round(sideFaces[0].GetArea(), 2);
+            //this.sideArea_2 = Math.Round(sideFaces[1].GetArea(), 2);
+
+            //this.openingArea = Math.Round(sideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+
+            //this.endFaceAreas.AddRange(tempSideAndEndFacesAreas);
         }
 
         double Length()
