@@ -63,10 +63,10 @@ namespace QTO_Tool
         {
             this.layerName = _layerName;
 
-            geometry = (Brep)rhobj.Geometry;
+            this.geometry = (Brep)rhobj.Geometry;
 
             this.id = rhobj.Id.ToString();
-            MessageBox.Show("Hi Hi");
+            
             for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
                 parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
@@ -74,19 +74,18 @@ namespace QTO_Tool
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(geometry);
+            var mass_properties = VolumeMassProperties.Compute(this.geometry);
             this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance));
-            this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(this.geometry, angleThreshold);
             
-            Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(geometry, angleThreshold);
-            MessageBox.Show("Bye Bye");
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
-            SidesAndEndAndOpeingArea();
+            this.SidesAndEndAndOpeingArea();
+
+            this.grossVolume = this.GrossVolume();
         }
 
         Dictionary<string, double> TopAndBottomArea(Brep brep, double angleThreshold)
@@ -253,21 +252,33 @@ namespace QTO_Tool
             MeshingParameters mp = new MeshingParameters();
 
             Brep[] joinedSideFaces;
-            MessageBox.Show(this.topFaces.Count.ToString());
+
             if (this.topFaces.Count > 1)
             {
                 for (int i = 0; i < this.topFaces.Count; i++)
                 {
-                    MessageBox.Show("Hi");
                     Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
                     boundaries.Add(boundary);
                 }
 
                 Curve[] tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
-                MessageBox.Show(tempMergedBoundaries.Length.ToString());
+
                 if (tempMergedBoundaries.Length > 1)
                 {
-                    MessageBox.Show("Yay!");
+                    if (Curve.DoDirectionsMatch(tempMergedBoundaries[0], tempMergedBoundaries[1]))
+                    {
+                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    }
+
+                    else
+                    {
+                        double t = 0;
+                        tempMergedBoundaries[0].Reverse();
+                        tempMergedBoundaries[0].ChangeClosedCurveSeam(t);
+                        tempMergedBoundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
+                        tempMergedBoundaries[1].ChangeClosedCurveSeam(t);
+                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    }
                 }
 
                 else
@@ -450,6 +461,32 @@ namespace QTO_Tool
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
             this.openingArea = Math.Round(joinedSideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+        }
+
+        double GrossVolume()
+        {
+            double result = 0;
+
+            List<Brep> brepFaces = new List<Brep>();
+
+            Brep grossVolumeGeometry;
+
+            for (int i = 0; i < this.sideFaces.Count; i++)
+            {
+                brepFaces.Add(this.sideFaces[i].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance));
+            }
+
+            brepFaces.AddRange(this.topFaces);
+            brepFaces.AddRange(this.bottomFaces);
+            brepFaces.AddRange(this.endFaces);
+
+            grossVolumeGeometry = Brep.JoinBreps(brepFaces, RunQTO.doc.ModelAbsoluteTolerance)[0];
+            
+            var mass_properties = VolumeMassProperties.Compute(grossVolumeGeometry);
+
+            result = Math.Round(mass_properties.Volume * 0.037037, 2);
+
+            return result;
         }
     }
 }
