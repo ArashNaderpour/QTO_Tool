@@ -66,7 +66,7 @@ namespace QTO_Tool
             this.geometry = (Brep)rhobj.Geometry;
 
             this.id = rhobj.Id.ToString();
-            
+
             for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
                 parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
@@ -78,7 +78,7 @@ namespace QTO_Tool
             this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(this.geometry, angleThreshold);
-            
+
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
@@ -253,56 +253,72 @@ namespace QTO_Tool
 
             Brep[] joinedSideFaces;
 
-            if (this.topFaces.Count > 1)
+            for (int i = 0; i < this.topFaces.Count; i++)
             {
-                for (int i = 0; i < this.topFaces.Count; i++)
+                Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                boundaries.Add(boundary);
+            }
+
+            Curve[] tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+
+            if (tempMergedBoundaries.Length > 1)
+            {
+                if (Curve.DoDirectionsMatch(tempMergedBoundaries[0], tempMergedBoundaries[1]))
                 {
-                    Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
-                    boundaries.Add(boundary);
-                }
-
-                Curve[] tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
-
-                if (tempMergedBoundaries.Length > 1)
-                {
-                    if (Curve.DoDirectionsMatch(tempMergedBoundaries[0], tempMergedBoundaries[1]))
-                    {
-                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
-                    }
-
-                    else
-                    {
-                        double t = 0;
-                        tempMergedBoundaries[0].Reverse();
-                        tempMergedBoundaries[0].ChangeClosedCurveSeam(t);
-                        tempMergedBoundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
-                        tempMergedBoundaries[1].ChangeClosedCurveSeam(t);
-                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
-                    }
+                    centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
                 }
 
                 else
                 {
-                    mergedBoundary = tempMergedBoundaries[0].
-                        Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                    double t = 0;
+                    tempMergedBoundaries[0].Reverse();
+                    tempMergedBoundaries[0].ChangeClosedCurveSeam(t);
+                    tempMergedBoundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
+                    tempMergedBoundaries[1].ChangeClosedCurveSeam(t);
+                    centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                }
+            }
 
-                    mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
+            else
+            {
+                mergedBoundary = tempMergedBoundaries[0].
+                    Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
 
-                    corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
+                double t0 = mergedBoundary.Domain.Min;
+                double t1 = mergedBoundary.Domain.Max;
+                double t;
 
-                    for (int i = 0; i < corners.Count; i++)
-                    {
-                        tempPoints = new List<Point3d>(corners);
+                corners = new List<Point3d>();
 
-                        tempPoints.Remove(tempPoints[i]);
+                do
+                {
+                    if (!mergedBoundary.GetNextDiscontinuity(Continuity.G1_locus_continuous, t0, t1, out t)) { break; }
 
-                        Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+                    corners.Add(mergedBoundary.PointAt(t));
 
-                        centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
-                    }
+                    t0 = t;
+                } while (true);
 
-                    centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+                for (int i = 0; i < corners.Count; i++)
+                {
+                    tempPoints = new List<Point3d>(corners);
 
+                    tempPoints.Remove(tempPoints[i]);
+
+                    Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+
+                    centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+                }
+
+                centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                if (centers.Count == 2)
+                {
+                    centerLines.Add(NurbsCurve.CreateFromLine(new Line(centers[0], centers[1])));
+                }
+
+                else
+                {
                     for (int i = 0; i < centers.Count; i++)
                     {
                         tempPoints = new List<Point3d>(centers);
@@ -341,60 +357,6 @@ namespace QTO_Tool
                             }
                         }
                     }
-                }
-            }
-
-            else
-            {
-                boundaries = Curve.JoinCurves(this.topFaces[0].Edges).ToList<Curve>();
-
-                if (boundaries.Count > 1)
-                {
-                    for (int i = 0; i < boundaries.Count; i++)
-                    {
-                        boundaries[i] = Curve.ProjectToPlane(boundaries[i], projectPlane).
-                            Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
-                    }
-
-                    if (Curve.DoDirectionsMatch(boundaries[0], boundaries[1]))
-                    {
-                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(boundaries[0], boundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
-                    }
-
-                    else
-                    {
-                        double t = 0;
-                        boundaries[0].Reverse();
-                        boundaries[0].ChangeClosedCurveSeam(t);
-                        boundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
-                        boundaries[1].ChangeClosedCurveSeam(t);
-                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(boundaries[0], boundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
-                    }
-                }
-
-                else
-                {
-                    mergedBoundary = Curve.ProjectToPlane(boundaries[0], projectPlane).
-                        Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
-
-                    mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
-
-                    corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
-
-                    for (int i = 0; i < corners.Count; i++)
-                    {
-                        tempPoints = new List<Point3d>(corners);
-
-                        tempPoints.Remove(tempPoints[i]);
-
-                        Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
-
-                        centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
-                    }
-
-                    centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
-
-                    centerLines.Add(NurbsCurve.CreateFromLine(new Line(centers[0], centers[1])));
                 }
             }
 
@@ -481,7 +443,7 @@ namespace QTO_Tool
             brepFaces.AddRange(this.endFaces);
 
             grossVolumeGeometry = Brep.JoinBreps(brepFaces, RunQTO.doc.ModelAbsoluteTolerance)[0];
-            
+
             var mass_properties = VolumeMassProperties.Compute(grossVolumeGeometry);
 
             result = Math.Round(mass_properties.Volume * 0.037037, 2);
