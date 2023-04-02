@@ -66,7 +66,7 @@ namespace QTO_Tool
             geometry = (Brep)rhobj.Geometry;
 
             this.id = rhobj.Id.ToString();
-
+            MessageBox.Show("Hi Hi");
             for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
                 parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
@@ -79,14 +79,14 @@ namespace QTO_Tool
 
             mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance));
             this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
-
+            
             Dictionary<string, double> topAndBottomArea = this.TopAndBottomArea(geometry, angleThreshold);
-
+            MessageBox.Show("Bye Bye");
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
-            SidesAndEndAndOpeingArea(); 
+            SidesAndEndAndOpeingArea();
         }
 
         Dictionary<string, double> TopAndBottomArea(Brep brep, double angleThreshold)
@@ -218,16 +218,18 @@ namespace QTO_Tool
 
             result.Add("Top Area", topArea);
             result.Add("Bottom Area", bottomArea);
-            
+
             return result;
         }
 
         void SidesAndEndAndOpeingArea()
         {
-            Plane projectPlane = new Plane(new Point3d(0,0,this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
+            Plane projectPlane = new Plane(new Point3d(0, 0, this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
             List<Curve> boundaries = new List<Curve>();
 
+            Curve mergedBoundary;
             Polyline mergedBoundaryPolyline = new Polyline();
+            Curve joinedProjectedCenterLine;
 
             List<Point3d> corners;
             List<Point3d> tempPoints;
@@ -251,73 +253,141 @@ namespace QTO_Tool
             MeshingParameters mp = new MeshingParameters();
 
             Brep[] joinedSideFaces;
-
-            for (int i = 0; i < this.topFaces.Count; i++)
+            MessageBox.Show(this.topFaces.Count.ToString());
+            if (this.topFaces.Count > 1)
             {
-                Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
-                boundaries.Add(boundary);
-            }
-
-            Curve mergedBoundary = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance)[0].
-                Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
-
-            mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
-
-            corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
-
-            for (int i = 0; i < corners.Count; i++)
-            {
-                tempPoints = new List<Point3d>(corners);
-
-                tempPoints.Remove(tempPoints[i]);
-
-                Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
-
-                centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
-            }
-
-            centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
-
-            for (int i = 0; i < centers.Count; i++)
-            {
-                tempPoints = new List<Point3d>(centers);
-                tempPoints.Remove(tempPoints[i]);
-
-                for (int j = 0; j < tempPoints.Count; j++)
+                for (int i = 0; i < this.topFaces.Count; i++)
                 {
-                    Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
+                    MessageBox.Show("Hi");
+                    Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                    boundaries.Add(boundary);
+                }
 
-                    var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+                Curve[] tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+                MessageBox.Show(tempMergedBoundaries.Length.ToString());
+                if (tempMergedBoundaries.Length > 1)
+                {
+                    MessageBox.Show("Yay!");
+                }
 
-                    if (events.Count < 2)
+                else
+                {
+                    mergedBoundary = tempMergedBoundaries[0].
+                        Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+
+                    mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
+
+                    corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                    for (int i = 0; i < corners.Count; i++)
                     {
-                        if (centerLines.Count > 0)
-                        {
-                            bool dup = false;
+                        tempPoints = new List<Point3d>(corners);
 
-                            for (int k = 0; k < centerLines.Count; k++)
+                        tempPoints.Remove(tempPoints[i]);
+
+                        Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+
+                        centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+                    }
+
+                    centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                    for (int i = 0; i < centers.Count; i++)
+                    {
+                        tempPoints = new List<Point3d>(centers);
+                        tempPoints.Remove(tempPoints[i]);
+
+                        for (int j = 0; j < tempPoints.Count; j++)
+                        {
+                            Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
+
+                            var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+
+                            if (events.Count < 2)
                             {
-                                if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
+                                if (centerLines.Count > 0)
                                 {
-                                    dup = true;
-                                    break;
+                                    bool dup = false;
+
+                                    for (int k = 0; k < centerLines.Count; k++)
+                                    {
+                                        if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
+                                        {
+                                            dup = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!dup)
+                                    {
+                                        centerLines.Add(centerLine);
+                                    }
+                                }
+                                else
+                                {
+                                    centerLines.Add(centerLine);
                                 }
                             }
-
-                            if (!dup)
-                            {
-                                centerLines.Add(centerLine);
-                            }
-                        }
-                        else
-                        {
-                            centerLines.Add(centerLine);
                         }
                     }
                 }
             }
 
-            Curve joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
+            else
+            {
+                boundaries = Curve.JoinCurves(this.topFaces[0].Edges).ToList<Curve>();
+
+                if (boundaries.Count > 1)
+                {
+                    for (int i = 0; i < boundaries.Count; i++)
+                    {
+                        boundaries[i] = Curve.ProjectToPlane(boundaries[i], projectPlane).
+                            Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                    }
+
+                    if (Curve.DoDirectionsMatch(boundaries[0], boundaries[1]))
+                    {
+                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(boundaries[0], boundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    }
+
+                    else
+                    {
+                        double t = 0;
+                        boundaries[0].Reverse();
+                        boundaries[0].ChangeClosedCurveSeam(t);
+                        boundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
+                        boundaries[1].ChangeClosedCurveSeam(t);
+                        centerLines.Add(Curve.CreateTweenCurvesWithMatching(boundaries[0], boundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    }
+                }
+
+                else
+                {
+                    mergedBoundary = Curve.ProjectToPlane(boundaries[0], projectPlane).
+                        Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+
+                    mergedBoundary.TryGetPolyline(out mergedBoundaryPolyline);
+
+                    corners = Point3d.SortAndCullPointList(mergedBoundaryPolyline.ToArray(), RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                    for (int i = 0; i < corners.Count; i++)
+                    {
+                        tempPoints = new List<Point3d>(corners);
+
+                        tempPoints.Remove(tempPoints[i]);
+
+                        Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+
+                        centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+                    }
+
+                    centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                    centerLines.Add(NurbsCurve.CreateFromLine(new Line(centers[0], centers[1])));
+                }
+            }
+
+            joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
 
             Brep centerLineExtrusion = Extrusion.Create(joinedProjectedCenterLine, extrusionHeight, false).ToBrep();
 
@@ -373,9 +443,9 @@ namespace QTO_Tool
 
             //Total End Area
             this.endArea = Math.Round(this.endFaceAreas.Sum(), 2);
-            
+
             joinedSideFaces = Brep.JoinBreps(this.sideFaces, RunQTO.doc.ModelAbsoluteTolerance);
-      
+
             this.sideArea_1 = Math.Round(joinedSideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
