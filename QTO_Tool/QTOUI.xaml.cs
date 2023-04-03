@@ -206,6 +206,20 @@ namespace QTO_Tool
             // Start the thread
             newWindowThread.Start();
 
+            ComboBox selectedConcreteTemplate;
+
+            RhinoObject[] rhobjs;
+
+            RhinoObject rhobj = null;
+
+            string selectedTemplate;
+
+            string layerName;
+
+            string objFloor;
+
+            List<object> layerTemplates;
+
             try
             {
                 this.allBeams.Clear();
@@ -229,20 +243,6 @@ namespace QTO_Tool
                 this.CombinedConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
-                
-                ComboBox selectedConcreteTemplate;
-
-                RhinoObject[] rhobjs;
-
-                string selectedTemplate;
-
-                string layerName;
-
-                string objFloor;
-
-                string objType;
-
-                List<object> layerTemplates;
 
                 for (int i = 0; i < RunQTO.doc.Layers.Count; i++)
                 {
@@ -269,7 +269,8 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    BeamTemplate beam = new BeamTemplate(rhobjs[j], layerName, angleThreshold);
+                                    rhobj = rhobjs[j];
+                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allBeams.allTemplates.ContainsKey(objFloor))
                                     {
@@ -306,7 +307,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName, true);
+                                    rhobj = rhobjs[j];
+
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, true);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -329,7 +332,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    ColumnTemplate column = new ColumnTemplate(rhobjs[j], layerName, false);
+                                    rhobj = rhobjs[j];
+
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, false);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -352,7 +357,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobjs[j], layerName, angleThreshold);
+                                    rhobj = rhobjs[j];
+
+                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -376,7 +383,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    CurbTemplate curb = new CurbTemplate(rhobjs[j], layerName, angleThreshold);
+                                    rhobj = rhobjs[j];
+
+                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allCurbs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -400,7 +409,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    FootingTemplate footing = new FootingTemplate(rhobjs[j], layerName, angleThreshold);
+                                    rhobj = rhobjs[j];
+
+                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -423,7 +434,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    WallTemplate wall = new WallTemplate(rhobjs[j], layerName, angleThreshold);
+                                    rhobj = rhobjs[j];
+
+                                    WallTemplate wall = new WallTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allWalls.allTemplates.ContainsKey(objFloor))
                                     {
@@ -447,9 +460,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    objType = rhobjs[j].GetType().ToString().Split('.').Last<string>();
+                                    rhobj = rhobjs[j];
 
-                                    SlabTemplate slab = new SlabTemplate(rhobjs[j], layerName, angleThreshold);
+                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, angleThreshold);
 
                                     if (allSlabs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -485,7 +498,9 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobjs[j], layerName);
+                                    rhobj = rhobjs[j];
+
+                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName);
 
                                     if (allStyrofoams.allTemplates.ContainsKey(objFloor))
                                     {
@@ -582,6 +597,8 @@ namespace QTO_Tool
                 MessageBox.Show("Something went wrong!");
 
                 MessageBox.Show(ex.ToString());
+
+                Methods.HighlightBadGeometry(rhobj);
             }
         }
 

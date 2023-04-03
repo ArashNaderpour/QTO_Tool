@@ -293,6 +293,20 @@ namespace QTO_Tool
             return _badGeometryCount;
         }
 
+        public static void HighlightBadGeometry(RhinoObject rhobj)
+        {
+            if (rhobj != null)
+            {
+                ObjectAttributes newObjectAttributes = rhobj.Attributes;
+                newObjectAttributes.ObjectColor = System.Drawing.Color.Red;
+                newObjectAttributes.ColorSource = ObjectColorSource.ColorFromObject;
+
+                RunQTO.doc.Objects.ModifyAttributes(rhobj, newObjectAttributes, false);
+
+                RunQTO.doc.Views.Redraw();
+            }
+        }
+
         public static UIElement GetByUid(DependencyObject rootElement, string uid)
         {
             foreach (UIElement element in LogicalTreeHelper.GetChildren(rootElement).OfType<UIElement>())
