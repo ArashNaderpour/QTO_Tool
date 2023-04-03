@@ -253,13 +253,38 @@ namespace QTO_Tool
 
             Brep[] joinedSideFaces;
 
-            for (int i = 0; i < this.topFaces.Count; i++)
-            {
-                Curve boundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
-                boundaries.Add(boundary);
-            }
+            Curve[] tempMergedBoundaries;
 
-            Curve[] tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+            if (this.topFaces.Count > 1)
+            {
+                for (int i = 0; i < this.topFaces.Count; i++)
+                {
+                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                    boundaries.Add(curveBoundary);
+                }
+
+                tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+            }
+            else
+            {
+                Curve[] curveBoundaries = Curve.JoinCurves(this.topFaces[0].Edges);
+
+                if (curveBoundaries.Length > 1)
+                {
+                    for (int i = 0; i < curveBoundaries.Length; i++)
+                    {
+                        Curve curveBoundary = Curve.ProjectToPlane(curveBoundaries[i], projectPlane);
+                        boundaries.Add(curveBoundary);
+                    }
+                }
+                else
+                {
+                    Curve curveBoundary = Curve.ProjectToPlane(curveBoundaries[0], projectPlane);
+                    boundaries.Add(curveBoundary);
+                }
+
+                tempMergedBoundaries = boundaries.ToArray();
+            }
 
             if (tempMergedBoundaries.Length > 1)
             {
