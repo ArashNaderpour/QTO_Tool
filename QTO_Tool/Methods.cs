@@ -95,7 +95,7 @@ namespace QTO_Tool
 
                 if (tempBreps != null)
                 {
-                    if (tempBreps.Length == 1)
+                    if (tempBreps.Length == 1 && tempBreps[0].IsSolid)
                     {
                         newBreps.Add(tempBreps[0], "Good");
                         newObjectAttributes.Add(obj.Attributes);
@@ -192,7 +192,7 @@ namespace QTO_Tool
 
             Brep tempBrep = Brep.CreateFromMesh(((Mesh)inputObj.Geometry), true);
 
-            if (tempBrep.IsSurface)
+            if (tempBrep.Faces.Count == 1)
             {
                 _surfaceList.Add(tempBrep);
             }
@@ -224,7 +224,7 @@ namespace QTO_Tool
             {
                 Brep tempBrep = (Brep)inputObj.Geometry;
 
-                if (tempBrep.IsSurface)
+                if (tempBrep.Faces.Count == 1)
                 {
                     _surfaceList.Add(tempBrep);
                 }
@@ -249,7 +249,7 @@ namespace QTO_Tool
             {
                 Brep tempBrep = Brep.TryConvertBrep(inputObj.Geometry);
 
-                if (tempBrep.IsSurface)
+                if (tempBrep.Faces.Count == 1)
                 {
                     _surfaceList.Add(tempBrep);
                 }
