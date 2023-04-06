@@ -255,6 +255,8 @@ namespace QTO_Tool
 
             Curve[] tempMergedBoundaries;
 
+            List<double> sideFaceBoundingBoxAreas = new List<double>();
+
             if (this.topFaces.Count > 1)
             {
                 for (int i = 0; i < this.topFaces.Count; i++)
@@ -429,6 +431,7 @@ namespace QTO_Tool
                     {
                         this.sideFaces.Add(this.sideAndEndFaces[i]);
                         this.sideFaceAreas.Add(this.sideAndEndFaceAreas[i]);
+                        sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
                     }
 
                     else
@@ -447,7 +450,7 @@ namespace QTO_Tool
             this.sideArea_1 = Math.Round(joinedSideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
-            this.openingArea = Math.Round(joinedSideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+            this.openingArea = Math.Round((sideFaceBoundingBoxAreas.Sum() - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
         }
 
         double GrossVolume()
