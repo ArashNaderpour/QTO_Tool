@@ -12,6 +12,7 @@ namespace QTO_Tool
     class ColumnTemplate
     {
         public Brep geometry { get; set; }
+        public System.Drawing.Color color { get; set; }
         public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
@@ -32,6 +33,8 @@ namespace QTO_Tool
             this.layerName = _layerName;
 
             this.rectangular = _rectangular;
+
+            this.color = rhobj.Attributes.ObjectColor;
 
             geometry = (Brep)rhobj.Geometry;
 

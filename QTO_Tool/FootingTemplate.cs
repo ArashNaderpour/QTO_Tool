@@ -12,6 +12,7 @@ namespace QTO_Tool
     class FootingTemplate
     {
         public Brep geometry { get; set; }
+        public System.Drawing.Color color { get; set; }
         public string layerName { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
@@ -31,6 +32,8 @@ namespace QTO_Tool
         public FootingTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
             this.geometry = (Brep)rhobj.Geometry;
+
+            this.color = rhobj.Attributes.ObjectColor;
 
             id = rhobj.Id.ToString();
 

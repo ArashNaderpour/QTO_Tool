@@ -30,6 +30,8 @@ namespace QTO_Tool
 
         public Brep geometry { get; set; }
 
+        public System.Drawing.Color color { get; set; }
+
         public string type = "BeamTemplate";
 
         private List<double> upfacingFaceElevations = new List<double>();
@@ -62,6 +64,8 @@ namespace QTO_Tool
         public BeamTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
             this.layerName = _layerName;
+
+            this.color = rhobj.Attributes.ObjectColor;
 
             this.geometry = (Brep)rhobj.Geometry;
 

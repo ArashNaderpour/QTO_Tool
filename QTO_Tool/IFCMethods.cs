@@ -13,6 +13,7 @@ using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.MaterialResource;
 using Xbim.Ifc4.MeasureResource;
+using Xbim.Ifc4.PresentationAppearanceResource;
 using Xbim.Ifc4.PresentationOrganizationResource;
 using Xbim.Ifc4.ProductExtension;
 using Xbim.Ifc4.ProfileResource;
@@ -265,7 +266,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((WallTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((WallTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -283,7 +284,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((BeamTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((BeamTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -301,7 +302,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((ColumnTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((ColumnTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -319,7 +320,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((FootingTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((FootingTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -337,7 +338,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((ContinuousFootingTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((ContinuousFootingTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -355,7 +356,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((CurbTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((CurbTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -373,7 +374,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((SlabTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((SlabTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -391,7 +392,7 @@ namespace QTO_Tool
 
                 ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
 
-                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices);
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((StyrofoamTemplate)template).color);
 
                 shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((StyrofoamTemplate)template).layerName);
                 shape.Items.Add(faceBasedSurfaceModel);
@@ -961,7 +962,8 @@ namespace QTO_Tool
         //    return ifcCartesianPoints;
         //}
 
-        public static IfcFaceBasedSurfaceModel CreateIfcFaceBasedSurfaceModel(IfcStore model, MeshFaceList faces, List<IfcCartesianPoint> ifcVertices)
+        public static IfcFaceBasedSurfaceModel CreateIfcFaceBasedSurfaceModel(IfcStore model, MeshFaceList faces, List<IfcCartesianPoint> ifcVertices,
+            System.Drawing.Color _representaionColour)
         {
             IfcConnectedFaceSet faceSet = model.Instances.New<IfcConnectedFaceSet>();
 
@@ -988,6 +990,24 @@ namespace QTO_Tool
 
             var faceBasedSurfaceModel = model.Instances.New<IfcFaceBasedSurfaceModel>();
             faceBasedSurfaceModel.FbsmFaces.Add(faceSet);
+
+            var representationColor = model.Instances.New<IfcColourRgb>();
+            representationColor.Red = _representaionColour.R / 255;
+            representationColor.Green = _representaionColour.G / 255;
+            representationColor.Blue = _representaionColour.B / 255;
+
+            var newStyleRendering = model.Instances.New<IfcSurfaceStyleRendering>();
+            newStyleRendering.SurfaceColour = representationColor;
+
+            var newSurfaceStyle = model.Instances.New<IfcSurfaceStyle>();
+            newSurfaceStyle.Styles.Add(newStyleRendering);
+
+            var newStyleAssignment = model.Instances.New<IfcPresentationStyleAssignment>();
+            newStyleAssignment.Styles.Add(newSurfaceStyle);
+
+            var newStyledItem = model.Instances.New<IfcStyledItem>();
+            newStyledItem.Item = faceBasedSurfaceModel;
+            newStyledItem.Styles.Add(newStyleAssignment);
 
             return faceBasedSurfaceModel;
         }

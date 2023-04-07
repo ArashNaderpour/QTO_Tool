@@ -12,6 +12,7 @@ namespace QTO_Tool
     class WallTemplate
     {
         public string nameAbb { get; set; }
+
         public string id { get; set; }
 
         public string layerName { get; set; }
@@ -29,6 +30,8 @@ namespace QTO_Tool
         public double openingArea { get; set; }
 
         public Brep geometry { get; set; }
+
+        public System.Drawing.Color color { get; set; }
 
         public string type = "WallTemplate";
 
@@ -62,6 +65,8 @@ namespace QTO_Tool
         public WallTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
         {
             this.layerName = _layerName;
+
+            this.color = rhobj.Attributes.ObjectColor;
 
             this.geometry = (Brep)rhobj.Geometry;
 
