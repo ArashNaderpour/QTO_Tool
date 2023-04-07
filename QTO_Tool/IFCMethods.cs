@@ -992,9 +992,9 @@ namespace QTO_Tool
             faceBasedSurfaceModel.FbsmFaces.Add(faceSet);
 
             var representationColor = model.Instances.New<IfcColourRgb>();
-            representationColor.Red = _representaionColour.R / 255;
-            representationColor.Green = _representaionColour.G / 255;
-            representationColor.Blue = _representaionColour.B / 255;
+            representationColor.Red = (_representaionColour.R / 255.0);
+            representationColor.Green = (_representaionColour.G / 255.0);
+            representationColor.Blue = (_representaionColour.B / 255.0);
 
             var newStyleRendering = model.Instances.New<IfcSurfaceStyleRendering>();
             newStyleRendering.SurfaceColour = representationColor;
