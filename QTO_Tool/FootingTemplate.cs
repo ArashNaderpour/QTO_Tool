@@ -29,11 +29,11 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "N/A" };
 
-        public FootingTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
+        public FootingTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold)
         {
             this.geometry = (Brep)rhobj.Geometry;
 
-            this.color = rhobj.Attributes.ObjectColor;
+            this.color = layerColor;
 
             id = rhobj.Id.ToString();
 

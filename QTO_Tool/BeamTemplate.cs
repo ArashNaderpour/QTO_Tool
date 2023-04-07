@@ -61,11 +61,11 @@ namespace QTO_Tool
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
             "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
-        public BeamTemplate(RhinoObject rhobj, string _layerName, double angleThreshold)
+        public BeamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold)
         {
             this.layerName = _layerName;
 
-            this.color = rhobj.Attributes.ObjectColor;
+            this.color = layerColor;
 
             this.geometry = (Brep)rhobj.Geometry;
 

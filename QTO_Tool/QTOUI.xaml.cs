@@ -216,6 +216,8 @@ namespace QTO_Tool
 
             string layerName;
 
+            System.Drawing.Color layerColor;
+
             string objFloor;
 
             List<object> layerTemplates;
@@ -255,6 +257,8 @@ namespace QTO_Tool
 
                         layerName = RunQTO.doc.Layers[i].Name;
 
+                        layerColor = RunQTO.doc.Layers[i].Color;
+
                         if (layerName.Split('_').Length >= 3)
                         {
                             objFloor = layerName.Split('_')[2];
@@ -270,7 +274,7 @@ namespace QTO_Tool
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
                                     rhobj = rhobjs[j];
-                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, angleThreshold);
+                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allBeams.allTemplates.ContainsKey(objFloor))
                                     {
@@ -309,7 +313,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, true);
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -334,7 +338,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, false);
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -359,7 +363,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, angleThreshold);
+                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -385,7 +389,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, angleThreshold);
+                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allCurbs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -411,7 +415,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, angleThreshold);
+                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -436,7 +440,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    WallTemplate wall = new WallTemplate(rhobj, layerName, angleThreshold);
+                                    WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allWalls.allTemplates.ContainsKey(objFloor))
                                     {
@@ -462,7 +466,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, angleThreshold);
+                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold);
 
                                     if (allSlabs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -500,7 +504,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName);
+                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor);
 
                                     if (allStyrofoams.allTemplates.ContainsKey(objFloor))
                                     {

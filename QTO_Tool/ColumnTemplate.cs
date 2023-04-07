@@ -28,13 +28,13 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Foot", "Square Foot", "N/A" };
 
-        public ColumnTemplate(RhinoObject rhobj, string _layerName, bool _rectangular)
+        public ColumnTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, bool _rectangular)
         {
             this.layerName = _layerName;
 
             this.rectangular = _rectangular;
 
-            this.color = rhobj.Attributes.ObjectColor;
+            this.color = layerColor;
 
             geometry = (Brep)rhobj.Geometry;
 

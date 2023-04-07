@@ -23,9 +23,9 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "N/A" };
 
-        public StyrofoamTemplate(RhinoObject rhobj, string _layerName)
+        public StyrofoamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor)
         {
-            this.color = rhobj.Attributes.ObjectColor;
+            this.color = layerColor;
 
             this.geometry = (Brep)rhobj.Geometry;
 
