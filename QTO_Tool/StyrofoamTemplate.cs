@@ -29,8 +29,6 @@ namespace QTO_Tool
 
             this.geometry = (Brep)rhobj.Geometry;
 
-            this.color = rhobj.Attributes.ObjectColor;
-
             this.layerName = _layerName;
 
             id = rhobj.Id.ToString();
