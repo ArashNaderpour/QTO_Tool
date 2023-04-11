@@ -92,7 +92,7 @@ namespace QTO_Tool
 
                     if (dotProduct > angleThreshold && dotProduct <= 1)
                     {
-                        area = Math.Round(area_properties.Area, 2);
+                        area += Math.Round(area_properties.Area, 2);
 
                         this.topBrepFace = brep.Faces[i].DuplicateFace(false);
                     }
