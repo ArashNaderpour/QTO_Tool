@@ -297,7 +297,7 @@ namespace QTO_Tool
             {
                 if (Curve.DoDirectionsMatch(tempMergedBoundaries[0], tempMergedBoundaries[1]))
                 {
-                    centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    centerLines.Add(Curve.CreateTweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
                 }
 
                 else
@@ -307,7 +307,7 @@ namespace QTO_Tool
                     tempMergedBoundaries[0].ChangeClosedCurveSeam(t);
                     tempMergedBoundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
                     tempMergedBoundaries[1].ChangeClosedCurveSeam(t);
-                    centerLines.Add(Curve.CreateTweenCurvesWithMatching(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    centerLines.Add(Curve.CreateTweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
                 }
             }
 
