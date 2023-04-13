@@ -303,6 +303,8 @@ namespace QTO_Tool
                
                 if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
                 {
+                    tempMergedBoundaries[0] = tempMergedBoundaries[0].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+
                     Curve curveOffset1 = tempMergedBoundaries[0].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
                     Curve curveOffset2 = tempMergedBoundaries[0].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
 
@@ -317,6 +319,8 @@ namespace QTO_Tool
                 }
                 else
                 {
+                    tempMergedBoundaries[1] = tempMergedBoundaries[1].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+
                     Curve curveOffset1 = tempMergedBoundaries[1].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
                     Curve curveOffset2 = tempMergedBoundaries[1].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
 
@@ -452,7 +456,7 @@ namespace QTO_Tool
 
                     dotProduct = Math.Round(Vector3d.Multiply(normal, curveTangent), 2);
 
-                    if (dotProduct == 0)
+                    if (dotProduct > -0.1 && dotProduct < 0.1)
                     {
                         this.sideFaces.Add(this.sideAndEndFaces[i]);
                         this.sideFaceAreas.Add(this.sideAndEndFaceAreas[i]);
