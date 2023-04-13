@@ -292,19 +292,38 @@ namespace QTO_Tool
 
             if (tempMergedBoundaries.Length > 1)
             {
-                if (Curve.DoDirectionsMatch(tempMergedBoundaries[0], tempMergedBoundaries[1]))
-                {
-                    centerLines.Add(Curve.CreateTweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
-                }
+                double maxDistance, maxDistanceParameterA, maxDistanceParameterB, minDistance, minDistanceParameterA, minDistanceParameterB;
 
+                Curve.GetDistancesBetweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], RunQTO.doc.ModelAbsoluteTolerance, out maxDistance,
+                    out maxDistanceParameterA, out maxDistanceParameterB, out minDistance, out minDistanceParameterA, out minDistanceParameterB);
+
+                if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
+                {
+                    Curve curveOffset1 = tempMergedBoundaries[0].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                    Curve curveOffset2 = tempMergedBoundaries[0].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+
+                    if (curveOffset1.GetLength() > curveOffset2.GetLength())
+                    {
+                        centerLines.Add(curveOffset1);
+                    }
+                    else
+                    {
+                        centerLines.Add(curveOffset2);
+                    }
+                }
                 else
                 {
-                    double t = 0;
-                    tempMergedBoundaries[0].Reverse();
-                    tempMergedBoundaries[0].ChangeClosedCurveSeam(t);
-                    tempMergedBoundaries[1].ClosestPoint(boundaries[0].PointAt(0), out t);
-                    tempMergedBoundaries[1].ChangeClosedCurveSeam(t);
-                    centerLines.Add(Curve.CreateTweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], 1, RunQTO.doc.ModelAbsoluteTolerance)[0]);
+                    Curve curveOffset1 = tempMergedBoundaries[1].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                    Curve curveOffset2 = tempMergedBoundaries[1].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+
+                    if (curveOffset1.GetLength() > curveOffset2.GetLength())
+                    {
+                        centerLines.Add(curveOffset1);
+                    }
+                    else
+                    {
+                        centerLines.Add(curveOffset2);
+                    }
                 }
             }
 
