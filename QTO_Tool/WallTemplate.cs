@@ -295,11 +295,12 @@ namespace QTO_Tool
 
             if (tempMergedBoundaries.Length > 1)
             {
-                double maxDistance, maxDistanceParameterA, maxDistanceParameterB, minDistance, minDistanceParameterA, minDistanceParameterB;
+                Point3d pointOnCurve1, pointOnCurve2;
 
-                Curve.GetDistancesBetweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], RunQTO.doc.ModelAbsoluteTolerance, out maxDistance,
-                    out maxDistanceParameterA, out maxDistanceParameterB, out minDistance, out minDistanceParameterA, out minDistanceParameterB);
+                tempMergedBoundaries[0].ClosestPoints(tempMergedBoundaries[1], out pointOnCurve1, out pointOnCurve2);
 
+                double minDistance = pointOnCurve1.DistanceTo(pointOnCurve2) / 2;
+               
                 if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
                 {
                     Curve curveOffset1 = tempMergedBoundaries[0].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
@@ -307,11 +308,11 @@ namespace QTO_Tool
 
                     if (curveOffset1.GetLength() > curveOffset2.GetLength())
                     {
-                        centerLines.Add(curveOffset1);
+                        centerLines.Add(curveOffset2);
                     }
                     else
                     {
-                        centerLines.Add(curveOffset2);
+                        centerLines.Add(curveOffset1);
                     }
                 }
                 else
@@ -321,15 +322,15 @@ namespace QTO_Tool
 
                     if (curveOffset1.GetLength() > curveOffset2.GetLength())
                     {
-                        centerLines.Add(curveOffset1);
+                        centerLines.Add(curveOffset2);
                     }
                     else
                     {
-                        centerLines.Add(curveOffset2);
+                        centerLines.Add(curveOffset1);
                     }
                 }
             }
-
+            
             else
             {
                 mergedBoundary = tempMergedBoundaries[0].
@@ -410,9 +411,9 @@ namespace QTO_Tool
                     }
                 }
             }
-
+           
             joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
-
+            
             Brep centerLineExtrusion = Extrusion.Create(joinedProjectedCenterLine, extrusionHeight, false).ToBrep();
 
             centerLineExtrusion.Join(Extrusion.Create(joinedProjectedCenterLine, -extrusionHeight, false).ToBrep(), 0.01, true);
@@ -426,10 +427,10 @@ namespace QTO_Tool
             foreach (Brep topFace in this.topFaces)
             {
                 Rhino.Geometry.Intersect.Intersection.BrepBrep(topFace, centerLineExtrusion, 0.01, out intersectionCurves, out intersectionPoints);
-
-                this.length += Math.Round(intersectionCurves[0].GetLength(), 2);
+                
+                this.length += Math.Round(Curve.JoinCurves(intersectionCurves)[0].GetLength(), 2);
             }
-
+            
             //Side and Edges Calculation
             for (int i = 0; i < this.sideAndEndFaces.Count; i++)
             {

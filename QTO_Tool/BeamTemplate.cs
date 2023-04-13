@@ -259,6 +259,8 @@ namespace QTO_Tool
 
             Curve[] tempMergedBoundaries;
 
+            List<double> sideFaceBoundingBoxAreas = new List<double>();
+
             if (this.topFaces.Count > 1)
             {
                 for (int i = 0; i < this.topFaces.Count; i++)
@@ -292,10 +294,11 @@ namespace QTO_Tool
 
             if (tempMergedBoundaries.Length > 1)
             {
-                double maxDistance, maxDistanceParameterA, maxDistanceParameterB, minDistance, minDistanceParameterA, minDistanceParameterB;
+                Point3d pointOnCurve1, pointOnCurve2;
 
-                Curve.GetDistancesBetweenCurves(tempMergedBoundaries[0], tempMergedBoundaries[1], RunQTO.doc.ModelAbsoluteTolerance, out maxDistance,
-                    out maxDistanceParameterA, out maxDistanceParameterB, out minDistance, out minDistanceParameterA, out minDistanceParameterB);
+                tempMergedBoundaries[0].ClosestPoints(tempMergedBoundaries[1], out pointOnCurve1, out pointOnCurve2);
+
+                double minDistance = pointOnCurve1.DistanceTo(pointOnCurve2) / 2;
 
                 if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
                 {
@@ -304,11 +307,11 @@ namespace QTO_Tool
 
                     if (curveOffset1.GetLength() > curveOffset2.GetLength())
                     {
-                        centerLines.Add(curveOffset1);
+                        centerLines.Add(curveOffset2);
                     }
                     else
                     {
-                        centerLines.Add(curveOffset2);
+                        centerLines.Add(curveOffset1);
                     }
                 }
                 else
@@ -318,11 +321,11 @@ namespace QTO_Tool
 
                     if (curveOffset1.GetLength() > curveOffset2.GetLength())
                     {
-                        centerLines.Add(curveOffset1);
+                        centerLines.Add(curveOffset2);
                     }
                     else
                     {
-                        centerLines.Add(curveOffset2);
+                        centerLines.Add(curveOffset1);
                     }
                 }
             }
@@ -424,7 +427,7 @@ namespace QTO_Tool
             {
                 Rhino.Geometry.Intersect.Intersection.BrepBrep(topFace, centerLineExtrusion, 0.01, out intersectionCurves, out intersectionPoints);
 
-                this.length += Math.Round(intersectionCurves[0].GetLength(), 2);
+                this.length += Math.Round(Curve.JoinCurves(intersectionCurves)[0].GetLength(), 2);
             }
 
             //Side and Edges Calculation
@@ -452,6 +455,7 @@ namespace QTO_Tool
                     {
                         this.sideFaces.Add(this.sideAndEndFaces[i]);
                         this.sideFaceAreas.Add(this.sideAndEndFaceAreas[i]);
+                        sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
                     }
 
                     else
@@ -470,7 +474,7 @@ namespace QTO_Tool
             this.sideArea_1 = Math.Round(joinedSideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
-            this.openingArea = Math.Round(joinedSideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea() - this.sideArea_1, 2);
+            this.openingArea = Math.Round((sideFaceBoundingBoxAreas.Sum() - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
         }
 
         double GrossVolume()
