@@ -91,7 +91,7 @@ namespace QTO_Tool
                     invalidObjCount++;
                 }
 
-                Brep[] tempBreps = Brep.JoinBreps(surfaceList, 0.01);
+                Brep[] tempBreps = Brep.JoinBreps(surfaceList, RunQTO.doc.ModelAbsoluteTolerance);
 
                 if (tempBreps != null)
                 {

@@ -460,7 +460,15 @@ namespace QTO_Tool
                     {
                         this.sideFaces.Add(this.sideAndEndFaces[i]);
                         this.sideFaceAreas.Add(this.sideAndEndFaceAreas[i]);
-                        sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
+
+                        if (this.sideAndEndFaces[i].Faces[0].IsPlanar(RunQTO.doc.ModelAbsoluteTolerance))
+                        {
+                            sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
+                        }
+                        else
+                        {
+                            sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetArea());
+                        }
                     }
 
                     else
