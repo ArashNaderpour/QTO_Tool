@@ -478,7 +478,10 @@ namespace QTO_Tool
             this.sideArea_1 = Math.Round(joinedSideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
-            this.openingArea = Math.Round((sideFaceBoundingBoxAreas.Sum() - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
+            double noHoleSideArea_1 = Math.Round(joinedSideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea(), 2);
+            double noHoleSideArea_2 = Math.Round(joinedSideFaces[1].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea(), 2);
+
+            this.openingArea = Math.Round(((noHoleSideArea_1 + noHoleSideArea_2) - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
         }
 
         double GrossVolume()
