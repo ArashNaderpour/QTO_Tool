@@ -27,7 +27,9 @@ namespace QTO_Tool
         public double openingPerimeter { get; set; }
 
         public string type = "SlabTemplate";
-        private Brep topBrepFace;
+
+        private List<Brep> topBrepFaces = new List<Brep>();
+
         private List<double> brepBoundaryCurveLengths = new List<double>();
 
         public Dictionary<string, BeamTemplate> beams = new Dictionary<string, BeamTemplate>();
@@ -43,31 +45,28 @@ namespace QTO_Tool
 
             this.layerName = _layerName;
 
-            id = rhobj.Id.ToString();
+            this.id = rhobj.Id.ToString();
 
             for (int i = 0; i < _layerName.Split('_').ToList().Count; i++)
             {
                 parsedLayerName.Add("C" + (1 + i).ToString(), _layerName.Split('_').ToList()[i]);
             }
 
-            nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
+            this.nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
             var mass_properties = VolumeMassProperties.Compute(geometry);
-            netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            this.netVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(0.01));
-            grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            this.grossVolume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
-            topArea = TopArea(geometry, angleThreshold);
+            this.topArea = TopArea(geometry, angleThreshold);
 
-            bottomArea = BottomArea(geometry, angleThreshold);
+            this.bottomArea = BottomArea(geometry, angleThreshold);
 
-            edgeArea = EdgeArea(geometry);
+            this.edgeArea = EdgeArea(geometry);
 
-            perimeter = Perimeter(topBrepFace);
-
-            openingPerimeter = OpeningPerimeter();
-
+            this.PerimeterAndOpeningPerimeter(topBrepFaces);
         }
 
         double TopArea(Brep brep, double angleThreshold)
@@ -94,7 +93,7 @@ namespace QTO_Tool
                     {
                         area += Math.Round(area_properties.Area, 2);
 
-                        this.topBrepFace = brep.Faces[i].DuplicateFace(false);
+                        this.topBrepFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
                 }
             }
@@ -118,7 +117,7 @@ namespace QTO_Tool
 
                 area = faceAreas[topFaceIndex];
 
-                this.topBrepFace = brep.Faces[topFaceIndex].DuplicateFace(false);
+                this.topBrepFaces.Add(brep.Faces[topFaceIndex].DuplicateFace(false));
             }
 
             return area;
@@ -146,7 +145,9 @@ namespace QTO_Tool
 
                     if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
-                        area = Math.Round(area_properties.Area, 2);
+                        area += Math.Round(area_properties.Area, 2);
+
+                        this.topBrepFaces.Add(brep.Faces[i].DuplicateFace(false));
                     }
                 }
             }
@@ -169,6 +170,8 @@ namespace QTO_Tool
                 int bottomFaceIndex = centerZValues.IndexOf(centerZValues.Min());
 
                 area = faceAreas[bottomFaceIndex];
+
+                this.topBrepFaces.Add(brep.Faces[bottomFaceIndex].DuplicateFace(false));
             }
 
             return area;
@@ -194,11 +197,13 @@ namespace QTO_Tool
             return area;
         }
 
-        double Perimeter(Brep brep)
+        void PerimeterAndOpeningPerimeter(List<Brep> breps)
         {
-            double result = 0;
+            Brep joinedBrep = Brep.JoinBreps(breps, RunQTO.doc.ModelAbsoluteTolerance)[0];
 
-            Curve[] brepBoundaryCurves = Curve.JoinCurves(brep.Edges);
+            joinedBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
+
+            Curve[] brepBoundaryCurves = Curve.JoinCurves(joinedBrep.Edges);
 
             for (int i = 0; i < brepBoundaryCurves.Length; i++)
             {
@@ -212,44 +217,42 @@ namespace QTO_Tool
 
             if (brepBoundaryCurveLengths.Count == 1)
             {
-                result = brepBoundaryCurveLengths[0];
+                this.perimeter = Math.Round(brepBoundaryCurveLengths[0], 2);
             }
 
             else
             {
-                result = brepBoundaryCurveLengths.Max();
+                this.perimeter = Math.Round(brepBoundaryCurveLengths.Max(), 2);
             }
 
-            result = Math.Round(result, 2);
-
-            return result;
+            this.openingPerimeter = Math.Round(brepBoundaryCurveLengths.Sum() - this.perimeter, 2);
         }
 
-        double OpeningPerimeter()
-        {
-            double result = 0;
+        //double OpeningPerimeter(List<Brep> breps)
+        //{
+        //    double result = 0;
 
-            if (brepBoundaryCurveLengths.Count == 1)
-            {
-                result = Math.Round(result, 2);
+        //    if (brepBoundaryCurveLengths.Count == 1)
+        //    {
+        //        result = Math.Round(result, 2);
 
-                return result;
-            }
+        //        return result;
+        //    }
 
-            else
-            {
-                foreach (double curveLength in brepBoundaryCurveLengths)
-                {
-                    if (curveLength != brepBoundaryCurveLengths.Max())
-                    {
-                        result += curveLength;
-                    }
-                }
-                result = Math.Round(result, 2);
+        //    else
+        //    {
+        //        foreach (double curveLength in brepBoundaryCurveLengths)
+        //        {
+        //            if (curveLength != brepBoundaryCurveLengths.Max())
+        //            {
+        //                result += curveLength;
+        //            }
+        //        }
+        //        result = Math.Round(result, 2);
 
-                return result;
-            }
-        }
+        //        return result;
+        //    }
+        //}
 
         public void UpdateNetVolumeAndBottomAreaWithBeams()
         {
