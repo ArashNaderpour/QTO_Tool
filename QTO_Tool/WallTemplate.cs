@@ -296,9 +296,9 @@ namespace QTO_Tool
             
             if (this.topFaces.Count > 1)
             {
-                for (int i = 0; i < this.topFaces.Count; i++)
+                for (int i = 0; i < this.upfacingFaces.Count; i++)
                 {
-                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.upfacingFaces[i].Edges)[0], projectPlane);
                     boundaries.Add(curveBoundary);
                 }
 
