@@ -164,7 +164,7 @@ namespace QTO_Tool
                         shorterSegments.Add(curveOffsetSegments[i]);
                     }
 
-                    else if (shorterSegments[0].GetLength() == curveOffsetSegments[i].GetLength())
+                    else if (Math.Round(shorterSegments[0].GetLength(), 2) == Math.Round(curveOffsetSegments[i].GetLength(), 2))
                     {
                         shorterSegments.Add(curveOffsetSegments[i]);
                     }
@@ -172,7 +172,7 @@ namespace QTO_Tool
             }
 
             Curve centerLine = new Line(shorterSegments[0].PointAtLength(shorterSegments[0].GetLength() / 2), shorterSegments[1].PointAtLength(shorterSegments[1].GetLength() / 2)).ToNurbsCurve();
-
+            
             //Side and Edges Calculation
             for (int i = 0; i < this.sideAndRiserFaces.Count; i++)
             {
