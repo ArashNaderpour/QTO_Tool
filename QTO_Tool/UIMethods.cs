@@ -12,7 +12,7 @@ namespace QTO_Tool
     {
         public static void GenerateLayerTemplate(Grid grid, List<string> layerPropertyColumnHeaders)
         {
-            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continuous Footing", "Slab", "Column", "Non-Rectangular Column", "Beam", "Wall", "Curb", "Styrofoam" };
+            List<string> concreteTemplateNames = new List<string>() { "N/A", "Footing", "Continuous Footing", "Slab", "Column", "Non-Rectangular Column", "Beam", "Wall", "Curb", "Stair", "Styrofoam" };
             int layerCounter = 0;
 
             layerPropertyColumnHeaders.Add("C1");
@@ -226,6 +226,17 @@ namespace QTO_Tool
                     if (counter == 0)
                     {
                         layerEstimateExpander.Name += "Styrofoam";
+                    }
+                }
+
+                else if (templateType == "Stair")
+                {
+                    UIMethods.GenerateStairTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                    if (counter == 0)
+                    {
+                        layerEstimateExpander.Name += "Stair";
                     }
                 }
 
@@ -1098,6 +1109,112 @@ namespace QTO_Tool
             styrofoamSelectObject.FontSize = _valueFontSize;
             Grid.SetColumn(styrofoamSelectObject, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(styrofoamSelectObject, _count);
+        }
+
+        static void GenerateStairTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
+    List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
+        {
+            StairTemplate stair = (StairTemplate)_obj;
+
+            TextBlock stairCount = new TextBlock();
+            stairCount.Text = _count.ToString();
+            stairCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairCount);
+            stairCount.FontSize = _valueFontSize;
+            Grid.SetColumn(stairCount, 0);
+            Grid.SetRow(stairCount, _count);
+
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            {
+                try
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = stair.parsedLayerName[_layerPropertyColumnHeaders[i]];
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+                catch
+                {
+                    TextBlock value = new TextBlock();
+                    value.Text = "N/A";
+                    value.HorizontalAlignment = HorizontalAlignment.Center;
+                    _layerEstimateGrid.Children.Add(value);
+                    value.FontSize = _valueFontSize;
+                    Grid.SetColumn(value, 1 + i);
+                    Grid.SetRow(value, _count);
+                }
+            }
+
+            TextBlock stairName = new TextBlock();
+            stairName.Text = stair.nameAbb;
+            stairName.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairName);
+            stairName.FontSize = _valueFontSize;
+            Grid.SetColumn(stairName, 1 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairName, _count);
+
+            TextBlock stairVolume = new TextBlock();
+            stairVolume.Text = stair.volume.ToString();
+            stairVolume.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairVolume);
+            stairVolume.FontSize = _valueFontSize;
+            Grid.SetColumn(stairVolume, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairVolume, _count);
+
+            TextBlock stairTreadArea = new TextBlock();
+            stairTreadArea.Text = stair.treadArea.ToString();
+            stairTreadArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairTreadArea);
+            stairTreadArea.FontSize = _valueFontSize;
+            Grid.SetColumn(stairTreadArea, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairTreadArea, _count);
+
+            TextBlock stairRiserArea = new TextBlock();
+            stairRiserArea.Text = stair.riserArea.ToString();
+            stairRiserArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairRiserArea);
+            stairRiserArea.FontSize = _valueFontSize;
+            Grid.SetColumn(stairRiserArea, 4 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairRiserArea, _count);
+
+            TextBlock stairTreadCount = new TextBlock();
+            stairTreadCount.Text = stair.treadCount.ToString();
+            stairTreadCount.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairTreadCount);
+            stairTreadCount.FontSize = _valueFontSize;
+            Grid.SetColumn(stairTreadCount, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairTreadCount, _count);
+
+            TextBlock stairSideArea = new TextBlock();
+            stairSideArea.Text = stair.sideArea.ToString();
+            stairSideArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairSideArea);
+            stairSideArea.FontSize = _valueFontSize;
+            Grid.SetColumn(stairSideArea, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairSideArea, _count);
+
+            TextBlock stairBottomArea = new TextBlock();
+            stairBottomArea.Text = stair.bottomArea.ToString();
+            stairBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(stairBottomArea);
+            stairBottomArea.FontSize = _valueFontSize;
+            Grid.SetColumn(stairBottomArea, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairBottomArea, _count);
+
+            ToggleButton stairSelectObject = new ToggleButton();
+            stairSelectObject.Uid = stair.id;
+            stairSelectObject.Content = "SELECT";
+            stairSelectObject.Checked += new RoutedEventHandler(SelectObjectActivated);
+            stairSelectObject.Unchecked += new RoutedEventHandler(DeselectObjectActivated);
+            stairSelectObject.HorizontalAlignment = HorizontalAlignment.Stretch;
+            stairSelectObject.Margin = new Thickness(2, 5, 2, 5);
+            _layerEstimateGrid.Children.Add(stairSelectObject);
+            stairSelectObject.FontSize = _valueFontSize;
+            Grid.SetColumn(stairSelectObject, 8 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(stairSelectObject, _count);
         }
     }
 }

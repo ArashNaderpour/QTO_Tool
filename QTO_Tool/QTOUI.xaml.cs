@@ -34,6 +34,7 @@ namespace QTO_Tool
         AllSlabs allSlabs = new AllSlabs();
         AllWalls allWalls = new AllWalls();
         AllStyrofoams allStyrofoams = new AllStyrofoams();
+        AllStairs allStairs = new AllStairs();
 
         Dictionary<string, object> allSelectedTemplates = new Dictionary<string, object>();
         Dictionary<string, List<string>> allSelectedTemplateValues = new Dictionary<string, List<string>>();
@@ -521,6 +522,31 @@ namespace QTO_Tool
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "ISOLATE" };
                             }
 
+                            if (selectedTemplate == "Stair")
+                            {
+                                rhobjs = RunQTO.doc.Objects.FindByLayer(layerName);
+
+                                for (int j = 0; j < rhobjs.Length; j++)
+                                {
+                                    rhobj = rhobjs[j];
+
+                                    StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold);
+
+                                    if (allStairs.allTemplates.ContainsKey(objFloor))
+                                    {
+                                        allStairs.allTemplates[objFloor].Add(stair);
+                                    }
+                                    else
+                                    {
+                                        allStairs.allTemplates.Add(objFloor, new List<object> { stair });
+                                    }
+
+                                    layerTemplates.Add(stair);
+                                }
+
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
+                            }
+
                             if (quantityValues.Count > 0)
                             {
                                 quantityValues.InsertRange(1, this.layerPropertyColumnHeaders);
@@ -569,6 +595,8 @@ namespace QTO_Tool
                 this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
                 this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);
                 this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "ISOLATE" });
+                this.allSelectedTemplates.Add("Stair", allStairs);
+                this.allSelectedTemplateValues.Add("Stair", new List<string>() { "COUNT", "NAME ABB.", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" });
 
                 // Generate Combined Value Table
                 //UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,

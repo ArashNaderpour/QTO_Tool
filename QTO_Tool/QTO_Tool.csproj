@@ -187,6 +187,7 @@
     <Compile Include="AllCurbs.cs" />
     <Compile Include="AllFootings.cs" />
     <Compile Include="AllSlabs.cs" />
+    <Compile Include="AllStairs.cs" />
     <Compile Include="AllStyrofoams.cs" />
     <Compile Include="AllTemplates.cs" />
     <Compile Include="AllWalls.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="QTOToolPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlabTemplate.cs" />
+    <Compile Include="StairTemplate.cs" />
     <Compile Include="StyrofoamTemplate.cs" />
     <Compile Include="UIMethods.cs" />
     <Compile Include="WallTemplate.cs" />
