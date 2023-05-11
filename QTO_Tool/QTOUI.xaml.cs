@@ -544,7 +544,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(stair);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
                             }
 
                             if (quantityValues.Count > 0)

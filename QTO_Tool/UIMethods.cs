@@ -25,7 +25,7 @@ namespace QTO_Tool
                 {
                     if (!String.IsNullOrWhiteSpace(layer.Name))
                     {
-                        if (layer.Name.Split('_').Length > layerPropertyColumnHeaders.Count - 1)
+                        if (layer.Name.Split('_').Length > layerPropertyColumnHeaders.Count)
                         {
                             layerPropertyColumnHeaders.Add("C" + (layerPropertyColumnHeaders.Count + 1).ToString());
                         }
