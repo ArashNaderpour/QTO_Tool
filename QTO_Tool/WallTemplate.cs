@@ -108,10 +108,8 @@ namespace QTO_Tool
 
             double dotProduct;
 
-            int index;
-
-            //Ray3d ray;
-            //Mesh mesh;
+            Ray3d ray;
+            Mesh mesh;
 
             for (int i = 0; i < brep.Faces.Count; i++)
             {
@@ -155,39 +153,78 @@ namespace QTO_Tool
                 }
             }
 
-            List<Brep> tempUpfacingFaces = new List<Brep>(this.upfacingFaces);
-            List<double> tempUpfacingFaceAreas = new List<double>(this.upfacingFaceAreas);
+            List<double> tempDownfacingFaceElevations = this.downfacingFaceElevations;
+            List<double> tempDownfacingFaceAreas = this.downfacingFaceAreas;
 
             for (int i = 0; i < this.upfacingFaceElevations.Count; i++)
             {
-                if (this.upfacingFaceElevations[i] == this.upfacingFaceElevations.Max())
+                ray = new Ray3d(this.upfacingFacesCenters[i], this.upfacingFacesNormals[i]);
+
+                bool isEndFace = false;
+
+                List<Brep> tempUpfacingFaces = new List<Brep>(this.upfacingFaces);
+
+                while (tempUpfacingFaces.Count > 0 && !isEndFace)
+                {
+                    mesh = Mesh.CreateFromBrep(tempUpfacingFaces[0], Rhino.Geometry.MeshingParameters.FastRenderMesh)[0];
+
+                    if (Rhino.Geometry.Intersect.Intersection.MeshRay(mesh, ray) > RunQTO.doc.ModelAbsoluteTolerance)
+                    {
+                        isEndFace = true;
+                    }
+
+                    tempUpfacingFaces.Remove(tempUpfacingFaces[0]);
+                }
+
+                if (isEndFace)
+                {
+                    this.endFaceAreas.Add(this.upfacingFaceAreas[i]);
+                }
+                else
                 {
                     topArea += this.upfacingFaceAreas[i];
+
                     this.topFaces.Add(this.upfacingFaces[i]);
-                    tempUpfacingFaces.Remove(this.upfacingFaces[i]);
-                    tempUpfacingFaceAreas.Remove(this.upfacingFaceAreas[i]);
                 }
             }
-
-            List<Brep> tempDownfacingFaces = new List<Brep>(this.downfacingFaces);
-            List<double> tempDownfacingFaceAreas = new List<double>(this.downfacingFaceAreas);
 
             for (int i = 0; i < this.downfacingFaceElevations.Count; i++)
             {
-                if (this.downfacingFaceElevations[i] == this.downfacingFaceElevations.Min())
+                ray = new Ray3d(this.downfacingFacesCenters[i], this.downfacingFacesNormals[i]);
+
+                bool isEndFace = false;
+
+                List<Brep> tempDownfacingFaces = new List<Brep>(this.downfacingFaces);
+
+                while (tempDownfacingFaces.Count > 0 && !isEndFace)
+                {
+                    mesh = Mesh.CreateFromBrep(tempDownfacingFaces[0], Rhino.Geometry.MeshingParameters.FastRenderMesh)[0];
+
+                    if (Rhino.Geometry.Intersect.Intersection.MeshRay(mesh, ray) > RunQTO.doc.ModelAbsoluteTolerance)
+                    {
+                        isEndFace = true;
+                    }
+
+                    tempDownfacingFaces.Remove(tempDownfacingFaces[0]);
+                }
+
+                if (isEndFace)
+                {
+                    this.endFaceAreas.Add(this.downfacingFaceAreas[i]);
+                }
+                else
                 {
                     bottomArea += this.downfacingFaceAreas[i];
+
                     this.bottomFaces.Add(this.downfacingFaces[i]);
-                    tempDownfacingFaces.Remove(this.downfacingFaces[i]);
-                    tempDownfacingFaceAreas.Remove(this.downfacingFaceAreas[i]);
                 }
             }
-            
-            this.endFaces.AddRange(tempUpfacingFaces);
-            this.endFaces.AddRange(tempDownfacingFaces);
-            this.endFaceAreas.AddRange(tempUpfacingFaceAreas);
-            this.endFaceAreas.AddRange(tempDownfacingFaceAreas);
-            
+
+            result.Add("Top Area", topArea);
+            result.Add("Bottom Area", bottomArea);
+
+            return result;
+
             //for (int i = 0; i < this.upfacingFaceElevations.Count; i++)
             //{
             //    ray = new Ray3d(this.upfacingFacesCenters[i], this.upfacingFacesNormals[i]);
@@ -251,11 +288,6 @@ namespace QTO_Tool
             //        this.bottomFaces.Add(this.downfacingFaces[i]);
             //    }
             //}
-
-            result.Add("Top Area", topArea);
-            result.Add("Bottom Area", bottomArea);
-
-            return result;
         }
 
         void SidesAndEndAndOpeingArea()
@@ -293,12 +325,12 @@ namespace QTO_Tool
             Curve[] tempMergedBoundaries;
 
             List<double> sideFaceBoundingBoxAreas = new List<double>();
-            
+
             if (this.topFaces.Count > 1)
             {
-                for (int i = 0; i < this.upfacingFaces.Count; i++)
+                for (int i = 0; i < this.topFaces.Count; i++)
                 {
-                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.upfacingFaces[i].Edges)[0], projectPlane);
+                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
                     boundaries.Add(curveBoundary);
                 }
 
@@ -307,7 +339,7 @@ namespace QTO_Tool
             else
             {
                 Curve[] curveBoundaries = Curve.JoinCurves(this.topFaces[0].Edges);
-                
+
                 if (curveBoundaries.Length > 1)
                 {
                     for (int i = 0; i < curveBoundaries.Length; i++)
@@ -321,7 +353,7 @@ namespace QTO_Tool
                     Curve curveBoundary = Curve.ProjectToPlane(curveBoundaries[0], projectPlane);
                     boundaries.Add(curveBoundary);
                 }
-                
+
                 tempMergedBoundaries = boundaries.ToArray();
             }
 
@@ -332,7 +364,7 @@ namespace QTO_Tool
                 tempMergedBoundaries[0].ClosestPoints(tempMergedBoundaries[1], out pointOnCurve1, out pointOnCurve2);
 
                 double minDistance = pointOnCurve1.DistanceTo(pointOnCurve2) / 2;
-                
+
                 if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
                 {
                     tempMergedBoundaries[0] = tempMergedBoundaries[0].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
@@ -366,7 +398,7 @@ namespace QTO_Tool
                     }
                 }
             }
-            
+
             else
             {
                 mergedBoundary = tempMergedBoundaries[0].
@@ -447,9 +479,9 @@ namespace QTO_Tool
                     }
                 }
             }
-           
+
             joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
-            
+
             Brep centerLineExtrusion = Extrusion.Create(joinedProjectedCenterLine, extrusionHeight, false).ToBrep();
 
             centerLineExtrusion.Join(Extrusion.Create(joinedProjectedCenterLine, -extrusionHeight, false).ToBrep(), 0.01, true);
@@ -463,10 +495,10 @@ namespace QTO_Tool
             foreach (Brep topFace in this.topFaces)
             {
                 Rhino.Geometry.Intersect.Intersection.BrepBrep(topFace, centerLineExtrusion, 0.01, out intersectionCurves, out intersectionPoints);
-                
+
                 this.length += Math.Round(Curve.JoinCurves(intersectionCurves)[0].GetLength(), 2);
             }
-            
+
             //Side and Edges Calculation
             for (int i = 0; i < this.sideAndEndFaces.Count; i++)
             {
@@ -484,27 +516,15 @@ namespace QTO_Tool
 
                     normal.Unitize();
 
+                    this.sideAndEndFaces[i].Faces[0].FrameAt(u, v, out frame);
+
                     dotProduct = Math.Round(Vector3d.Multiply(normal, curveTangent), 2);
 
                     if (dotProduct > -0.1 && dotProduct < 0.1)
                     {
                         this.sideFaces.Add(this.sideAndEndFaces[i]);
                         this.sideFaceAreas.Add(this.sideAndEndFaceAreas[i]);
-
-                        Curve brepFaceBoundary = Curve.JoinCurves(this.sideAndEndFaces[i].Edges)[0];
-
-                        Brep tempBrepFace = Brep.CreatePlanarBreps(brepFaceBoundary, RunQTO.doc.ModelAbsoluteTolerance)[0];
-
-                        frame = new Plane(tempBrepFace.Vertices[0].Location, tempBrepFace.Vertices[1].Location, tempBrepFace.Vertices[2].Location);
-
-                        if (this.sideAndEndFaces[i].Faces[0].IsPlanar(RunQTO.doc.ModelAbsoluteTolerance))
-                        {
-                            sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
-                        }
-                        else
-                        {
-                            sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetArea());
-                        }
+                        sideFaceBoundingBoxAreas.Add(this.sideAndEndFaces[i].GetBoundingBox(frame).Area / 2);
                     }
 
                     else
@@ -523,7 +543,10 @@ namespace QTO_Tool
             this.sideArea_1 = Math.Round(joinedSideFaces[0].GetArea(), 2);
             this.sideArea_2 = Math.Round(joinedSideFaces[1].GetArea(), 2);
 
-            this.openingArea = Math.Round((sideFaceBoundingBoxAreas.Sum() - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
+            double noHoleSideArea_1 = Math.Round(joinedSideFaces[0].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea(), 2);
+            double noHoleSideArea_2 = Math.Round(joinedSideFaces[1].RemoveHoles(RunQTO.doc.ModelAbsoluteTolerance).GetArea(), 2);
+
+            this.openingArea = Math.Round(((noHoleSideArea_1 + noHoleSideArea_2) - (this.sideArea_1 + this.sideArea_2)) / 2, 2);
         }
 
         double GrossVolume()
