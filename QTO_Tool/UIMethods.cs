@@ -34,7 +34,7 @@ namespace QTO_Tool
                         RowDefinition rowDef = new RowDefinition();
                         rowDef.Height = new GridLength(60, GridUnitType.Pixel);
                         grid.RowDefinitions.Add(rowDef);
-                       
+
                         // Layer Name
                         TextBlock layerName = new TextBlock();
                         layerName.Name = "Layer_" + layer.Index.ToString();
@@ -53,7 +53,7 @@ namespace QTO_Tool
                         rect.Height = 1;
                         rect.HorizontalAlignment = HorizontalAlignment.Stretch;
                         rect.Margin = new Thickness(10, 5, 10, 0);
-                        
+
                         panel.Children.Add(layerName);
                         panel.Children.Add(rect);
 
@@ -63,13 +63,13 @@ namespace QTO_Tool
 
                         ComboBox concreteTemplatesSelector = new ComboBox();
                         concreteTemplatesSelector.Name = "ConcreteTemplates_" + layer.Index.ToString();
-                        
+
                         foreach (string templateName in concreteTemplateNames)
                         {
                             ComboBoxItem item = new ComboBoxItem();
                             item.Content = templateName;
                             concreteTemplatesSelector.Items.Add(item);
-                        }                       
+                        }
 
                         concreteTemplatesSelector.SelectedIndex = Methods.AutomaticTemplateSelect(layer.Name, concreteTemplateNames); ;
                         concreteTemplatesSelector.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -82,7 +82,7 @@ namespace QTO_Tool
                     }
 
                     layerCounter++;
-                } 
+                }
             }
         }
 
@@ -261,7 +261,7 @@ namespace QTO_Tool
             Grid.SetColumn(slabCount, 0);
             Grid.SetRow(slabCount, _count);
 
-            for(int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
+            for (int i = 0; i < _layerPropertyColumnHeaders.Count; i++)
             {
                 try
                 {
@@ -1049,7 +1049,7 @@ namespace QTO_Tool
             List<string> _layerPropertyColumnHeaders, RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
             StyrofoamTemplate styrofoam = (StyrofoamTemplate)_obj;
-            
+
             TextBlock styrofoamCount = new TextBlock();
             styrofoamCount.Text = _count.ToString();
             styrofoamCount.HorizontalAlignment = HorizontalAlignment.Center;
@@ -1215,6 +1215,58 @@ namespace QTO_Tool
             stairSelectObject.FontSize = _valueFontSize;
             Grid.SetColumn(stairSelectObject, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(stairSelectObject, _count);
+        }
+
+        public static void AddElevationInput(Grid elevationInput)
+        {
+            int gridRow = elevationInput.RowDefinitions.Count;
+            double fontSize = 20;
+
+            RowDefinition rowDef = new RowDefinition();
+            rowDef.Height = new GridLength(50);
+            elevationInput.RowDefinitions.Add(rowDef);
+
+            Grid inputWrapper = new Grid();
+            Grid.SetRow(inputWrapper, gridRow);
+            inputWrapper.Margin = new Thickness(0, 10, 0, 10);
+
+            ColumnDefinition colDef1 = new ColumnDefinition();
+            colDef1.Width = new GridLength(50);
+            ColumnDefinition colDef2 = new ColumnDefinition();
+            ColumnDefinition colDef3 = new ColumnDefinition();
+
+            inputWrapper.ColumnDefinitions.Add(colDef1);
+            inputWrapper.ColumnDefinitions.Add(colDef2);
+            inputWrapper.ColumnDefinitions.Add(colDef3);
+
+            rowDef = new RowDefinition();
+            rowDef.Height = new GridLength(30);
+
+            inputWrapper.RowDefinitions.Add(rowDef);
+
+            Label label = new Label();
+            label.Content = gridRow.ToString() + ".";
+            label.FontSize = 16;
+            label.HorizontalContentAlignment = HorizontalAlignment.Center;
+            Grid.SetColumn(label, 0);
+
+            // Add the first text cell to the Grid
+            TextBox input1 = new TextBox();
+            input1.FontSize = fontSize;
+            input1.Margin = new Thickness(0, 0, 10, 0);
+            Grid.SetColumn(input1, 1);
+
+            // Add the first text cell to the Grid
+            TextBox input2 = new TextBox();
+            input2.FontSize = fontSize;
+            input2.Margin = new Thickness(10, 0, 0, 0);
+            Grid.SetColumn(input2, 2);
+
+            inputWrapper.Children.Add(label);
+            inputWrapper.Children.Add(input1);
+            inputWrapper.Children.Add(input2);
+
+            elevationInput.Children.Add(inputWrapper);
         }
     }
 }

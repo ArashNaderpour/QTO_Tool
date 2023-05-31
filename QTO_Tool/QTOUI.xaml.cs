@@ -45,21 +45,37 @@ namespace QTO_Tool
 
         List<RhinoObject> selectedObjects = new List<RhinoObject>();
 
-        // Save/Load Dictionary
-        Dictionary<string, object> saveData = new Dictionary<string, object>();
-        Dictionary<string, object> loadData = new Dictionary<string, object>();
+        //// Save/Load Dictionary
+        //Dictionary<string, object> saveData = new Dictionary<string, object>();
+        //Dictionary<string, object> loadData = new Dictionary<string, object>();
+
+        ElevationInput elevationInput;
 
         public QTOUI()
         {
             InitializeComponent();
         }
 
-        public void Load_Clicked(object sender, RoutedEventArgs e)
+        public void Set_Elevation_Clicked(object sender, RoutedEventArgs e)
         {
+ 
+            try
+            {
+                if (this.elevationInput != null)
+                {
+                    this.elevationInput.Close();
+                }
+                this.elevationInput = new ElevationInput();
+                this.elevationInput.Show();
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
-        public void Save_Clicked(object sender, RoutedEventArgs e)
+        public void Edit_Elevation_Clicked(object sender, RoutedEventArgs e)
         {
 
         }
@@ -131,8 +147,8 @@ namespace QTO_Tool
 
                     this.selectedConcreteTemplatesForLayers.Clear();
 
-                    this.saveData.Clear();
-                    this.loadData.Clear();
+                    //this.saveData.Clear();
+                    //this.loadData.Clear();
                 }
             }
             if (this.ExteriorIsIncluded.IsChecked == true)
@@ -239,8 +255,8 @@ namespace QTO_Tool
 
                 this.selectedConcreteTemplatesForLayers.Clear();
 
-                this.saveData.Clear();
-                this.loadData.Clear();
+                //this.saveData.Clear();
+                //this.loadData.Clear();
 
                 this.DissipatedConcreteTablePanel.Children.Clear();
                 this.CombinedConcreteTablePanel.Children.Clear();
@@ -634,119 +650,119 @@ namespace QTO_Tool
             }
         }
 
-        private void Concrete_Save_Clicked(object sender, RoutedEventArgs e)
-        {
-            Stream stream = null;
-            StreamWriter streamWriter = null;
+        //private void Concrete_Save_Clicked(object sender, RoutedEventArgs e)
+        //{
+        //    Stream stream = null;
+        //    StreamWriter streamWriter = null;
 
-            this.saveData.Add("SelectedConcreteTemplatesForLayers", this.selectedConcreteTemplatesForLayers);
-            this.saveData.Add("AllSelectedTemplates", this.allSelectedTemplates);
-            this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
-            this.saveData.Add("DissipatedConcreteTablePanel", this.DissipatedConcreteTablePanel);
-            this.saveData.Add("CombinedConcreteTablePanel", this.CombinedConcreteTablePanel);
-            this.saveData.Add("LayerPropertyColumnHeaders", this.layerPropertyColumnHeaders);
+        //    this.saveData.Add("SelectedConcreteTemplatesForLayers", this.selectedConcreteTemplatesForLayers);
+        //    this.saveData.Add("AllSelectedTemplates", this.allSelectedTemplates);
+        //    this.saveData.Add("AllSelectedTemplateValues", this.allSelectedTemplateValues);
+        //    this.saveData.Add("DissipatedConcreteTablePanel", this.DissipatedConcreteTablePanel);
+        //    this.saveData.Add("CombinedConcreteTablePanel", this.CombinedConcreteTablePanel);
+        //    this.saveData.Add("LayerPropertyColumnHeaders", this.layerPropertyColumnHeaders);
 
-            // Json String Of The Save Data
-            string projectData = JsonConvert.SerializeObject(saveData, Formatting.Indented);
+        //    // Json String Of The Save Data
+        //    string projectData = JsonConvert.SerializeObject(saveData, Formatting.Indented);
 
-            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+        //    System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 
-            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                using (stream = File.Open(saveFileDialog.FileName, FileMode.Create))
-                {
-                    using (streamWriter = new StreamWriter(stream))
-                    {
-                        streamWriter.Write(projectData);
-                    }
-                }
+        //    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //    {
+        //        using (stream = File.Open(saveFileDialog.FileName, FileMode.Create))
+        //        {
+        //            using (streamWriter = new StreamWriter(stream))
+        //            {
+        //                streamWriter.Write(projectData);
+        //            }
+        //        }
 
-                MessageBox.Show("Save was successful.");
-            }
+        //        MessageBox.Show("Save was successful.");
+        //    }
 
-            else
-            {
-                MessageBox.Show("Something went wrong, please try again.");
-            }
-        }
+        //    else
+        //    {
+        //        MessageBox.Show("Something went wrong, please try again.");
+        //    }
+        //}
 
-        private void Concrete_Load_Clicked(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            Stream stream = null;
+        //private void Concrete_Load_Clicked(object sender, RoutedEventArgs e)
+        //{
+        //    System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+        //    Stream stream = null;
 
-            string pathToFile = "";
+        //    string pathToFile = "";
 
-            // Read The File
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                try
-                {
-                    stream = openFileDialog.OpenFile();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: Could not read file from disk. original error: " + ex.Message);
-                    return;
-                }
+        //    // Read The File
+        //    if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        //    {
+        //        try
+        //        {
+        //            stream = openFileDialog.OpenFile();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Error: Could not read file from disk. original error: " + ex.Message);
+        //            return;
+        //        }
 
-                if (stream != null)
-                {
-                    pathToFile = openFileDialog.FileName;
+        //        if (stream != null)
+        //        {
+        //            pathToFile = openFileDialog.FileName;
 
-                    try
-                    {
-                        loadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(pathToFile));
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: Could not open the file. original error: " + ex.Message);
-                        return;
-                    }
+        //            try
+        //            {
+        //                loadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(pathToFile));
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show("Error: Could not open the file. original error: " + ex.Message);
+        //                return;
+        //            }
 
-                    // Load The Project
-                    try
-                    {
-                        Dictionary<string, string> tempSelectedConcreteTemplatesForLayers =
-                            ((JObject)loadData["SelectedConcreteTemplatesForLayers"]).ToObject<Dictionary<string, string>>();
+        //            // Load The Project
+        //            try
+        //            {
+        //                Dictionary<string, string> tempSelectedConcreteTemplatesForLayers =
+        //                    ((JObject)loadData["SelectedConcreteTemplatesForLayers"]).ToObject<Dictionary<string, string>>();
 
-                        for (int i = 0; i < this.ConcreteTemplateGrid.Children.Count; i++)
-                        {
-                            if (this.ConcreteTemplateGrid.Children[i].GetType().ToString().Split('.').Last() == "DockPanel")
-                            {
-                                DockPanel tempDockPanel = (DockPanel)this.ConcreteTemplateGrid.Children[i];
+        //                for (int i = 0; i < this.ConcreteTemplateGrid.Children.Count; i++)
+        //                {
+        //                    if (this.ConcreteTemplateGrid.Children[i].GetType().ToString().Split('.').Last() == "DockPanel")
+        //                    {
+        //                        DockPanel tempDockPanel = (DockPanel)this.ConcreteTemplateGrid.Children[i];
 
-                                Label tempLabel = (Label)tempDockPanel.Children[0];
+        //                        Label tempLabel = (Label)tempDockPanel.Children[0];
 
-                                if (tempSelectedConcreteTemplatesForLayers.Keys.Contains(tempLabel.Content.ToString()))
-                                {
-                                    ComboBox tempComboBox = LogicalTreeHelper.FindLogicalNode(this.ConcreteTemplateGrid,
-                                            "ConcreteTemplates_" + tempLabel.Name.Split('_').Last()) as ComboBox;
+        //                        if (tempSelectedConcreteTemplatesForLayers.Keys.Contains(tempLabel.Content.ToString()))
+        //                        {
+        //                            ComboBox tempComboBox = LogicalTreeHelper.FindLogicalNode(this.ConcreteTemplateGrid,
+        //                                    "ConcreteTemplates_" + tempLabel.Name.Split('_').Last()) as ComboBox;
 
-                                    tempComboBox.Text = tempSelectedConcreteTemplatesForLayers[tempLabel.Content.ToString()];
-                                }
+        //                            tempComboBox.Text = tempSelectedConcreteTemplatesForLayers[tempLabel.Content.ToString()];
+        //                        }
 
-                                else
-                                {
-                                    MessageBox.Show("No saved data exists for layer " + "\"" + tempLabel.Content.ToString() + "\"" + ".");
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: Data is corupted, " + ex.Message);
-                    }
-                }
+        //                        else
+        //                        {
+        //                            MessageBox.Show("No saved data exists for layer " + "\"" + tempLabel.Content.ToString() + "\"" + ".");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show("Error: Data is corupted, " + ex.Message);
+        //            }
+        //        }
 
-                // Handeling Selected File Not Exist.
-                else
-                {
-                    MessageBox.Show("Error: File not found.");
-                    return;
-                }
-            }
-        }
+        //        // Handeling Selected File Not Exist.
+        //        else
+        //        {
+        //            MessageBox.Show("Error: File not found.");
+        //            return;
+        //        }
+        //    }
+        //}
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
         {

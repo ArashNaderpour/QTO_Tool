@@ -97,13 +97,13 @@
                                 <RowDefinition Height="60"/>
                             </Grid.RowDefinitions>
 
-                            <Button Name="ConcreteSaveButton" Content="SAVE" Grid.Column="0"
+                            <Button Name="ConcreteSaveButton" Content="EDIT ELEAVTION" Grid.Column="0"
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="20 0 10 0" FontSize="26" Click="Concrete_Save_Clicked"/>
+                        Margin="20 0 10 0" FontSize="26" Click="Edit_Elevation_Clicked"/>
 
-                            <Button Name="ConcreteLoadButton" Content="LOAD" Grid.Column="1" 
+                            <Button Name="ConcreteLoadButton" Content="SET ELEAVTION" Grid.Column="1" 
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="True" 
-                        Margin="10 0 20 0" FontSize="26" Click="Concrete_Load_Clicked"/>
+                        Margin="10 0 20 0" FontSize="26" Click="Set_Elevation_Clicked"/>
 
                         </Grid>
 
@@ -257,10 +257,10 @@
 
                     <Button Name="ExteriorSaveButton" Content="SAVE" Grid.Column="0"
                         Grid.Row="1" HorizontalAlignment="Stretch" 
-                        Margin="0 0 10 0" Click="Save_Clicked"/>
+                        Margin="0 0 10 0"/>
                     <Button Name="ExteriorLoadButton" Content="LOAD" Grid.Column="1" 
                         Grid.Row="1" HorizontalAlignment="Stretch" 
-                        Margin="10 0 0 0" Click="Load_Clicked"/>
+                        Margin="10 0 0 0"/>
                 </Grid>
 
             </TabItem>

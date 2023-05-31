@@ -195,6 +195,9 @@
     <Compile Include="ColumnTemplate.cs" />
     <Compile Include="ContinuousFootingTemplate.cs" />
     <Compile Include="CurbTemplate.cs" />
+    <Compile Include="ElevationInput.xaml.cs">
+      <DependentUpon>ElevationInput.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExcelMethods.cs" />
     <Compile Include="FootingTemplate.cs" />
     <Compile Include="IFCMethods.cs" />
@@ -228,6 +231,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ElevationInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
