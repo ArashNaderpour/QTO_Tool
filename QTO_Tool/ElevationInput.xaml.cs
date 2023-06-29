@@ -20,6 +20,7 @@ namespace QTO_Tool
     /// </summary>
     public partial class ElevationInput : Window
     {
+        public static Dictionary<string, string> inputElevation = new Dictionary<string, string>();
         public ElevationInput()
         {
             InitializeComponent();
@@ -32,7 +33,28 @@ namespace QTO_Tool
 
         private void Accept_Clicked(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Accept");
+            ElevationInput.inputElevation.Clear();
+
+            foreach (Grid wrapper in this.ElevationInputWrapper.Children)
+            {
+                string floor = ((TextBox)wrapper.Children[1]).Text;
+                string elevation = ((TextBox)wrapper.Children[2]).Text;
+
+                if (floor != string.Empty && elevation != string.Empty)
+                {
+                    try
+                    {
+                        Convert.ToDouble(elevation);
+                        ElevationInput.inputElevation[floor] = elevation;
+                    }
+                    catch
+                    {
+                        MessageBox.Show(floor + " was not added to the program because the input elevation is not a number.");
+                    }   
+                }
+            }
+
+            MessageBox.Show(ElevationInput.inputElevation.Count.ToString());
         }
     }
 }

@@ -8,8 +8,8 @@
              Width="450" Height="800" Title="ELEVATION INPUT">
 
     <ScrollViewer>
-        <StackPanel  x:Name="ElevationInputPageWrapper">
-            <Grid x:Name="ElevationInputWrapper" Margin="10 10 10 10">
+        <StackPanel Name="ElevationInputPageWrapper">
+            <Grid Name="ElevationInputWrapper" Margin="10 10 10 10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="50"/>
