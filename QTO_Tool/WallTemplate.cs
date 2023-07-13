@@ -439,44 +439,47 @@ namespace QTO_Tool
 
                 else
                 {
-                    for (int i = 0; i < centers.Count; i++)
-                    {
-                        tempPoints = new List<Point3d>(centers);
-                        tempPoints.Remove(tempPoints[i]);
 
-                        for (int j = 0; j < tempPoints.Count; j++)
-                        {
-                            Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
+                    centerLines.Add(new PolylineCurve(centers));
 
-                            var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+                    //for (int i = 0; i < centers.Count; i++)
+                    //{
+                    //    tempPoints = new List<Point3d>(centers);
+                    //    tempPoints.Remove(tempPoints[i]);
 
-                            if (events.Count < 2)
-                            {
-                                if (centerLines.Count > 0)
-                                {
-                                    bool dup = false;
+                    //    for (int j = 0; j < tempPoints.Count; j++)
+                    //    {
+                    //        Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
 
-                                    for (int k = 0; k < centerLines.Count; k++)
-                                    {
-                                        if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
-                                        {
-                                            dup = true;
-                                            break;
-                                        }
-                                    }
+                    //        var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
 
-                                    if (!dup)
-                                    {
-                                        centerLines.Add(centerLine);
-                                    }
-                                }
-                                else
-                                {
-                                    centerLines.Add(centerLine);
-                                }
-                            }
-                        }
-                    }
+                    //        if (events.Count < 2)
+                    //        {
+                    //            if (centerLines.Count > 0)
+                    //            {
+                    //                bool dup = false;
+
+                    //                for (int k = 0; k < centerLines.Count; k++)
+                    //                {
+                    //                    if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
+                    //                    {
+                    //                        dup = true;
+                    //                        break;
+                    //                    }
+                    //                }
+
+                    //                if (!dup)
+                    //                {
+                    //                    centerLines.Add(centerLine);
+                    //                }
+                    //            }
+                    //            else
+                    //            {
+                    //                centerLines.Add(centerLine);
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
             }
 

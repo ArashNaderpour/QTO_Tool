@@ -357,7 +357,7 @@ namespace QTO_Tool
 
             for (int i = 0; i < concreteTemplateNames.Count; i++)
             {
-                if (layerName.ToLower().Contains(concreteTemplateNames[i].ToLower()))
+                if (layerName.ToLower().Split('_')[0].Contains(concreteTemplateNames[i].ToLower()))
                 {
                     if (layerName.ToLower().Contains("continuous") == false)
                     {
