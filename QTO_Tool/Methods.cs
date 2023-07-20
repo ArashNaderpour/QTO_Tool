@@ -45,7 +45,7 @@ namespace QTO_Tool
 
             Vector2d rotatedVector = new Vector2d(1, 0);
 
-            rotatedVector.Rotate(angleThresholdSlider * (Math.PI/180));
+            rotatedVector.Rotate(angleThresholdSlider * (Math.PI / 180));
 
             result = (baseVector.X * rotatedVector.X) + (baseVector.Y * rotatedVector.Y);
 
@@ -231,11 +231,20 @@ namespace QTO_Tool
 
                 else
                 {
-                    tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAngleToleranceRadians);
+                    tempBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
 
                     if (tempBrep.IsSolid)
                     {
-                        RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                        if (tempBrep.IsValid)
+                        {
+                            RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                        }
+                        else
+                        {
+                            tempBrep = (Brep)inputObj.Geometry;
+
+                            RunQTO.doc.Objects.Add(tempBrep, _mainObjectAttributes);
+                        }
                     }
 
                     else

@@ -30,8 +30,6 @@ namespace QTO_Tool
 
         private List<Brep> topBrepFaces = new List<Brep>();
 
-        private List<double> brepBoundaryCurveLengths = new List<double>();
-
         public Dictionary<string, BeamTemplate> beams = new Dictionary<string, BeamTemplate>();
         //public List<BeamTemplate> beams = new List<BeamTemplate>();
 
@@ -203,29 +201,39 @@ namespace QTO_Tool
 
             joinedBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
 
-            Curve[] brepBoundaryCurves = Curve.JoinCurves(joinedBrep.Edges);
+            Curve[] brepBoundaryCurves = Curve.JoinCurves(joinedBrep.DuplicateNakedEdgeCurves(true, true));
+            //List<Curve> projectedBrepBoundaryCurves = new List<Curve>();
+
+            List<double> projectedBrepBoundaryCurveAreas = new List<double>();
+            List<double> projectedBrepBoundaryCurveLengths = new List<double>();
 
             for (int i = 0; i < brepBoundaryCurves.Length; i++)
             {
                 if (brepBoundaryCurves[i].IsClosed)
                 {
+                    Curve projectedCurve = Curve.ProjectToPlane(brepBoundaryCurves[i], Plane.WorldXY);
+                    var areaProps = AreaMassProperties.Compute(projectedCurve);
 
-                    brepBoundaryCurveLengths.Add(brepBoundaryCurves[i].GetLength());
-
+                    //projectedBrepBoundaryCurves.Add(projectedCurve);
+                    projectedBrepBoundaryCurveAreas.Add(areaProps.Area);
+                    projectedBrepBoundaryCurveLengths.Add(projectedCurve.GetLength());
                 }
             }
 
-            if (brepBoundaryCurveLengths.Count == 1)
-            {
-                this.perimeter = Math.Round(brepBoundaryCurveLengths[0], 2);
-            }
+            List<int> indexOrder = projectedBrepBoundaryCurveAreas
+                .Select((value, index) => new { Value = value, Index = index })
+                .OrderBy(item => item.Value)
+                .Select(item => item.Index)
+                .ToList();
 
-            else
-            {
-                this.perimeter = Math.Round(brepBoundaryCurveLengths.Max(), 2);
-            }
+            List<double> sortedProjectedBrepBoundaryCurveAreas = indexOrder.Select(index => projectedBrepBoundaryCurveAreas[index]).ToList();
+            //List<Curve> sortedProjectedBrepBoundaryCurves = indexOrder.Select(index => projectedBrepBoundaryCurves[index]).ToList();
+            List<double> sortedProjectedBrepBoundaryCurveLengths = indexOrder.Select(index => projectedBrepBoundaryCurveLengths[index]).ToList();
 
-            this.openingPerimeter = Math.Round(brepBoundaryCurveLengths.Sum() - this.perimeter, 2);
+            this.perimeter = Math.Round(sortedProjectedBrepBoundaryCurveLengths.Last(), 2);
+
+            sortedProjectedBrepBoundaryCurveAreas.RemoveAt(sortedProjectedBrepBoundaryCurveAreas.Count - 1);
+            this.openingPerimeter = Math.Round(sortedProjectedBrepBoundaryCurveAreas.Sum(), 2);
         }
 
         //double OpeningPerimeter(List<Brep> breps)
