@@ -14,6 +14,8 @@ namespace QTO_Tool
         public Brep geometry { get; set; }
         public System.Drawing.Color color { get; set; }
         public string layerName { get; set; }
+
+        public string floor { get; set; }
         public string nameAbb { get; set; }
         public string id { get; set; }
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
@@ -28,7 +30,7 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Foot", "Square Foot", "N/A" };
 
-        public ColumnTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, bool _rectangular)
+        public ColumnTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, bool _rectangular, Dictionary<double, string> floorElevations)
         {
             this.layerName = _layerName;
 
@@ -52,6 +54,8 @@ namespace QTO_Tool
 
             this.sideArea = this.SideArea(geometry);
 
+            this.floor = Methods.FindFloor(floorElevations, this.topAndBottomFaceCenters["Bottom"].Z);
+
             this.height = this.Height(topAndBottomFaceCenters);
         }
 
@@ -60,7 +64,7 @@ namespace QTO_Tool
             double area = 0;
 
             List<double> faceAreas = new List<double>();
-            List<double> faceCentersZ = new List<double>();
+            List<double> faceCentersElevation = new List<double>();
             List<Point3d> faceCenters = new List<Point3d>();
 
             Point3d center;
@@ -72,7 +76,7 @@ namespace QTO_Tool
                 center = area_properties.Centroid;
 
                 faceAreas.Add(area_properties.Area);
-                faceCentersZ.Add(center.Z);
+                faceCentersElevation.Add(center.Z);
                 faceCenters.Add(center);
 
                 if (this.rectangular)
@@ -81,8 +85,8 @@ namespace QTO_Tool
                 }
             }
 
-            int topFaceIndex = faceCentersZ.IndexOf(faceCentersZ.Max());
-            int bottomFaceIndex = faceCentersZ.IndexOf(faceCentersZ.Min());
+            int topFaceIndex = faceCentersElevation.IndexOf(faceCentersElevation.Max());
+            int bottomFaceIndex = faceCentersElevation.IndexOf(faceCentersElevation.Min());
 
             topAndBottomFaceCenters.Add("Top", faceCenters[topFaceIndex]);
             topAndBottomFaceCenters.Add("Bottom", faceCenters[bottomFaceIndex]);

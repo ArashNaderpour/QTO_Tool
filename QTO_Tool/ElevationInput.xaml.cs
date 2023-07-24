@@ -20,7 +20,7 @@ namespace QTO_Tool
     /// </summary>
     public partial class ElevationInput : Window
     {
-        public static Dictionary<string, string> inputElevation = new Dictionary<string, string>();
+        public static Dictionary<double, string> floorElevations = new Dictionary<double, string>();
         public ElevationInput()
         {
             InitializeComponent();
@@ -33,19 +33,19 @@ namespace QTO_Tool
 
         private void Accept_Clicked(object sender, RoutedEventArgs e)
         {
-            ElevationInput.inputElevation.Clear();
+            ElevationInput.floorElevations.Clear();
 
             foreach (Grid wrapper in this.ElevationInputWrapper.Children)
             {
                 string floor = ((TextBox)wrapper.Children[1]).Text;
-                string elevation = ((TextBox)wrapper.Children[2]).Text;
+                string elevationText = ((TextBox)wrapper.Children[2]).Text;
 
-                if (floor != string.Empty && elevation != string.Empty)
+                if (floor != string.Empty && elevationText != string.Empty)
                 {
                     try
                     {
-                        Convert.ToDouble(elevation);
-                        ElevationInput.inputElevation[floor] = elevation;
+                        double elevation = Convert.ToDouble(elevationText);
+                        ElevationInput.floorElevations[elevation] = floor;
                     }
                     catch
                     {
@@ -54,7 +54,7 @@ namespace QTO_Tool
                 }
             }
 
-            MessageBox.Show(ElevationInput.inputElevation.Count.ToString());
+            this.Close();
         }
     }
 }

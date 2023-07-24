@@ -61,7 +61,7 @@ namespace QTO_Tool
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
             "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
-        public CurbTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold)
+        public CurbTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold, Dictionary<double, string> floorElevations)
         {
             this.layerName = _layerName;
 

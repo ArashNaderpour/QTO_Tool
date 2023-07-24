@@ -382,5 +382,25 @@ namespace QTO_Tool
 
             return result;
         }
+
+        public static string FindFloor(Dictionary<double, string> floorElevations, double targetValue)
+        {
+            List<double> elevations = floorElevations.Keys.ToList();
+
+            double closestValue = elevations[0];
+            double minDifference = Math.Abs(elevations[0] - targetValue);
+
+            for (int i = 1; i < elevations.Count; i++)
+            {
+                double difference = Math.Abs(elevations[i] - targetValue);
+                if (difference < minDifference)
+                {
+                    minDifference = difference;
+                    closestValue = elevations[i];
+                }
+            }
+
+            return floorElevations[closestValue];
+        }
     }
 }

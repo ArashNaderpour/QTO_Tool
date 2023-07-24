@@ -18,6 +18,8 @@ namespace QTO_Tool
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
 
+        public string floor { get; set; }
+
         public double grossVolume = double.MaxValue;
         public double netVolume { get; set; }
         public double topArea { get; set; }
@@ -61,7 +63,7 @@ namespace QTO_Tool
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Cubic Yard", "Square Foot", "Square Foot",
             "Square Foot", "Square Foot", "Foot", "Foot", "N/A" };
 
-        public BeamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold)
+        public BeamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, double angleThreshold, Dictionary<double, string> floorElevations)
         {
             this.layerName = _layerName;
 
@@ -86,6 +88,8 @@ namespace QTO_Tool
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
 
             this.SidesAndEndAndOpeingArea();
 

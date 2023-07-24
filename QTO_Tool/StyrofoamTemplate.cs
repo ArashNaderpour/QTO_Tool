@@ -23,7 +23,7 @@ namespace QTO_Tool
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "N/A" };
 
-        public StyrofoamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor)
+        public StyrofoamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, Dictionary<double, string> floorElevations)
         {
             this.color = layerColor;
 

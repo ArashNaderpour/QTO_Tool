@@ -58,7 +58,6 @@ namespace QTO_Tool
 
         public void Set_Elevation_Clicked(object sender, RoutedEventArgs e)
         {
- 
             try
             {
                 if (this.elevationInput != null)
@@ -255,14 +254,11 @@ namespace QTO_Tool
 
                 this.selectedConcreteTemplatesForLayers.Clear();
 
-                //this.saveData.Clear();
-                //this.loadData.Clear();
-
                 this.DissipatedConcreteTablePanel.Children.Clear();
                 this.CombinedConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
-
+                
                 for (int i = 0; i < RunQTO.doc.Layers.Count; i++)
                 {
                     if (RunQTO.doc.Layers[i].IsDeleted == false)
@@ -291,7 +287,7 @@ namespace QTO_Tool
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
                                     rhobj = rhobjs[j];
-                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allBeams.allTemplates.ContainsKey(objFloor))
                                     {
@@ -304,6 +300,7 @@ namespace QTO_Tool
 
                                     layerTemplates.Add(beam);
 
+                                    // This section is for future to capture interaction between slab and beam
                                     if (allSlabs.allTemplates.ContainsKey(objFloor))
                                     {
                                         foreach (var item in allSlabs.allTemplates[objFloor])
@@ -330,7 +327,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true);
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true, ElevationInput.floorElevations);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -355,7 +352,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false);
+                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false, ElevationInput.floorElevations);
 
                                     if (allColumns.allTemplates.ContainsKey(objFloor))
                                     {
@@ -380,7 +377,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -406,7 +403,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allCurbs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -432,7 +429,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allFootings.allTemplates.ContainsKey(objFloor))
                                     {
@@ -457,7 +454,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allWalls.allTemplates.ContainsKey(objFloor))
                                     {
@@ -483,7 +480,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allSlabs.allTemplates.ContainsKey(objFloor))
                                     {
@@ -521,7 +518,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor);
+                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor, ElevationInput.floorElevations);
 
                                     if (allStyrofoams.allTemplates.ContainsKey(objFloor))
                                     {
@@ -546,7 +543,7 @@ namespace QTO_Tool
                                 {
                                     rhobj = rhobjs[j];
 
-                                    StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold);
+                                    StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
                                     if (allStairs.allTemplates.ContainsKey(objFloor))
                                     {
