@@ -315,7 +315,7 @@ namespace QTO_Tool
                                     }
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "BOTTOM AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
@@ -341,7 +341,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(column);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                             }
 
                             if (selectedTemplate.Contains("Non-Rectangular"))
@@ -366,7 +366,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(column);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
                             }
 
                             if (selectedTemplate == "ContinuousFooting")
@@ -391,7 +391,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(continuousFooting);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
@@ -417,7 +417,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(curb);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
@@ -443,7 +443,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(footing);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
                             }
 
                             if (selectedTemplate == "Wall")
@@ -468,7 +468,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(wall);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" };
                             }
 
@@ -507,7 +507,7 @@ namespace QTO_Tool
                                     }
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" };
                             }
 
                             if (selectedTemplate == "Styrofoam")
@@ -532,7 +532,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(styrofoam);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "ISOLATE" };
                             }
 
                             if (selectedTemplate == "Stair")
@@ -557,7 +557,7 @@ namespace QTO_Tool
                                     layerTemplates.Add(stair);
                                 }
 
-                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
+                                quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
                             }
 
                             if (quantityValues.Count > 0)
@@ -592,24 +592,24 @@ namespace QTO_Tool
                 }
 
                 this.allSelectedTemplates.Add("Beam", allBeams);
-                this.allSelectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.allSelectedTemplates.Add("Column", allColumns);
-                this.allSelectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
                 this.allSelectedTemplates.Add("Curb", allCurbs);
-                this.allSelectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.allSelectedTemplates.Add("Footing", allFootings);
-                this.allSelectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
                 this.allSelectedTemplates.Add("Wall", allWalls);
-                this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME ABB.","FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" });
                 this.allSelectedTemplates.Add("Continuous Footing", allContinuousFootings);
-                this.allSelectedTemplateValues.Add("Continuous Footing", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Continuous Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
                 this.allSelectedTemplates.Add("Slab", allSlabs);
-                this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
                 this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);
-                this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME ABB.", "GROSS VOLUME", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "ISOLATE" });
                 this.allSelectedTemplates.Add("Stair", allStairs);
-                this.allSelectedTemplateValues.Add("Stair", new List<string>() { "COUNT", "NAME ABB.", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" });
+                this.allSelectedTemplateValues.Add("Stair", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" });
 
                 // Generate Combined Value Table
                 //UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,

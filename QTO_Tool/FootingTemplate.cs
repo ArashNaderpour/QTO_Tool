@@ -18,6 +18,7 @@ namespace QTO_Tool
         public string id { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
+        public string floor { get; set; }
         public double volume { get; set; }
         public double topArea { get; set; }
         public double bottomArea { get; set; }
@@ -26,6 +27,8 @@ namespace QTO_Tool
         public string type = "FootingTemplate";
 
         private Brep topBrepFace;
+
+        private List<double> downfacingFaceElevations = new List<double>();
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "Square Foot", "Square Foot", "Square Foot", "N/A" };
 
@@ -52,6 +55,8 @@ namespace QTO_Tool
             this.topArea = TopArea(geometry, angleThreshold);
            
             this.bottomArea = BottomArea(geometry, angleThreshold);
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
 
             this.sideArea = SideArea(geometry);
         }
@@ -133,6 +138,8 @@ namespace QTO_Tool
                     if (dotProduct < -angleThreshold && dotProduct >= -1)
                     {
                         area += Math.Round(area_properties.Area, 2);
+
+                        this.downfacingFaceElevations.Add(center.Z);
                     }
                 }
             }
@@ -153,6 +160,8 @@ namespace QTO_Tool
                 }
 
                 int bottomFaceIndex = centerZValues.IndexOf(centerZValues.Min());
+
+                this.downfacingFaceElevations.Add(centerZValues.Min());
 
                 area = faceAreas[bottomFaceIndex];
             }

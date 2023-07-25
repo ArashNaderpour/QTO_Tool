@@ -17,11 +17,15 @@ namespace QTO_Tool
         public string id { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
+
+        public string floor { get; set; }
         public double volume { get; set; }
 
         public string type = "StyrofoamTemplate";
 
         public static string[] units = { "N/A", "N/A", "Cubic Yard", "N/A" };
+
+        private List<double> downfacingFaceElevations = new List<double>();
 
         public StyrofoamTemplate(RhinoObject rhobj, string _layerName, System.Drawing.Color layerColor, Dictionary<double, string> floorElevations)
         {
@@ -42,6 +46,22 @@ namespace QTO_Tool
 
             var mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(0.01));
             volume = Math.Round(mass_properties.Volume * 0.037037, 2);
+
+            for (int i = 0; i < this.geometry.Faces.Count; i++)
+            {
+                var area_properties = AreaMassProperties.Compute(this.geometry.Faces[i]);
+
+                Point3d center = area_properties.Centroid;
+
+                double u, v;
+
+                if (this.geometry.Faces[i].ClosestPoint(center, out u, out v))
+                {
+                    this.downfacingFaceElevations.Add(center.Z);
+                }
+            }
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
         }
     }
 }

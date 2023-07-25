@@ -18,6 +18,7 @@ namespace QTO_Tool
         public string id { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
+        public string floor { get; set; }
         public double grossVolume { get; set; }
         public double netVolume { get; set; }
         public double topArea { get; set; }
@@ -29,6 +30,8 @@ namespace QTO_Tool
         public string type = "SlabTemplate";
 
         private List<Brep> topBrepFaces = new List<Brep>();
+
+        private List<double> downfacingFaceElevations = new List<double>();
 
         public Dictionary<string, BeamTemplate> beams = new Dictionary<string, BeamTemplate>();
         //public List<BeamTemplate> beams = new List<BeamTemplate>();
@@ -61,6 +64,8 @@ namespace QTO_Tool
             this.topArea = TopArea(geometry, angleThreshold);
 
             this.bottomArea = BottomArea(geometry, angleThreshold);
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
 
             this.edgeArea = EdgeArea(geometry);
 
@@ -108,6 +113,7 @@ namespace QTO_Tool
                     Point3d center = area_properties.Centroid;
 
                     centerZValues.Add(center.Z);
+
                     faceAreas.Add(Math.Round(area_properties.Area, 2));
                 }
 
@@ -145,7 +151,7 @@ namespace QTO_Tool
                     {
                         area += Math.Round(area_properties.Area, 2);
 
-                        this.topBrepFaces.Add(brep.Faces[i].DuplicateFace(false));
+                        this.downfacingFaceElevations.Add(center.Z);
                     }
                 }
             }
@@ -167,9 +173,9 @@ namespace QTO_Tool
 
                 int bottomFaceIndex = centerZValues.IndexOf(centerZValues.Min());
 
-                area = faceAreas[bottomFaceIndex];
+                this.downfacingFaceElevations.Add(centerZValues.Min());
 
-                this.topBrepFaces.Add(brep.Faces[bottomFaceIndex].DuplicateFace(false));
+                area = faceAreas[bottomFaceIndex];
             }
 
             return area;

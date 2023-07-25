@@ -18,6 +18,7 @@ namespace QTO_Tool
         public string id { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
+        public string floor { get; set; }
         public double volume { get; set; }
         public double treadArea { get; set; }
         public double riserArea { get; set; }
@@ -32,6 +33,7 @@ namespace QTO_Tool
 
         private List<double> downfacingFaceAreas = new List<double>();
         private List<Brep> downfacingFaces = new List<Brep>();
+        private List<double> downfacingFaceElevations = new List<double>();
 
         private List<double> sideAndRiserFaceAreas = new List<double>();
         private List<Brep> sideAndRiserFaces = new List<Brep>();
@@ -65,6 +67,8 @@ namespace QTO_Tool
             this.volume = Math.Round(mass_properties.Volume * 0.037037, 2);
 
             this.TreadAndRiserAndBottomArea(this.geometry, angleThreshold);
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
         }
 
         void TreadAndRiserAndBottomArea(Brep brep, double angleThreshold)
@@ -107,6 +111,7 @@ namespace QTO_Tool
                     {
                         this.downfacingFaceAreas.Add(area_properties.Area);
                         this.downfacingFaces.Add(brep.Faces[i].DuplicateFace(false));
+                        this.downfacingFaceElevations.Add(center.Z);
                     }
 
                     else

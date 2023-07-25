@@ -17,6 +17,7 @@ namespace QTO_Tool
         public string layerName { get; set; }
 
         public Dictionary<string, string> parsedLayerName = new Dictionary<string, string>();
+        public string floor { get; set; }
 
         public double grossVolume = double.MaxValue;
         public double netVolume { get; set; }
@@ -86,6 +87,8 @@ namespace QTO_Tool
             this.topArea = Math.Round(topAndBottomArea["Top Area"], 2);
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
+
+            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
 
             this.SidesAndEndAndOpeingArea();
 

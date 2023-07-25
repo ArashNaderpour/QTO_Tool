@@ -293,12 +293,20 @@ namespace QTO_Tool
             Grid.SetColumn(slabName, 1 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabName, _count);
 
+            TextBlock floor = new TextBlock();
+            floor.Text = slab.floor;
+            floor.HorizontalAlignment = HorizontalAlignment.Center;
+            _layerEstimateGrid.Children.Add(floor);
+            floor.FontSize = _valueFontSize;
+            Grid.SetColumn(floor, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetRow(floor, _count);
+
             TextBlock slabGrossVolume = new TextBlock();
             slabGrossVolume.Text = slab.grossVolume.ToString();
             slabGrossVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabGrossVolume);
             slabGrossVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(slabGrossVolume, 2 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabGrossVolume, 3 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabGrossVolume, _count);
 
             TextBlock slabNetVolume = new TextBlock();
@@ -307,7 +315,7 @@ namespace QTO_Tool
             slabNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabNetVolume);
             slabNetVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(slabNetVolume, 3 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabNetVolume, 4 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabNetVolume, _count);
 
             TextBlock slabTopArea = new TextBlock();
@@ -315,7 +323,7 @@ namespace QTO_Tool
             slabTopArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabTopArea);
             slabTopArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabTopArea, 4 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabTopArea, 5 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabTopArea, _count);
 
             TextBlock slabBottomArea = new TextBlock();
@@ -324,7 +332,7 @@ namespace QTO_Tool
             slabBottomArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabBottomArea);
             slabBottomArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabBottomArea, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabBottomArea, 6 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabBottomArea, _count);
 
             TextBlock slabEdgeArea = new TextBlock();
@@ -332,7 +340,7 @@ namespace QTO_Tool
             slabEdgeArea.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabEdgeArea);
             slabEdgeArea.FontSize = _valueFontSize;
-            Grid.SetColumn(slabEdgeArea, 6 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabEdgeArea, 7 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabEdgeArea, _count);
 
             TextBlock slabPerimeter = new TextBlock();
@@ -340,7 +348,7 @@ namespace QTO_Tool
             slabPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabPerimeter);
             slabPerimeter.FontSize = _valueFontSize;
-            Grid.SetColumn(slabPerimeter, 7 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabPerimeter, 8 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabPerimeter, _count);
 
             TextBlock slabOpeningPerimeter = new TextBlock();
@@ -348,7 +356,7 @@ namespace QTO_Tool
             slabOpeningPerimeter.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(slabOpeningPerimeter);
             slabOpeningPerimeter.FontSize = _valueFontSize;
-            Grid.SetColumn(slabOpeningPerimeter, 8 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabOpeningPerimeter, 9 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabOpeningPerimeter, _count);
 
             ToggleButton slabSelectObject = new ToggleButton();
@@ -360,7 +368,7 @@ namespace QTO_Tool
             slabSelectObject.Margin = new Thickness(2, 5, 2, 5);
             _layerEstimateGrid.Children.Add(slabSelectObject);
             slabSelectObject.FontSize = _valueFontSize;
-            Grid.SetColumn(slabSelectObject, 9 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(slabSelectObject, 10 + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(slabSelectObject, _count);
         }
 
