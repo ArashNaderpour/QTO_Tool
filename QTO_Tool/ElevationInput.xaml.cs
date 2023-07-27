@@ -24,6 +24,8 @@ namespace QTO_Tool
         public ElevationInput()
         {
             InitializeComponent();
+
+            ElevationInput.floorElevations = Methods.RetrieveDictionaryFromDocumentStrings();
         }
 
         private void AddLevel_Clicked(object sender, RoutedEventArgs e)
@@ -54,6 +56,8 @@ namespace QTO_Tool
                 }
             }
 
+            Methods.SaveDictionaryToDocumentStrings(ElevationInput.floorElevations);
+           
             this.Close();
         }
     }

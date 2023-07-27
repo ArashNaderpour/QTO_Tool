@@ -58,10 +58,17 @@
                             </CheckBox>
                         </Grid>
 
-                        <Button Name="StartCheckup" Content="Start Checkup" Grid.Column="0"
-                        Grid.Row="1" HorizontalAlignment="Center" 
-                        Margin="0 20 10 0" Width="250" Height="60"
-                        FontSize="26" Click="StartCheckup_Clicked"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Name="SetFloor" Content="Set Floor" Grid.Column="0" 
+                                    Grid.Row="1" HorizontalAlignment="Center" 
+                                    Margin="0 20 50 0" Width="400" Height="60"
+                                    FontSize="26" Click="SetFloor_Clicked"/>
+
+                            <Button Name="StartCheckup" Content="Start Checkup" Grid.Column="0"
+                                    Grid.Row="1" HorizontalAlignment="Center" 
+                                    Margin="50 20 0 0" Width="400" Height="60"
+                                    FontSize="26" Click="StartCheckup_Clicked"/>
+                        </StackPanel>
 
                         <GroupBox Name="CheckupResults" Header="Results"
                                   Margin="10" Visibility="Hidden"
@@ -99,11 +106,11 @@
 
                             <Button Name="ConcreteSaveButton" Content="EDIT ELEAVTION" Grid.Column="0"
                         Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
-                        Margin="20 0 10 0" FontSize="26" Click="Edit_Elevation_Clicked"/>
+                        Margin="20 0 10 0" FontSize="26" />
 
-                            <Button Name="ConcreteLoadButton" Content="SET ELEAVTION" Grid.Column="1" 
-                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="True" 
-                        Margin="10 0 20 0" FontSize="26" Click="Set_Elevation_Clicked"/>
+                            <Button Name="SOMDSettings" Content="SET SOMD" Grid.Column="1" 
+                        Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False" 
+                        Margin="10 0 20 0" FontSize="26"/>
 
                         </Grid>
 

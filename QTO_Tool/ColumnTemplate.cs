@@ -54,7 +54,14 @@ namespace QTO_Tool
 
             this.sideArea = this.SideArea(geometry);
 
-            this.floor = Methods.FindFloor(floorElevations, this.topAndBottomFaceCenters["Bottom"].Z);
+            if (floorElevations.Count > 0)
+            {
+                this.floor = Methods.FindFloor(floorElevations, this.topAndBottomFaceCenters["Bottom"].Z);
+            }
+            else
+            {
+                this.floor = "-";
+            }
 
             this.height = this.Height(topAndBottomFaceCenters);
         }

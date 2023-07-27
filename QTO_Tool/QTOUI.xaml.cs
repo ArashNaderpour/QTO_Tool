@@ -56,7 +56,7 @@ namespace QTO_Tool
             InitializeComponent();
         }
 
-        public void Set_Elevation_Clicked(object sender, RoutedEventArgs e)
+        public void SetFloor_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -65,18 +65,13 @@ namespace QTO_Tool
                     this.elevationInput.Close();
                 }
                 this.elevationInput = new ElevationInput();
-                this.elevationInput.Show();
 
+                this.elevationInput.Show();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-        }
-
-        public void Edit_Elevation_Clicked(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void StartCheckup_Clicked(object sender, RoutedEventArgs e)
@@ -116,6 +111,17 @@ namespace QTO_Tool
 
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
+
+                ElevationInput.floorElevations = Methods.RetrieveDictionaryFromDocumentStrings();
+
+                if (ElevationInput.floorElevations.Count > 0)
+                {
+                    this.SetFloor.Background = System.Windows.Media.Brushes.ForestGreen;
+                }
+                else
+                {
+                    this.SetFloor.Background = System.Windows.Media.Brushes.DarkRed;
+                }
 
                 this.CheckupResults.Content = Methods.ConcreteModelSetup();
 
@@ -258,7 +264,7 @@ namespace QTO_Tool
                 this.CombinedConcreteTablePanel.Children.Clear();
 
                 double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
-                
+
                 for (int i = 0; i < RunQTO.doc.Layers.Count; i++)
                 {
                     if (RunQTO.doc.Layers[i].IsDeleted == false)

@@ -88,7 +88,14 @@ namespace QTO_Tool
 
             this.bottomArea = Math.Round(topAndBottomArea["Bottom Area"], 2);
 
-            this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
+            if (floorElevations.Count > 0)
+            {
+                this.floor = Methods.FindFloor(floorElevations, this.downfacingFaceElevations.Min());
+            }
+            else
+            {
+                this.floor = "-";
+            }
 
             this.SidesAndEndAndOpeingArea();
 

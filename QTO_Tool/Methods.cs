@@ -3,10 +3,13 @@ using System.Windows;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Interop;
+using System.Reflection;
 using Rhino;
 using Rhino.Geometry;
 using Rhino.DocObjects;
-using System.Reflection;
+using Rhino.Collections;
+using Rhino.DocObjects.Custom;
+using Newtonsoft.Json;
 
 namespace QTO_Tool
 {
@@ -401,6 +404,36 @@ namespace QTO_Tool
             }
 
             return floorElevations[closestValue];
+        }
+
+        public static void SaveDictionaryToDocumentStrings(Dictionary<double, string> data)
+        {
+            // Serialize the dictionary to a JSON string
+            string jsonString = JsonConvert.SerializeObject(data);
+
+            // Store the JSON string in RhinoDoc.Strings
+            RunQTO.doc.Strings.SetString("FloorElevations", jsonString);
+
+            // Save changes to the Rhino document
+            RunQTO.doc.Modified = true;
+        }
+
+        public static Dictionary<double, string> RetrieveDictionaryFromDocumentStrings()
+        {
+            // Get the active Rhino document
+            RhinoDoc doc = RhinoDoc.ActiveDoc;
+
+            // Retrieve the JSON string from RhinoDoc.Strings
+            string jsonString = doc.Strings.GetValue("FloorElevations");
+
+            if (!string.IsNullOrEmpty(jsonString))
+            {
+                // Deserialize the JSON string back to a dictionary
+                return JsonConvert.DeserializeObject<Dictionary<double, string>>(jsonString);
+            }
+
+            // Return an empty dictionary if the JSON string is not found
+            return new Dictionary<double, string>();
         }
     }
 }
