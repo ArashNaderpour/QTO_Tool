@@ -116,7 +116,7 @@ namespace QTO_Tool
 
                 if (ElevationInput.floorElevations.Count > 0)
                 {
-                    this.SetFloor.Background = System.Windows.Media.Brushes.ForestGreen;
+                    this.SetFloor.Background = System.Windows.Media.Brushes.YellowGreen;
                 }
                 else
                 {
