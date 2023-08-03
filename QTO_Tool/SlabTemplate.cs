@@ -245,8 +245,8 @@ namespace QTO_Tool
 
             this.perimeter = Math.Round(sortedProjectedBrepBoundaryCurveLengths.Last(), 2);
 
-            sortedProjectedBrepBoundaryCurveAreas.RemoveAt(sortedProjectedBrepBoundaryCurveAreas.Count - 1);
-            this.openingPerimeter = Math.Round(sortedProjectedBrepBoundaryCurveAreas.Sum(), 2);
+            sortedProjectedBrepBoundaryCurveLengths.RemoveAt(sortedProjectedBrepBoundaryCurveLengths.Count - 1);
+            this.openingPerimeter = Math.Round(sortedProjectedBrepBoundaryCurveLengths.Sum(), 2);
         }
 
         //double OpeningPerimeter(List<Brep> breps)

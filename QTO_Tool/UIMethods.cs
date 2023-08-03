@@ -961,7 +961,7 @@ namespace QTO_Tool
             curbNetVolume.HorizontalAlignment = HorizontalAlignment.Center;
             _layerEstimateGrid.Children.Add(curbNetVolume);
             curbNetVolume.FontSize = _valueFontSize;
-            Grid.SetColumn(curbNetVolume, 5 + _layerPropertyColumnHeaders.Count);
+            Grid.SetColumn(curbNetVolume, columnIndex + _layerPropertyColumnHeaders.Count);
             Grid.SetRow(curbNetVolume, _count);
             columnIndex++;
 

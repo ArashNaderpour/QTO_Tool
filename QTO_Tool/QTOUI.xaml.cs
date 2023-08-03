@@ -15,6 +15,7 @@ using MySql.Data.MySqlClient;
 using Microsoft.VisualBasic;
 using Xbim.Ifc;
 using Xbim.Ifc4.ProductExtension;
+using System.Windows.Media;
 
 namespace QTO_Tool
 {
@@ -25,7 +26,7 @@ namespace QTO_Tool
     public partial class QTOUI : Window
     {
         Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
-
+        
         AllBeams allBeams = new AllBeams();
         AllColumns allColumns = new AllColumns();
         AllContinousFootings allContinuousFootings = new AllContinousFootings();
@@ -54,6 +55,21 @@ namespace QTO_Tool
         public QTOUI()
         {
             InitializeComponent();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ElevationInput.floorElevations = Methods.RetrieveDictionaryFromDocumentStrings();
+            
+            if (ElevationInput.floorElevations.Count > 0)
+            {
+                this.SetFloor.Background = (Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#98AD80");
+            }
+            else
+            {
+                this.SetFloor.Background = Brushes.Firebrick;
+                //this.SetFloor.Background = (Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#FF5858 ");
+            }
         }
 
         public void SetFloor_Clicked(object sender, RoutedEventArgs e)
@@ -111,18 +127,6 @@ namespace QTO_Tool
 
             if (this.ConcreteIsIncluded.IsChecked == true)
             {
-
-                ElevationInput.floorElevations = Methods.RetrieveDictionaryFromDocumentStrings();
-
-                if (ElevationInput.floorElevations.Count > 0)
-                {
-                    this.SetFloor.Background = System.Windows.Media.Brushes.YellowGreen;
-                }
-                else
-                {
-                    this.SetFloor.Background = System.Windows.Media.Brushes.DarkRed;
-                }
-
                 this.CheckupResults.Content = Methods.ConcreteModelSetup();
 
                 this.CheckupResults.Visibility = Visibility.Visible;
