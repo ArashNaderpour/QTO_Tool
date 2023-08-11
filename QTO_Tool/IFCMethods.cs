@@ -427,6 +427,11 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(wallTemplate.floor);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
                         p.Name = "GROSS VOLUME";
                         p.NominalValue = new IfcNumericMeasure(Math.Round(wallTemplate.grossVolume, 2).ToString());
                     }),
@@ -495,6 +500,11 @@ namespace QTO_Tool
                     {
                         p.Name = "NAME ABB.";
                         p.NominalValue = new IfcText(beam.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(beamTemplate.floor);
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
@@ -569,6 +579,11 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(columnTemplate.floor);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
                         p.Name = "GROSS VOLUME";
                         p.NominalValue = new IfcNumericMeasure(Math.Round(columnTemplate.volume, 2).ToString());
                     }),
@@ -612,6 +627,11 @@ namespace QTO_Tool
                     {
                         p.Name = "NAME ABB.";
                         p.NominalValue = new IfcText(curb.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(curbTemplate.floor);
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
@@ -686,6 +706,11 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(footingTemplate.floor);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
                         p.Name = "GROSS VOLUME";
                         p.NominalValue = new IfcNumericMeasure(Math.Round(footingTemplate.volume, 2).ToString());
                     }),
@@ -734,6 +759,11 @@ namespace QTO_Tool
                     {
                         p.Name = "NAME ABB.";
                         p.NominalValue = new IfcText(continuousFooting.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(continuousFootingTemplate.floor);
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
@@ -813,6 +843,11 @@ namespace QTO_Tool
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(slabTemplate.floor);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
                         p.Name = "GROSS VOLUME";
                         p.NominalValue = new IfcNumericMeasure(Math.Round(slabTemplate.grossVolume, 2).ToString());
                     }),
@@ -876,6 +911,11 @@ namespace QTO_Tool
                     {
                         p.Name = "NAME ABB.";
                         p.NominalValue = new IfcText(styrofoam.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(styrofoamTemplate.floor);
                     }),
                         model.Instances.New<IfcPropertySingleValue>(p =>
                     {
