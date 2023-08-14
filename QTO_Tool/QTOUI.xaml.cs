@@ -244,8 +244,6 @@ namespace QTO_Tool
 
             System.Drawing.Color layerColor;
 
-            string objFloor;
-
             List<object> layerTemplates;
 
             try
@@ -282,10 +280,8 @@ namespace QTO_Tool
 
                         layerColor = RunQTO.doc.Layers[i].Color;
 
-                        if (layerName.Split('_').Length >= 3)
+                        if (layerName.Split('_').Length >= 2)
                         {
-                            objFloor = layerName.Split('_')[2];
-
                             this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
 
                             layerTemplates = new List<object>();
@@ -299,21 +295,21 @@ namespace QTO_Tool
                                     rhobj = rhobjs[j];
                                     BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allBeams.allTemplates.ContainsKey(objFloor))
+                                    if (allBeams.allTemplates.ContainsKey(beam.floor))
                                     {
-                                        allBeams.allTemplates[objFloor].Add(beam);
+                                        allBeams.allTemplates[beam.floor].Add(beam);
                                     }
                                     else
                                     {
-                                        allBeams.allTemplates.Add(objFloor, new List<object> { beam });
+                                        allBeams.allTemplates.Add(beam.floor, new List<object> { beam });
                                     }
 
                                     layerTemplates.Add(beam);
 
                                     // This section is for future to capture interaction between slab and beam
-                                    if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                    if (allSlabs.allTemplates.ContainsKey(beam.floor))
                                     {
-                                        foreach (var item in allSlabs.allTemplates[objFloor])
+                                        foreach (var item in allSlabs.allTemplates[beam.floor])
                                         {
                                             SlabTemplate slabTemplate = (SlabTemplate)item;
 
@@ -339,13 +335,13 @@ namespace QTO_Tool
 
                                     ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true, ElevationInput.floorElevations);
 
-                                    if (allColumns.allTemplates.ContainsKey(objFloor))
+                                    if (allColumns.allTemplates.ContainsKey(column.floor))
                                     {
-                                        allColumns.allTemplates[objFloor].Add(column);
+                                        allColumns.allTemplates[column.floor].Add(column);
                                     }
                                     else
                                     {
-                                        allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                        allColumns.allTemplates.Add(column.floor, new List<object> { column });
                                     }
 
                                     layerTemplates.Add(column);
@@ -364,13 +360,13 @@ namespace QTO_Tool
 
                                     ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false, ElevationInput.floorElevations);
 
-                                    if (allColumns.allTemplates.ContainsKey(objFloor))
+                                    if (allColumns.allTemplates.ContainsKey(column.floor))
                                     {
-                                        allColumns.allTemplates[objFloor].Add(column);
+                                        allColumns.allTemplates[column.floor].Add(column);
                                     }
                                     else
                                     {
-                                        allColumns.allTemplates.Add(objFloor, new List<object> { column });
+                                        allColumns.allTemplates.Add(column.floor, new List<object> { column });
                                     }
 
                                     layerTemplates.Add(column);
@@ -389,13 +385,13 @@ namespace QTO_Tool
 
                                     ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allContinuousFootings.allTemplates.ContainsKey(objFloor))
+                                    if (allContinuousFootings.allTemplates.ContainsKey(continuousFooting.floor))
                                     {
-                                        allContinuousFootings.allTemplates[objFloor].Add(continuousFooting);
+                                        allContinuousFootings.allTemplates[continuousFooting.floor].Add(continuousFooting);
                                     }
                                     else
                                     {
-                                        allContinuousFootings.allTemplates.Add(objFloor, new List<object> { continuousFooting });
+                                        allContinuousFootings.allTemplates.Add(continuousFooting.floor, new List<object> { continuousFooting });
                                     }
 
                                     layerTemplates.Add(continuousFooting);
@@ -415,13 +411,13 @@ namespace QTO_Tool
 
                                     CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allCurbs.allTemplates.ContainsKey(objFloor))
+                                    if (allCurbs.allTemplates.ContainsKey(curb.floor))
                                     {
-                                        allCurbs.allTemplates[objFloor].Add(curb);
+                                        allCurbs.allTemplates[curb.floor].Add(curb);
                                     }
                                     else
                                     {
-                                        allCurbs.allTemplates.Add(objFloor, new List<object> { curb });
+                                        allCurbs.allTemplates.Add(curb.floor, new List<object> { curb });
                                     }
 
                                     layerTemplates.Add(curb);
@@ -441,13 +437,13 @@ namespace QTO_Tool
 
                                     FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allFootings.allTemplates.ContainsKey(objFloor))
+                                    if (allFootings.allTemplates.ContainsKey(footing.floor))
                                     {
-                                        allFootings.allTemplates[objFloor].Add(footing);
+                                        allFootings.allTemplates[footing.floor].Add(footing);
                                     }
                                     else
                                     {
-                                        allFootings.allTemplates.Add(objFloor, new List<object> { footing });
+                                        allFootings.allTemplates.Add(footing.floor, new List<object> { footing });
                                     }
 
                                     layerTemplates.Add(footing);
@@ -466,13 +462,13 @@ namespace QTO_Tool
 
                                     WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allWalls.allTemplates.ContainsKey(objFloor))
+                                    if (allWalls.allTemplates.ContainsKey(wall.floor))
                                     {
-                                        allWalls.allTemplates[objFloor].Add(wall);
+                                        allWalls.allTemplates[wall.floor].Add(wall);
                                     }
                                     else
                                     {
-                                        allWalls.allTemplates.Add(objFloor, new List<object> { wall });
+                                        allWalls.allTemplates.Add(wall.floor, new List<object> { wall });
                                     }
 
                                     layerTemplates.Add(wall);
@@ -492,20 +488,20 @@ namespace QTO_Tool
 
                                     SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allSlabs.allTemplates.ContainsKey(objFloor))
+                                    if (allSlabs.allTemplates.ContainsKey(slab.floor))
                                     {
-                                        allSlabs.allTemplates[objFloor].Add(slab);
+                                        allSlabs.allTemplates[slab.floor].Add(slab);
                                     }
                                     else
                                     {
-                                        allSlabs.allTemplates.Add(objFloor, new List<object> { slab });
+                                        allSlabs.allTemplates.Add(slab.floor, new List<object> { slab });
                                     }
 
                                     layerTemplates.Add(slab);
 
-                                    if (allBeams.allTemplates.ContainsKey(objFloor))
+                                    if (allBeams.allTemplates.ContainsKey(slab.floor))
                                     {
-                                        foreach (var item in allBeams.allTemplates[objFloor])
+                                        foreach (var item in allBeams.allTemplates[slab.floor])
                                         {
                                             BeamTemplate beamTemplate = (BeamTemplate)item;
 
@@ -530,13 +526,13 @@ namespace QTO_Tool
 
                                     StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor, ElevationInput.floorElevations);
 
-                                    if (allStyrofoams.allTemplates.ContainsKey(objFloor))
+                                    if (allStyrofoams.allTemplates.ContainsKey(styrofoam.floor))
                                     {
-                                        allStyrofoams.allTemplates[objFloor].Add(styrofoam);
+                                        allStyrofoams.allTemplates[styrofoam.floor].Add(styrofoam);
                                     }
                                     else
                                     {
-                                        allStyrofoams.allTemplates.Add(objFloor, new List<object> { styrofoam });
+                                        allStyrofoams.allTemplates.Add(styrofoam.floor, new List<object> { styrofoam });
                                     }
 
                                     layerTemplates.Add(styrofoam);
@@ -555,13 +551,13 @@ namespace QTO_Tool
 
                                     StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allStairs.allTemplates.ContainsKey(objFloor))
+                                    if (allStairs.allTemplates.ContainsKey(stair.floor))
                                     {
-                                        allStairs.allTemplates[objFloor].Add(stair);
+                                        allStairs.allTemplates[stair.floor].Add(stair);
                                     }
                                     else
                                     {
-                                        allStairs.allTemplates.Add(objFloor, new List<object> { stair });
+                                        allStairs.allTemplates.Add(stair.floor, new List<object> { stair });
                                     }
 
                                     layerTemplates.Add(stair);
@@ -585,6 +581,10 @@ namespace QTO_Tool
                             {
                                 continue;
                             }
+                        }
+                        else
+                        {
+                            MessageBox.Show("INCOMPATIBLE LAYER NAMING SCHEME!");
                         }
                     }
                 }
