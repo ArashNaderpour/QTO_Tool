@@ -584,7 +584,10 @@ namespace QTO_Tool
                         }
                         else
                         {
-                            MessageBox.Show("INCOMPATIBLE LAYER NAMING SCHEME!");
+                            if (selectedTemplate != "N/A")
+                            {
+                                MessageBox.Show(layerName + "=>" + "INCOMPATIBLE LAYER NAMING SCHEME!");
+                            }
                         }
                     }
                 }
