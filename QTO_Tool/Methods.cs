@@ -314,8 +314,6 @@ namespace QTO_Tool
                 newObjectAttributes.ColorSource = ObjectColorSource.ColorFromObject;
 
                 RunQTO.doc.Objects.ModifyAttributes(rhobj, newObjectAttributes, false);
-
-                RunQTO.doc.Views.Redraw();
             }
         }
 

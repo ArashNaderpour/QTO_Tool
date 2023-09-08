@@ -26,7 +26,7 @@ namespace QTO_Tool
     public partial class QTOUI : Window
     {
         Dictionary<string, string> selectedConcreteTemplatesForLayers = new Dictionary<string, string>();
-        
+
         AllBeams allBeams = new AllBeams();
         AllColumns allColumns = new AllColumns();
         AllContinousFootings allContinuousFootings = new AllContinousFootings();
@@ -60,7 +60,7 @@ namespace QTO_Tool
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ElevationInput.floorElevations = Methods.RetrieveDictionaryFromDocumentStrings();
-            
+
             if (ElevationInput.floorElevations.Count > 0)
             {
                 this.SetFloor.Background = (Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#98AD80");
@@ -246,27 +246,29 @@ namespace QTO_Tool
 
             List<object> layerTemplates;
 
+            int badGeometryCount = 0;
+
+            this.allBeams.Clear();
+            this.allColumns.Clear();
+            this.allCurbs.Clear();
+            this.allFootings.Clear();
+            this.allWalls.Clear();
+            this.allContinuousFootings.Clear();
+            this.allSlabs.Clear();
+            this.allStyrofoams.Clear();
+
+            this.allSelectedTemplates.Clear();
+            this.allSelectedTemplateValues.Clear();
+
+            this.selectedConcreteTemplatesForLayers.Clear();
+
+            this.DissipatedConcreteTablePanel.Children.Clear();
+            this.CombinedConcreteTablePanel.Children.Clear();
+
+            double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
+
             try
             {
-                this.allBeams.Clear();
-                this.allColumns.Clear();
-                this.allCurbs.Clear();
-                this.allFootings.Clear();
-                this.allWalls.Clear();
-                this.allContinuousFootings.Clear();
-                this.allSlabs.Clear();
-                this.allStyrofoams.Clear();
-
-                this.allSelectedTemplates.Clear();
-                this.allSelectedTemplateValues.Clear();
-
-                this.selectedConcreteTemplatesForLayers.Clear();
-
-                this.DissipatedConcreteTablePanel.Children.Clear();
-                this.CombinedConcreteTablePanel.Children.Clear();
-
-                double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
-
                 for (int i = 0; i < RunQTO.doc.Layers.Count; i++)
                 {
                     if (RunQTO.doc.Layers[i].IsDeleted == false)
@@ -292,32 +294,41 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-                                    BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allBeams.allTemplates.ContainsKey(beam.floor))
+                                    try
                                     {
-                                        allBeams.allTemplates[beam.floor].Add(beam);
-                                    }
-                                    else
-                                    {
-                                        allBeams.allTemplates.Add(beam.floor, new List<object> { beam });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(beam);
+                                        BeamTemplate beam = new BeamTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    // This section is for future to capture interaction between slab and beam
-                                    if (allSlabs.allTemplates.ContainsKey(beam.floor))
-                                    {
-                                        foreach (var item in allSlabs.allTemplates[beam.floor])
+                                        if (allBeams.allTemplates.ContainsKey(beam.floor))
                                         {
-                                            SlabTemplate slabTemplate = (SlabTemplate)item;
+                                            allBeams.allTemplates[beam.floor].Add(beam);
+                                        }
+                                        else
+                                        {
+                                            allBeams.allTemplates.Add(beam.floor, new List<object> { beam });
+                                        }
 
-                                            if (!slabTemplate.beams.ContainsKey(beam.id))
+                                        layerTemplates.Add(beam);
+
+                                        // This section is for future to capture interaction between slab and beam
+                                        if (allSlabs.allTemplates.ContainsKey(beam.floor))
+                                        {
+                                            foreach (var item in allSlabs.allTemplates[beam.floor])
                                             {
-                                                slabTemplate.beams.Add(beam.id, beam);
+                                                SlabTemplate slabTemplate = (SlabTemplate)item;
+
+                                                if (!slabTemplate.beams.ContainsKey(beam.id))
+                                                {
+                                                    slabTemplate.beams.Add(beam.id, beam);
+                                                }
                                             }
                                         }
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
                                     }
                                 }
 
@@ -331,20 +342,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true, ElevationInput.floorElevations);
-
-                                    if (allColumns.allTemplates.ContainsKey(column.floor))
+                                    try
                                     {
-                                        allColumns.allTemplates[column.floor].Add(column);
-                                    }
-                                    else
-                                    {
-                                        allColumns.allTemplates.Add(column.floor, new List<object> { column });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(column);
+                                        ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, true, ElevationInput.floorElevations);
+
+                                        if (allColumns.allTemplates.ContainsKey(column.floor))
+                                        {
+                                            allColumns.allTemplates[column.floor].Add(column);
+                                        }
+                                        else
+                                        {
+                                            allColumns.allTemplates.Add(column.floor, new List<object> { column });
+                                        }
+
+                                        layerTemplates.Add(column);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
@@ -356,20 +375,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false, ElevationInput.floorElevations);
-
-                                    if (allColumns.allTemplates.ContainsKey(column.floor))
+                                    try
                                     {
-                                        allColumns.allTemplates[column.floor].Add(column);
-                                    }
-                                    else
-                                    {
-                                        allColumns.allTemplates.Add(column.floor, new List<object> { column });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(column);
+                                        ColumnTemplate column = new ColumnTemplate(rhobj, layerName, layerColor, false, ElevationInput.floorElevations);
+
+                                        if (allColumns.allTemplates.ContainsKey(column.floor))
+                                        {
+                                            allColumns.allTemplates[column.floor].Add(column);
+                                        }
+                                        else
+                                        {
+                                            allColumns.allTemplates.Add(column.floor, new List<object> { column });
+                                        }
+
+                                        layerTemplates.Add(column);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" };
@@ -381,20 +408,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allContinuousFootings.allTemplates.ContainsKey(continuousFooting.floor))
+                                    try
                                     {
-                                        allContinuousFootings.allTemplates[continuousFooting.floor].Add(continuousFooting);
-                                    }
-                                    else
-                                    {
-                                        allContinuousFootings.allTemplates.Add(continuousFooting.floor, new List<object> { continuousFooting });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(continuousFooting);
+                                        ContinuousFootingTemplate continuousFooting = new ContinuousFootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
+
+                                        if (allContinuousFootings.allTemplates.ContainsKey(continuousFooting.floor))
+                                        {
+                                            allContinuousFootings.allTemplates[continuousFooting.floor].Add(continuousFooting);
+                                        }
+                                        else
+                                        {
+                                            allContinuousFootings.allTemplates.Add(continuousFooting.floor, new List<object> { continuousFooting });
+                                        }
+
+                                        layerTemplates.Add(continuousFooting);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "END AREA",
@@ -407,20 +442,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allCurbs.allTemplates.ContainsKey(curb.floor))
+                                    try
                                     {
-                                        allCurbs.allTemplates[curb.floor].Add(curb);
-                                    }
-                                    else
-                                    {
-                                        allCurbs.allTemplates.Add(curb.floor, new List<object> { curb });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(curb);
+                                        CurbTemplate curb = new CurbTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
+
+                                        if (allCurbs.allTemplates.ContainsKey(curb.floor))
+                                        {
+                                            allCurbs.allTemplates[curb.floor].Add(curb);
+                                        }
+                                        else
+                                        {
+                                            allCurbs.allTemplates.Add(curb.floor, new List<object> { curb });
+                                        }
+
+                                        layerTemplates.Add(curb);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
@@ -433,20 +476,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allFootings.allTemplates.ContainsKey(footing.floor))
+                                    try
                                     {
-                                        allFootings.allTemplates[footing.floor].Add(footing);
-                                    }
-                                    else
-                                    {
-                                        allFootings.allTemplates.Add(footing.floor, new List<object> { footing });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(footing);
+                                        FootingTemplate footing = new FootingTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
+
+                                        if (allFootings.allTemplates.ContainsKey(footing.floor))
+                                        {
+                                            allFootings.allTemplates[footing.floor].Add(footing);
+                                        }
+                                        else
+                                        {
+                                            allFootings.allTemplates.Add(footing.floor, new List<object> { footing });
+                                        }
+
+                                        layerTemplates.Add(footing);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" };
@@ -458,20 +509,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allWalls.allTemplates.ContainsKey(wall.floor))
+                                    try
                                     {
-                                        allWalls.allTemplates[wall.floor].Add(wall);
-                                    }
-                                    else
-                                    {
-                                        allWalls.allTemplates.Add(wall.floor, new List<object> { wall });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(wall);
+                                        WallTemplate wall = new WallTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
+
+                                        if (allWalls.allTemplates.ContainsKey(wall.floor))
+                                        {
+                                            allWalls.allTemplates[wall.floor].Add(wall);
+                                        }
+                                        else
+                                        {
+                                            allWalls.allTemplates.Add(wall.floor, new List<object> { wall });
+                                        }
+
+                                        layerTemplates.Add(wall);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
@@ -484,32 +543,40 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allSlabs.allTemplates.ContainsKey(slab.floor))
+                                    try
                                     {
-                                        allSlabs.allTemplates[slab.floor].Add(slab);
-                                    }
-                                    else
-                                    {
-                                        allSlabs.allTemplates.Add(slab.floor, new List<object> { slab });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(slab);
+                                        SlabTemplate slab = new SlabTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
 
-                                    if (allBeams.allTemplates.ContainsKey(slab.floor))
-                                    {
-                                        foreach (var item in allBeams.allTemplates[slab.floor])
+                                        if (allSlabs.allTemplates.ContainsKey(slab.floor))
                                         {
-                                            BeamTemplate beamTemplate = (BeamTemplate)item;
+                                            allSlabs.allTemplates[slab.floor].Add(slab);
+                                        }
+                                        else
+                                        {
+                                            allSlabs.allTemplates.Add(slab.floor, new List<object> { slab });
+                                        }
 
-                                            if (!slab.beams.ContainsKey(beamTemplate.id))
+                                        layerTemplates.Add(slab);
+
+                                        if (allBeams.allTemplates.ContainsKey(slab.floor))
+                                        {
+                                            foreach (var item in allBeams.allTemplates[slab.floor])
                                             {
-                                                slab.beams.Add(beamTemplate.id, beamTemplate);
+                                                BeamTemplate beamTemplate = (BeamTemplate)item;
+
+                                                if (!slab.beams.ContainsKey(beamTemplate.id))
+                                                {
+                                                    slab.beams.Add(beamTemplate.id, beamTemplate);
+                                                }
                                             }
                                         }
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
                                     }
                                 }
 
@@ -522,20 +589,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor, ElevationInput.floorElevations);
-
-                                    if (allStyrofoams.allTemplates.ContainsKey(styrofoam.floor))
+                                    try
                                     {
-                                        allStyrofoams.allTemplates[styrofoam.floor].Add(styrofoam);
-                                    }
-                                    else
-                                    {
-                                        allStyrofoams.allTemplates.Add(styrofoam.floor, new List<object> { styrofoam });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(styrofoam);
+                                        StyrofoamTemplate styrofoam = new StyrofoamTemplate(rhobj, layerName, layerColor, ElevationInput.floorElevations);
+
+                                        if (allStyrofoams.allTemplates.ContainsKey(styrofoam.floor))
+                                        {
+                                            allStyrofoams.allTemplates[styrofoam.floor].Add(styrofoam);
+                                        }
+                                        else
+                                        {
+                                            allStyrofoams.allTemplates.Add(styrofoam.floor, new List<object> { styrofoam });
+                                        }
+
+                                        layerTemplates.Add(styrofoam);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "ISOLATE" };
@@ -547,20 +622,28 @@ namespace QTO_Tool
 
                                 for (int j = 0; j < rhobjs.Length; j++)
                                 {
-                                    rhobj = rhobjs[j];
-
-                                    StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
-
-                                    if (allStairs.allTemplates.ContainsKey(stair.floor))
+                                    try
                                     {
-                                        allStairs.allTemplates[stair.floor].Add(stair);
-                                    }
-                                    else
-                                    {
-                                        allStairs.allTemplates.Add(stair.floor, new List<object> { stair });
-                                    }
+                                        rhobj = rhobjs[j];
 
-                                    layerTemplates.Add(stair);
+                                        StairTemplate stair = new StairTemplate(rhobj, layerName, layerColor, angleThreshold, ElevationInput.floorElevations);
+
+                                        if (allStairs.allTemplates.ContainsKey(stair.floor))
+                                        {
+                                            allStairs.allTemplates[stair.floor].Add(stair);
+                                        }
+                                        else
+                                        {
+                                            allStairs.allTemplates.Add(stair.floor, new List<object> { stair });
+                                        }
+
+                                        layerTemplates.Add(stair);
+                                    }
+                                    catch
+                                    {
+                                        badGeometryCount++;
+                                        Methods.HighlightBadGeometry(rhobj);
+                                    }
                                 }
 
                                 quantityValues = new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" };
@@ -592,60 +675,77 @@ namespace QTO_Tool
                     }
                 }
 
-                foreach (var item in allSlabs.allTemplates)
+                if (badGeometryCount == 0)
                 {
-                    foreach (SlabTemplate slab in item.Value)
+                    foreach (var item in allSlabs.allTemplates)
                     {
-                        slab.UpdateNetVolumeAndBottomAreaWithBeams();
+                        foreach (SlabTemplate slab in item.Value)
+                        {
+                            slab.UpdateNetVolumeAndBottomAreaWithBeams();
 
-                        ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_NetVolume"))).Text = slab.netVolume.ToString();
+                            ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_NetVolume"))).Text = slab.netVolume.ToString();
 
-                        ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_BottomArea"))).Text = slab.bottomArea.ToString();
+                            ((TextBlock)(Methods.GetByUid(this.DissipatedConcreteTablePanel, slab.id + "_BottomArea"))).Text = slab.bottomArea.ToString();
+                        }
                     }
-                }
 
-                this.allSelectedTemplates.Add("Beam", allBeams);
-                this.allSelectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.allSelectedTemplates.Add("Column", allColumns);
-                this.allSelectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
-                this.allSelectedTemplates.Add("Curb", allCurbs);
-                this.allSelectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.allSelectedTemplates.Add("Footing", allFootings);
-                this.allSelectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
-                this.allSelectedTemplates.Add("Wall", allWalls);
-                this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME ABB.","FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
+                    this.allSelectedTemplates.Add("Beam", allBeams);
+                    this.allSelectedTemplateValues.Add("Beam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Column", allColumns);
+                    this.allSelectedTemplateValues.Add("Column", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "HEIGHT", "SIDE AREA", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Curb", allCurbs);
+                    this.allSelectedTemplateValues.Add("Curb", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Footing", allFootings);
+                    this.allSelectedTemplateValues.Add("Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Wall", allWalls);
+                    this.allSelectedTemplateValues.Add("Wall", new List<string>() { "COUNT", "NAME ABB.","FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "END AREA",
                             "SIDE-1", "SIDE-2", "LENGTH", "OPENING AREA" ,"ISOLATE" });
-                this.allSelectedTemplates.Add("Continuous Footing", allContinuousFootings);
-                this.allSelectedTemplateValues.Add("Continuous Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
-                this.allSelectedTemplates.Add("Slab", allSlabs);
-                this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
-                this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);
-                this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "ISOLATE" });
-                this.allSelectedTemplates.Add("Stair", allStairs);
-                this.allSelectedTemplateValues.Add("Stair", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Continuous Footing", allContinuousFootings);
+                    this.allSelectedTemplateValues.Add("Continuous Footing", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "TOP AREA", "BOTTOM AREA", "SIDE AREA", "LENGTH", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Slab", allSlabs);
+                    this.allSelectedTemplateValues.Add("Slab", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "NET VOLUME", "TOP AREA", "BOTTOM AREA", "EDGE AREA", "PERIMETER", "OPENING PERIMETER", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Styrofoam", allStyrofoams);
+                    this.allSelectedTemplateValues.Add("Styrofoam", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "GROSS VOLUME", "ISOLATE" });
+                    this.allSelectedTemplates.Add("Stair", allStairs);
+                    this.allSelectedTemplateValues.Add("Stair", new List<string>() { "COUNT", "NAME ABB.", "FLOOR", "VOLUME", "TREAD AREA", "RISER AREA", "TREAD COUNT", "SIDE AREA", "BOTTOM AREA", "ISOLATE" });
 
-                // Generate Combined Value Table
-                //UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,
-                //    this.allSelectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
+                    // Generate Combined Value Table
+                    //UIMethods.GenerateCombinedTableExpander(this.CombinedConcreteTablePanel, this.allSelectedTemplates,
+                    //    this.allSelectedTemplateValues, ObjectSelection_Activated, ObjectDeselection_Activated);
 
-                if (CombinedValuesToggle.IsChecked == true)
-                {
-                    this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
-                    this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+                    if (CombinedValuesToggle.IsChecked == true)
+                    {
+                        this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
+                        this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+                    }
+
+                    else
+                    {
+                        this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
+                        this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
+                    }
+
+                    this.ExportExcelButton.IsEnabled = true;
+                    this.ConcreteSaveButton.IsEnabled = true;
+                    this.SendToMySql.IsEnabled = true;
+                    this.ExportIFC.IsEnabled = true;
+
+                    Dispatcher.FromThread(newWindowThread).InvokeShutdown();
                 }
-
                 else
                 {
-                    this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
-                    this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
+                    Dispatcher.FromThread(newWindowThread).InvokeShutdown();
+                    if (badGeometryCount > 1)
+                    {
+                        MessageBox.Show(String.Format("After pressing the 'OK' button, the model will highlight {0} incompatible geometries in red.", badGeometryCount.ToString()));
+                    }
+                    else
+                    {
+                        MessageBox.Show(String.Format("After pressing the 'OK' button, the model will highlight {0} incompatible geometry in red.", badGeometryCount.ToString()));
+                    }
+
+                    RunQTO.doc.Views.Redraw();
                 }
-
-                this.ExportExcelButton.IsEnabled = true;
-                this.ConcreteSaveButton.IsEnabled = true;
-                this.SendToMySql.IsEnabled = true;
-                this.ExportIFC.IsEnabled = true;
-
-                Dispatcher.FromThread(newWindowThread).InvokeShutdown();
             }
 
             catch (Exception ex)
@@ -655,8 +755,6 @@ namespace QTO_Tool
                 MessageBox.Show("Something went wrong!");
 
                 MessageBox.Show(ex.ToString());
-
-                Methods.HighlightBadGeometry(rhobj);
             }
         }
 
