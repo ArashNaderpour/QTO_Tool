@@ -1033,27 +1033,27 @@ namespace QTO_Tool
                 {
                     string outputPath = saveFileDialog.FileName;
 
-                    IfcStore testProject = IFCMethods.CreateandInitIFCModel("Test Project");
+                    IfcStore project = IFCMethods.CreateandInitIFCModel(RunQTO.doc.Path.Replace(".3dm", ""));
 
-                    IfcBuilding building = IFCMethods.CreateBuilding(testProject, "Test Building");
+                    IfcBuilding building = IFCMethods.CreateBuilding(project, "Concrete Building");
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allWalls);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allWalls);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allBeams);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allBeams);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allColumns);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allColumns);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allContinuousFootings);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allContinuousFootings);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allFootings);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allFootings);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allSlabs);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allSlabs);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allCurbs);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allCurbs);
 
-                    IFCMethods.CreateAndAddIFCElement(testProject, building, this.allStyrofoams);
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allStyrofoams);
 
-                    testProject.SaveAs(outputPath);
+                    project.SaveAs(outputPath);
 
                     MessageBox.Show("Export was successful.");
 

@@ -36,8 +36,8 @@ namespace QTO_Tool
                 ApplicationFullName = "QTO_TOOL",
                 ApplicationIdentifier = "QTO",
                 ApplicationVersion = "1.0",
-                EditorsFamilyName = "Naderpour",
-                EditorsGivenName = "Arash",
+                EditorsFamilyName = "N/A",
+                EditorsGivenName = "N/A",
                 EditorsOrganisationName = "Digital Charcoal"
             };
 
