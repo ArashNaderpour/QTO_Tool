@@ -81,12 +81,22 @@ namespace QTO_Tool
                     this.elevationInput.Close();
                 }
                 this.elevationInput = new ElevationInput();
+                this.elevationInput.ChangeSetFloorButtonColorRequest += ChangeSetFloorButtonColor;
 
                 this.elevationInput.Show();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
+            }
+        }
+
+        // Event handler to change the color in Page1
+        private void ChangeSetFloorButtonColor(object sender, EventArgs e)
+        {
+            if (ElevationInput.floorElevations.Count > 0)
+            {
+                this.SetFloor.Background = (Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#98AD80");
             }
         }
 
@@ -244,7 +254,7 @@ namespace QTO_Tool
 
             System.Drawing.Color layerColor;
 
-            List<object> layerTemplates;
+            Dictionary<string, List<object>> layerTemplates;
 
             int badGeometryCount = 0;
 
@@ -286,7 +296,7 @@ namespace QTO_Tool
                         {
                             this.selectedConcreteTemplatesForLayers.Add(layerName, selectedTemplate);
 
-                            layerTemplates = new List<object>();
+                            layerTemplates = new Dictionary<string, List<object>>();
 
                             if (selectedTemplate == "Beam")
                             {
@@ -309,7 +319,16 @@ namespace QTO_Tool
                                             allBeams.allTemplates.Add(beam.floor, new List<object> { beam });
                                         }
 
-                                        layerTemplates.Add(beam);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", beam.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { beam };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(beam);
+                                        }
 
                                         // This section is for future to capture interaction between slab and beam
                                         if (allSlabs.allTemplates.ContainsKey(beam.floor))
@@ -357,7 +376,16 @@ namespace QTO_Tool
                                             allColumns.allTemplates.Add(column.floor, new List<object> { column });
                                         }
 
-                                        layerTemplates.Add(column);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", column.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { column };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(column);
+                                        }
                                     }
                                     catch
                                     {
@@ -390,7 +418,16 @@ namespace QTO_Tool
                                             allColumns.allTemplates.Add(column.floor, new List<object> { column });
                                         }
 
-                                        layerTemplates.Add(column);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", column.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { column };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(column);
+                                        }
                                     }
                                     catch
                                     {
@@ -423,7 +460,16 @@ namespace QTO_Tool
                                             allContinuousFootings.allTemplates.Add(continuousFooting.floor, new List<object> { continuousFooting });
                                         }
 
-                                        layerTemplates.Add(continuousFooting);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", continuousFooting.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { continuousFooting };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(continuousFooting);
+                                        }
                                     }
                                     catch
                                     {
@@ -457,7 +503,16 @@ namespace QTO_Tool
                                             allCurbs.allTemplates.Add(curb.floor, new List<object> { curb });
                                         }
 
-                                        layerTemplates.Add(curb);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", curb.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { curb };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(curb);
+                                        }
                                     }
                                     catch
                                     {
@@ -491,7 +546,16 @@ namespace QTO_Tool
                                             allFootings.allTemplates.Add(footing.floor, new List<object> { footing });
                                         }
 
-                                        layerTemplates.Add(footing);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", footing.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { footing };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(footing);
+                                        }
                                     }
                                     catch
                                     {
@@ -524,7 +588,16 @@ namespace QTO_Tool
                                             allWalls.allTemplates.Add(wall.floor, new List<object> { wall });
                                         }
 
-                                        layerTemplates.Add(wall);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", wall.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { wall };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(wall);
+                                        }
                                     }
                                     catch
                                     {
@@ -558,7 +631,16 @@ namespace QTO_Tool
                                             allSlabs.allTemplates.Add(slab.floor, new List<object> { slab });
                                         }
 
-                                        layerTemplates.Add(slab);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", slab.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { slab };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(slab);
+                                        }
 
                                         if (allBeams.allTemplates.ContainsKey(slab.floor))
                                         {
@@ -604,7 +686,16 @@ namespace QTO_Tool
                                             allStyrofoams.allTemplates.Add(styrofoam.floor, new List<object> { styrofoam });
                                         }
 
-                                        layerTemplates.Add(styrofoam);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", styrofoam.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { styrofoam };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(styrofoam);
+                                        }
                                     }
                                     catch
                                     {
@@ -637,7 +728,16 @@ namespace QTO_Tool
                                             allStairs.allTemplates.Add(stair.floor, new List<object> { stair });
                                         }
 
-                                        layerTemplates.Add(stair);
+                                        string layernameAndFloorName = layerName + String.Format("({0})", stair.floor);
+
+                                        if (!layerTemplates.ContainsKey(layernameAndFloorName))
+                                        {
+                                            layerTemplates[layernameAndFloorName] = new List<object>() { stair };
+                                        }
+                                        else
+                                        {
+                                            layerTemplates[layernameAndFloorName].Add(stair);
+                                        }
                                     }
                                     catch
                                     {

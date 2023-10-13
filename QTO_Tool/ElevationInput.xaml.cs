@@ -21,6 +21,9 @@ namespace QTO_Tool
     public partial class ElevationInput : Window
     {
         public static Dictionary<double, string> floorElevations = new Dictionary<double, string>();
+
+        public event EventHandler ChangeSetFloorButtonColorRequest;
+
         public ElevationInput()
         {
             InitializeComponent();
@@ -65,6 +68,9 @@ namespace QTO_Tool
             }
 
             Methods.SaveDictionaryToDocumentStrings(ElevationInput.floorElevations);
+
+            // Raise the custom event when the button is clicked
+            ChangeSetFloorButtonColorRequest?.Invoke(this, EventArgs.Empty);
 
             this.Close();
         }

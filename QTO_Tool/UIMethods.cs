@@ -87,165 +87,168 @@ namespace QTO_Tool
         }
 
         public static void GenerateConcreteTableExpander(StackPanel stackPanel,
-            string layerName, string templateType, List<object> layerTemplate, List<string> values, List<string> layerPropertyColumnHeaders,
+            string layerName, string templateType, Dictionary<string, List<object>> layerTemplate, List<string> values, List<string> layerPropertyColumnHeaders,
             RoutedEventHandler SelectObjectActivated, RoutedEventHandler DeselectObjectActivated)
         {
-            Expander layerEstimateExpander = new Expander();
-            layerEstimateExpander.Name = "LayerEstimateExpader_";
-            TextBlock expanderHeader = new TextBlock();
-            expanderHeader.Text = layerName;
-            expanderHeader.Foreground = Brushes.Black;
-            layerEstimateExpander.Header = expanderHeader;
-            layerEstimateExpander.FontWeight = FontWeights.DemiBold;
-            layerEstimateExpander.Background = Brushes.DarkOrange;
-            layerEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
-
-            /*--- The Grid for setting up the name of the department input---*/
-            Grid layerEstimateGrid = new Grid();
-            layerEstimateGrid.Margin = new Thickness(2, 5, 2, 0);
-            layerEstimateGrid.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0f0f0"));
-
-            TextBlock quantityName;
-
-            RowDefinition rowDef = new RowDefinition();
-            layerEstimateGrid.RowDefinitions.Add(rowDef);
-
-            for (int i = 0; i < values.Count; i++)
+            foreach (KeyValuePair<string, List<object>> entry in layerTemplate)
             {
-                // Column Definition for Grids
-                ColumnDefinition colDef = new ColumnDefinition();
-                layerEstimateGrid.ColumnDefinitions.Add(colDef);
+                Expander layerEstimateExpander = new Expander();
+                layerEstimateExpander.Name = "LayerEstimateExpader_";
+                TextBlock expanderHeader = new TextBlock();
+                expanderHeader.Text = entry.Key;
+                expanderHeader.Foreground = Brushes.Black;
+                layerEstimateExpander.Header = expanderHeader;
+                layerEstimateExpander.FontWeight = FontWeights.DemiBold;
+                layerEstimateExpander.Background = Brushes.DarkOrange;
+                layerEstimateExpander.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#036fad"));
 
-                quantityName = new TextBlock();
-                quantityName.Text = values[i];
-                quantityName.FontSize = 20;
-                quantityName.Foreground = Brushes.Black;
-                quantityName.FontWeight = FontWeights.Bold;
-                quantityName.Margin = new Thickness(0, 0, 2, 0);
-                quantityName.HorizontalAlignment = HorizontalAlignment.Center;
+                /*--- The Grid for setting up the name of the department input---*/
+                Grid layerEstimateGrid = new Grid();
+                layerEstimateGrid.Margin = new Thickness(2, 5, 2, 0);
+                layerEstimateGrid.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0f0f0"));
 
-                layerEstimateGrid.Children.Add(quantityName);
-                Grid.SetColumn(quantityName, i);
-                Grid.SetRow(quantityName, 0);
-            }
+                TextBlock quantityName;
 
-            int counter = 0;
-            int valueFontSize = 18;
-
-            foreach (object obj in layerTemplate)
-            {
-                //Dynamically adding Rows to the Grid
-                rowDef = new RowDefinition();
-                rowDef.Height = new GridLength(1, GridUnitType.Star);
+                RowDefinition rowDef = new RowDefinition();
                 layerEstimateGrid.RowDefinitions.Add(rowDef);
 
-                int count = layerTemplate.IndexOf(obj) + 1;
-
-                if (templateType == "Slab")
+                for (int i = 0; i < values.Count; i++)
                 {
-                    UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+                    // Column Definition for Grids
+                    ColumnDefinition colDef = new ColumnDefinition();
+                    layerEstimateGrid.ColumnDefinitions.Add(colDef);
 
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Slab";
-                    }
+                    quantityName = new TextBlock();
+                    quantityName.Text = values[i];
+                    quantityName.FontSize = 20;
+                    quantityName.Foreground = Brushes.Black;
+                    quantityName.FontWeight = FontWeights.Bold;
+                    quantityName.Margin = new Thickness(0, 0, 2, 0);
+                    quantityName.HorizontalAlignment = HorizontalAlignment.Center;
+
+                    layerEstimateGrid.Children.Add(quantityName);
+                    Grid.SetColumn(quantityName, i);
+                    Grid.SetRow(quantityName, 0);
                 }
 
-                else if (templateType == "Footing")
-                {
-                    UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+                int counter = 0;
+                int valueFontSize = 18;
 
-                    if (counter == 0)
+                foreach (object obj in entry.Value)
+                {
+                    //Dynamically adding Rows to the Grid
+                    rowDef = new RowDefinition();
+                    rowDef.Height = new GridLength(1, GridUnitType.Star);
+                    layerEstimateGrid.RowDefinitions.Add(rowDef);
+
+                    int count = entry.Value.IndexOf(obj) + 1;
+
+                    if (templateType == "Slab")
                     {
-                        layerEstimateExpander.Name += "Footing";
+                        UIMethods.GenerateSlabTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Slab";
+                        }
                     }
+
+                    else if (templateType == "Footing")
+                    {
+                        UIMethods.GenerateFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Footing";
+                        }
+                    }
+
+                    else if (templateType.Contains("Column"))
+                    {
+                        UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Column";
+                        }
+                    }
+
+                    else if (templateType == "Beam")
+                    {
+                        UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Beam";
+                        }
+                    }
+
+                    else if (templateType == "Wall")
+                    {
+                        UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Wall";
+                        }
+                    }
+
+                    else if (templateType == "Curb")
+                    {
+                        UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Curb";
+                        }
+                    }
+
+                    else if (templateType == "ContinuousFooting")
+                    {
+                        UIMethods.GenerateContinuousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "ContinuousFooting";
+                        }
+                    }
+
+                    else if (templateType == "Styrofoam")
+                    {
+                        UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Styrofoam";
+                        }
+                    }
+
+                    else if (templateType == "Stair")
+                    {
+                        UIMethods.GenerateStairTableExpander(obj, count, layerEstimateGrid, valueFontSize,
+                            layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+
+                        if (counter == 0)
+                        {
+                            layerEstimateExpander.Name += "Stair";
+                        }
+                    }
+
+                    counter++;
                 }
 
-                else if (templateType.Contains("Column"))
-                {
-                    UIMethods.GenerateColumnTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
+                layerEstimateExpander.Content = layerEstimateGrid;
 
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Column";
-                    }
-                }
-
-                else if (templateType == "Beam")
-                {
-                    UIMethods.GenerateBeamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Beam";
-                    }
-                }
-
-                else if (templateType == "Wall")
-                {
-                    UIMethods.GenerateWallTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Wall";
-                    }
-                }
-
-                else if (templateType == "Curb")
-                {
-                    UIMethods.GenerateCurbTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Curb";
-                    }
-                }
-
-                else if (templateType == "ContinuousFooting")
-                {
-                    UIMethods.GenerateContinuousFootingTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "ContinuousFooting";
-                    }
-                }
-
-                else if (templateType == "Styrofoam")
-                {
-                    UIMethods.GenerateStyrofoamTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Styrofoam";
-                    }
-                }
-
-                else if (templateType == "Stair")
-                {
-                    UIMethods.GenerateStairTableExpander(obj, count, layerEstimateGrid, valueFontSize,
-                        layerPropertyColumnHeaders, SelectObjectActivated, DeselectObjectActivated);
-
-                    if (counter == 0)
-                    {
-                        layerEstimateExpander.Name += "Stair";
-                    }
-                }
-
-                counter++;
+                stackPanel.Children.Add(layerEstimateExpander);
             }
-
-            layerEstimateExpander.Content = layerEstimateGrid;
-
-            stackPanel.Children.Add(layerEstimateExpander);
         }
 
         static void GenerateSlabTableExpander(object _obj, int _count, Grid _layerEstimateGrid, int _valueFontSize,
