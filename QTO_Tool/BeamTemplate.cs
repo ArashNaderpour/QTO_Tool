@@ -241,18 +241,21 @@ namespace QTO_Tool
             Plane projectPlane = new Plane(new Point3d(0, 0, this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
             List<Curve> boundaries = new List<Curve>();
 
-            Curve mergedBoundary;
             Polyline mergedBoundaryPolyline = new Polyline();
-            Curve joinedProjectedCenterLine;
+            Curve joinedProjectedCenterLine = null;
 
             List<Point3d> corners;
             List<Point3d> tempPoints;
+
+            double wallThickness = new double();
 
             List<Point3d> centers = new List<Point3d>();
 
             List<Curve> centerLines = new List<Curve>();
 
-            double extrusionHeight = 9999;
+            double extensionValue = 9999;
+
+            Rhino.Geometry.Intersect.CurveIntersections intersectionEvents;
 
             Vector3d normal;
             double u, v;
@@ -260,7 +263,10 @@ namespace QTO_Tool
 
             Plane frame;
 
-            double dotProduct, curveParameter;
+            double dotProduct;
+
+            double curveParameter;
+
             Vector3d curveTangent;
 
             Mesh meshedTopFaces = new Mesh();
@@ -303,139 +309,273 @@ namespace QTO_Tool
                 tempMergedBoundaries = boundaries.ToArray();
             }
 
+            // <-----------If it's a closed boundary----------->
             if (tempMergedBoundaries.Length > 1)
             {
-                Point3d pointOnCurve1, pointOnCurve2;
+                curveParameter = tempMergedBoundaries[0].Domain.Mid * 0.66;
 
-                tempMergedBoundaries[0].ClosestPoints(tempMergedBoundaries[1], out pointOnCurve1, out pointOnCurve2);
+                Point3d pointOnCurve0 = tempMergedBoundaries[0].PointAt(curveParameter);
 
-                double minDistance = pointOnCurve1.DistanceTo(pointOnCurve2) / 2;
+                tempMergedBoundaries[1].ClosestPoint(pointOnCurve0, out curveParameter);
 
-                if (tempMergedBoundaries[0].GetLength() > tempMergedBoundaries[1].GetLength())
-                {
-                    tempMergedBoundaries[0] = tempMergedBoundaries[0].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                Point3d pointOnCurve1 = tempMergedBoundaries[1].PointAt(curveParameter);
 
-                    Curve curveOffset1 = tempMergedBoundaries[0].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
-                    Curve curveOffset2 = tempMergedBoundaries[0].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                wallThickness = Math.Round(pointOnCurve0.DistanceTo(pointOnCurve1), 2);
 
-                    if (curveOffset1.GetLength() > curveOffset2.GetLength())
-                    {
-                        centerLines.Add(curveOffset2);
-                    }
-                    else
-                    {
-                        centerLines.Add(curveOffset1);
-                    }
-                }
-                else
-                {
-                    tempMergedBoundaries[1] = tempMergedBoundaries[1].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                Vector3d offsetDirection = pointOnCurve1 - pointOnCurve0;
 
-                    Curve curveOffset1 = tempMergedBoundaries[1].Offset(Plane.WorldXY, minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
-                    Curve curveOffset2 = tempMergedBoundaries[1].Offset(Plane.WorldXY, -minDistance, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                offsetDirection /= 2;
 
-                    if (curveOffset1.GetLength() > curveOffset2.GetLength())
-                    {
-                        centerLines.Add(curveOffset2);
-                    }
-                    else
-                    {
-                        centerLines.Add(curveOffset1);
-                    }
-                }
+                Point3d offsetDirectionPoint = pointOnCurve0 + offsetDirection;
+
+                joinedProjectedCenterLine = tempMergedBoundaries[1].Offset(offsetDirectionPoint,
+                  new Vector3d(0, 0, 1), wallThickness / 2, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
             }
 
             else
             {
-                mergedBoundary = tempMergedBoundaries[0].
-                    Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                Curve mergedBoundary = tempMergedBoundaries[0];
+                Curve[] mergedBoundarySegments = mergedBoundary.DuplicateSegments();
 
-                double t0 = mergedBoundary.Domain.Min;
-                double t1 = mergedBoundary.Domain.Max;
-                double t;
+                //double t0 = mergedBoundary.Domain.Min;
+                //double t1 = mergedBoundary.Domain.Max;
+                //double t;
 
-                corners = new List<Point3d>();
+                //corners = new List<Point3d>();
 
-                do
+                //do
+                //{
+                //    if (!mergedBoundary.GetNextDiscontinuity(Continuity.G1_locus_continuous, t0, t1, out t)) { break; }
+
+                //    corners.Add(mergedBoundary.PointAt(t));
+
+                //    t0 = t;
+                //} while (true);
+
+                if (mergedBoundarySegments.Length == 4)
                 {
-                    if (!mergedBoundary.GetNextDiscontinuity(Continuity.G1_locus_continuous, t0, t1, out t)) { break; }
+                    Curve[] longestSegments = new Curve[2];
+                    double[] longestSegmentsLengths = { double.MinValue, double.MinValue };
 
-                    corners.Add(mergedBoundary.PointAt(t));
+                    foreach (Curve curve in mergedBoundarySegments)
+                    {
+                        if (curve != null)
+                        {
+                            double length = curve.GetLength();
 
-                    t0 = t;
-                } while (true);
+                            if (length > longestSegmentsLengths[0])
+                            {
+                                longestSegmentsLengths[1] = longestSegmentsLengths[0];
+                                longestSegments[1] = longestSegments[0];
 
-                for (int i = 0; i < corners.Count; i++)
-                {
-                    tempPoints = new List<Point3d>(corners);
+                                longestSegmentsLengths[0] = length;
+                                longestSegments[0] = curve;
+                            }
+                            else if (length > longestSegmentsLengths[1])
+                            {
+                                longestSegmentsLengths[1] = length;
+                                longestSegments[1] = curve;
+                            }
+                        }
+                    }
 
-                    tempPoints.Remove(tempPoints[i]);
+                    curveParameter = longestSegments[0].Domain.Mid;
 
-                    Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+                    Point3d pointOnCurve0 = longestSegments[0].PointAt(curveParameter);
 
-                    centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+                    longestSegments[1].ClosestPoint(pointOnCurve0, out curveParameter);
+
+                    Point3d pointOnCurve1 = longestSegments[1].PointAt(curveParameter);
+
+                    wallThickness = Math.Round(pointOnCurve0.DistanceTo(pointOnCurve1), 2);
+
+                    Vector3d offsetDirection = pointOnCurve1 - pointOnCurve0;
+
+                    offsetDirection /= 2;
+
+                    Point3d offsetDirectionPoint = pointOnCurve0 + offsetDirection;
+
+                    joinedProjectedCenterLine = longestSegments[1].Offset(offsetDirectionPoint,
+                      new Vector3d(0, 0, 1), wallThickness / 2, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
                 }
-
-                centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
-
-                if (centers.Count == 2)
-                {
-                    centerLines.Add(NurbsCurve.CreateFromLine(new Line(centers[0], centers[1])));
-                }
-
                 else
                 {
+                    Curve longestSegment = null;
+                    double maxLength = 0.0;
 
-                    centerLines.Add(new PolylineCurve(centers));
+                    foreach (Curve curve in mergedBoundarySegments)
+                    {
+                        if (curve != null)
+                        {
+                            double length = curve.GetLength();
+                            if (length > maxLength)
+                            {
+                                maxLength = length;
+                                longestSegment = curve;
+                            }
+                        }
+                    }
 
-                    //for (int i = 0; i < centers.Count; i++)
-                    //{
-                    //    tempPoints = new List<Point3d>(centers);
-                    //    tempPoints.Remove(tempPoints[i]);
+                    Point3d middlePoint = longestSegment.PointAt(longestSegment.Domain.Mid);
+                    Vector3d perpendicularDirection = Vector3d.CrossProduct(longestSegment.TangentAt(longestSegment.Domain.Mid), Vector3d.ZAxis);
 
-                    //    for (int j = 0; j < tempPoints.Count; j++)
-                    //    {
-                    //        Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
+                    Curve perpendicularLine1 = new Line(middlePoint, perpendicularDirection * extensionValue).ToNurbsCurve();
+                    Curve perpendicularLine2 = new Line(middlePoint, perpendicularDirection * -extensionValue).ToNurbsCurve();
 
-                    //        var events = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+                    var intersectionEvents1 = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, perpendicularLine1.ToNurbsCurve(),
+                        RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAbsoluteTolerance);
+                    var intersectionEvents2 = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, perpendicularLine2.ToNurbsCurve(),
+                        RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAbsoluteTolerance);
 
-                    //        if (events.Count < 2)
-                    //        {
-                    //            if (centerLines.Count > 0)
-                    //            {
-                    //                bool dup = false;
+                    Point3d closestIntersectionPoint1 = new Point3d();
+                    Point3d closestIntersectionPoint2 = new Point3d();
+                    Point3d midIntersectionPoint1 = new Point3d();
+                    Point3d midIntersectionPoint2 = new Point3d();
+                    double closestDistance = double.MaxValue;
 
-                    //                for (int k = 0; k < centerLines.Count; k++)
-                    //                {
-                    //                    if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
-                    //                    {
-                    //                        dup = true;
-                    //                        break;
-                    //                    }
-                    //                }
+                    for (int i = 0; i < intersectionEvents1.Count; i++)
+                    {
+                        double distance = intersectionEvents1[i].PointA.DistanceTo(middlePoint);
+                        if (distance < closestDistance && distance > RunQTO.doc.ModelAbsoluteTolerance)
+                        {
+                            closestIntersectionPoint1 = intersectionEvents1[i].PointA;
+                            midIntersectionPoint1 = (closestIntersectionPoint1 + middlePoint) / 2;
+                            closestDistance = distance;
+                        }
+                    }
 
-                    //                if (!dup)
-                    //                {
-                    //                    centerLines.Add(centerLine);
-                    //                }
-                    //            }
-                    //            else
-                    //            {
-                    //                centerLines.Add(centerLine);
-                    //            }
-                    //        }
-                    //    }
-                    //}
+                    for (int i = 0; i < intersectionEvents2.Count; i++)
+                    {
+                        double distance = intersectionEvents2[i].PointA.DistanceTo(middlePoint);
+                        if (distance < closestDistance && distance > RunQTO.doc.ModelAbsoluteTolerance)
+                        {
+                            closestIntersectionPoint2 = intersectionEvents2[i].PointA;
+                            midIntersectionPoint2 = (closestIntersectionPoint2 + middlePoint) / 2;
+                            closestDistance = distance;
+                        }
+                    }
+
+                    if (mergedBoundary.Contains(midIntersectionPoint1, Plane.WorldXY, RunQTO.doc.ModelAbsoluteTolerance) == PointContainment.Inside)
+                    {
+                        wallThickness = Math.Round(middlePoint.DistanceTo(closestIntersectionPoint1), 2);
+                    }
+                    else
+                    {
+                        wallThickness = Math.Round(middlePoint.DistanceTo(closestIntersectionPoint2), 2);
+                    }
+
+                    Curve curveOffset1 = mergedBoundary.Offset(Plane.WorldXY, wallThickness * 0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                    Curve curveOffset2 = mergedBoundary.Offset(Plane.WorldXY, wallThickness * -0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+
+                    Curve mergedBoundaryOffset;
+
+                    if (Rhino.Geometry.AreaMassProperties.Compute(curveOffset1, RunQTO.doc.ModelAbsoluteTolerance).Area < Rhino.Geometry.AreaMassProperties.Compute(curveOffset2, RunQTO.doc.ModelAbsoluteTolerance).Area)
+                    {
+                        mergedBoundaryOffset = curveOffset1.Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                    }
+                    else
+                    {
+                        mergedBoundaryOffset = curveOffset2.Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                    }
+
+                    double t0 = mergedBoundaryOffset.Domain.Min;
+                    double t1 = mergedBoundaryOffset.Domain.Max;
+                    double t;
+
+                    corners = new List<Point3d>();
+
+                    do
+                    {
+                        if (!mergedBoundaryOffset.GetNextDiscontinuity(Continuity.G1_locus_continuous, t0, t1, out t)) { break; }
+
+                        corners.Add(mergedBoundaryOffset.PointAt(t));
+
+                        t0 = t;
+                    } while (true);
+
+                    for (int i = 0; i < corners.Count; i++)
+                    {
+                        tempPoints = new List<Point3d>(corners);
+
+                        tempPoints.Remove(tempPoints[i]);
+
+                        Point3d closest = Rhino.Collections.Point3dList.ClosestPointInList(tempPoints, corners[i]);
+
+                        centers.Add(Point3d.Divide(Point3d.Add(closest, corners[i]), 2));
+                    }
+
+                    centers = Point3d.SortAndCullPointList(centers, RunQTO.doc.ModelAbsoluteTolerance).ToList();
+
+                    if (centers.Count == 2)
+                    {
+                        centerLines.Add(NurbsCurve.CreateFromLine(new Line(centers[0], centers[1])));
+                    }
+
+                    else
+                    {
+                        for (int i = 0; i < centers.Count; i++)
+                        {
+                            tempPoints = new List<Point3d>(centers);
+                            tempPoints.Remove(tempPoints[i]);
+
+                            for (int j = 0; j < tempPoints.Count; j++)
+                            {
+                                Curve centerLine = NurbsCurve.CreateFromLine(new Line(centers[i], tempPoints[j]));
+
+                                Point3d centerLineMidPoint = (centers[i] + tempPoints[j]) / 2;
+
+                                double closestPointParameter;
+
+                                mergedBoundary.ClosestPoint(centerLineMidPoint, out closestPointParameter);
+
+                                double centerLineMidPointDistanceToCurve = centerLineMidPoint.DistanceTo(mergedBoundary.PointAt(closestPointParameter));
+
+                                intersectionEvents = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+
+                                if (intersectionEvents.Count < 2 && Math.Abs(Math.Round(centerLineMidPointDistanceToCurve, 2) - (Math.Round(wallThickness / 2, 2))) <= RunQTO.doc.ModelAbsoluteTolerance)
+                                {
+                                    if (centerLines.Count > 0)
+                                    {
+                                        bool dup = false;
+
+                                        for (int k = 0; k < centerLines.Count; k++)
+                                        {
+                                            if (GeometryBase.GeometryEquals(centerLines[k], centerLine))
+                                            {
+                                                dup = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!dup)
+                                        {
+                                            centerLines.Add(centerLine);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        centerLines.Add(centerLine);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
+
+                    joinedProjectedCenterLine = joinedProjectedCenterLine.Extend(CurveEnd.Both, wallThickness, CurveExtensionStyle.Line);
+
+                    intersectionEvents = Rhino.Geometry.Intersect.Intersection.CurveCurve(joinedProjectedCenterLine, mergedBoundary, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAbsoluteTolerance);
+
+                    joinedProjectedCenterLine.Trim(intersectionEvents[0].ParameterA, intersectionEvents[1].ParameterA);
                 }
             }
 
-            joinedProjectedCenterLine = Curve.JoinCurves(centerLines)[0];
+            Brep centerLineExtrusion = Extrusion.Create(joinedProjectedCenterLine, extensionValue, false).ToBrep();
 
-            Brep centerLineExtrusion = Extrusion.Create(joinedProjectedCenterLine, extrusionHeight, false).ToBrep();
+            centerLineExtrusion.Join(Extrusion.Create(joinedProjectedCenterLine, -extensionValue, false).ToBrep(), RunQTO.doc.ModelAbsoluteTolerance, true);
 
-            centerLineExtrusion.Join(Extrusion.Create(joinedProjectedCenterLine, -extrusionHeight, false).ToBrep(), 0.01, true);
-
-            centerLineExtrusion.MergeCoplanarFaces(0.01);
+            centerLineExtrusion.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
 
             Curve[] intersectionCurves;
             Point3d[] intersectionPoints;
@@ -443,9 +583,15 @@ namespace QTO_Tool
             //Calculate Length
             foreach (Brep topFace in this.topFaces)
             {
-                Rhino.Geometry.Intersect.Intersection.BrepBrep(topFace, centerLineExtrusion, 0.01, out intersectionCurves, out intersectionPoints);
-
-                this.length += Math.Round(Curve.JoinCurves(intersectionCurves)[0].GetLength(), 2);
+                try
+                {
+                    Rhino.Geometry.Intersect.Intersection.BrepBrep(topFace, centerLineExtrusion, RunQTO.doc.ModelAbsoluteTolerance, out intersectionCurves, out intersectionPoints);
+                    this.length += Math.Round(Curve.JoinCurves(intersectionCurves)[0].GetLength(), 2);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
 
             //Side and Edges Calculation
