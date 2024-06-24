@@ -15,6 +15,8 @@ namespace QTO_Tool
 {
     class Methods
     {
+        public static Random random = new Random();
+
         internal static void SetChildStatus(QTOUI mw, ChildStatus winChildStatus)
         {
             switch (winChildStatus)

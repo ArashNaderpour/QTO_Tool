@@ -172,7 +172,6 @@ namespace QTO_Tool
                 {
                     if (Math.Round(shorterSegments[0].GetLength(), 2) > Math.Round(curveOffsetSegments[i].GetLength(), 2))
                     {
-
                         shorterSegments.Clear();
                         shorterSegments.Add(curveOffsetSegments[i]);
                     }
