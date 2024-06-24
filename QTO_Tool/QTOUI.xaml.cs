@@ -16,6 +16,7 @@ using Microsoft.VisualBasic;
 using Xbim.Ifc;
 using Xbim.Ifc4.ProductExtension;
 using System.Windows.Media;
+using System.Diagnostics;
 
 namespace QTO_Tool
 {
@@ -217,6 +218,12 @@ namespace QTO_Tool
 
         private void Calculate_Concrete_Clicked(object sender, RoutedEventArgs e)
         {
+            // Create a new Stopwatch instance
+            Stopwatch stopwatch = new Stopwatch();
+
+            // Start the stopwatch
+            stopwatch.Start();
+
             Thread newWindowThread = new Thread(new ThreadStart(() =>
             {
                 // Create our context, and install it:
@@ -856,6 +863,13 @@ namespace QTO_Tool
 
                 MessageBox.Show(ex.ToString());
             }
+            // Get the elapsed time as a TimeSpan value
+            TimeSpan ts = stopwatch.Elapsed;
+
+            // Format and display the TimeSpan value
+            string calculationTime = ts.TotalSeconds.ToString("F6");
+
+            MessageBox.Show("Calculation process completed in: " + calculationTime + " seconds!");
         }
 
         //private void Concrete_Save_Clicked(object sender, RoutedEventArgs e)
