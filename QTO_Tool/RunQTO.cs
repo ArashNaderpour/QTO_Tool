@@ -19,6 +19,7 @@ namespace QTO_Tool
         QTOUI UI;
 
         public static RhinoDoc doc;
+        public static double volumeConversionFactor;
 
         public RunQTO()
         {
@@ -48,6 +49,8 @@ namespace QTO_Tool
 
             // Always get the Actice model
             RunQTO.doc = RhinoDoc.ActiveDoc;
+
+            RunQTO.volumeConversionFactor = Methods.SetVolumeConversionFactor(RunQTO.doc.GetUnitSystemName(true, true, true, true));
 
             //try closing a window if it's already up
             try

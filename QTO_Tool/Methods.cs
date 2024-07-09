@@ -435,5 +435,26 @@ namespace QTO_Tool
             // Return an empty dictionary if the JSON string is not found
             return new Dictionary<double, string>();
         }
+
+        public static double SetVolumeConversionFactor(string modelUnit)
+        {
+            double result;
+
+            if (modelUnit == "ft")
+            {
+                result = 0.037037;
+            }
+
+            else if (modelUnit == "in")
+            {
+                result = 2.14335e-5;
+            }
+            else
+            {
+                result = 1;
+            }
+
+            return result;
+        }
     }
 }

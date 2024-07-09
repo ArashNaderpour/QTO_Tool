@@ -50,7 +50,7 @@ namespace QTO_Tool
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
             var mass_properties = VolumeMassProperties.Compute(geometry);
-            volume = Math.Round(mass_properties.Volume * 0.037037, 2);
+            volume = Math.Round(mass_properties.Volume * RunQTO.volumeConversionFactor, 2);
 
             this.topArea = TopArea(geometry, angleThreshold);
            
