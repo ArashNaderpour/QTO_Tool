@@ -516,7 +516,7 @@ namespace QTO_Tool
 
                                 double centerLineMidPointDistanceToCurve = centerLineMidPoint.DistanceTo(mergedBoundary.PointAt(closestPointParameter));
 
-                                intersectionEvents = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundary, centerLine, 0.01, 0.01);
+                                intersectionEvents = Rhino.Geometry.Intersect.Intersection.CurveCurve(mergedBoundaryOffset, centerLine, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAbsoluteTolerance);
 
                                 if (intersectionEvents.Count < 2 && Math.Abs(Math.Round(centerLineMidPointDistanceToCurve, 2) - (Math.Round(wallThickness / 2, 2))) <= 0.1)
                                 {
