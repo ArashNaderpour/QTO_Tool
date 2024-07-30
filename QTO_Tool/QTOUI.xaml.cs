@@ -1167,6 +1167,8 @@ namespace QTO_Tool
 
                     IFCMethods.CreateAndAddIFCElement(project, building, this.allStyrofoams);
 
+                    IFCMethods.CreateAndAddIFCElement(project, building, this.allStairs);
+
                     project.SaveAs(outputPath);
 
                     MessageBox.Show("Export was successful.");

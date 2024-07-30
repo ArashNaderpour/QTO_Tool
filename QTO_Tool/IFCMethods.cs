@@ -228,6 +228,25 @@ namespace QTO_Tool
                     }
                 }
             }
+
+            else if (templates.GetType() == typeof(QTO_Tool.AllStairs))
+            {
+                foreach (KeyValuePair<string, List<object>> entry in ((AllStairs)templates).allTemplates)
+                {
+                    foreach (StairTemplate stairTemplate in entry.Value)
+                    {
+                        //begin a transaction
+                        using (var txn = model.BeginTransaction("Add IFC Element"))
+                        {
+                            List<IfcBuildingElement> buildingElements = IFCMethods.ToBuildingElementIfc(model, stairTemplate);
+
+                            building.AddElement(buildingElements[0]);
+
+                            txn.Commit();
+                        }
+                    }
+                }
+            }
         }
 
         public static List<IfcBuildingElement> ToBuildingElementIfc(IfcStore model, object template)
@@ -398,6 +417,24 @@ namespace QTO_Tool
                 shape.Items.Add(faceBasedSurfaceModel);
 
                 var styrofoam = IFCMethods.CreateStyrofoam(model, (StyrofoamTemplate)template, shape, insertPlane);
+                relAssociatesMaterial.RelatedObjects.Add(styrofoam);
+                buildingElements.Add(styrofoam);
+            }
+            else if (template.GetType() == typeof(QTO_Tool.StairTemplate))
+            {
+                meshGeometry.Append(Mesh.CreateFromBrep(((StairTemplate)template).geometry, MeshingParameters.QualityRenderMesh));
+
+                faces = meshGeometry.Faces;
+                vertices = meshGeometry.Vertices;
+
+                ifcVertices = IFCMethods.VerticesToIfcCartesianPoints(model, vertices);
+
+                faceBasedSurfaceModel = IFCMethods.CreateIfcFaceBasedSurfaceModel(model, faces, ifcVertices, ((StairTemplate)template).color);
+
+                shape = IFCMethods.CreateIfcShapeRepresentation(model, "Body", ((StairTemplate)template).layerName);
+                shape.Items.Add(faceBasedSurfaceModel);
+
+                var styrofoam = IFCMethods.CreateStair(model, (StairTemplate)template, shape, insertPlane);
                 relAssociatesMaterial.RelatedObjects.Add(styrofoam);
                 buildingElements.Add(styrofoam);
             }
@@ -931,6 +968,72 @@ namespace QTO_Tool
             IFCMethods.ApplyRepresentationAndPlacement(model, styrofoam, shape, insertPlane);
 
             return styrofoam;
+        }
+
+        private static IfcStair CreateStair(IfcStore model, StairTemplate stairTemplate, IfcShapeRepresentation shape, Plane insertPlane)
+        {
+            var stair = model.Instances.New<IfcStair>();
+            stair.Name = stairTemplate.nameAbb;
+
+            //set a few basic properties
+            model.Instances.New<IfcRelDefinesByProperties>(rel =>
+            {
+                rel.RelatedObjects.Add(stair);
+
+                rel.RelatingPropertyDefinition = model.Instances.New<IfcPropertySet>(pset =>
+                {
+                    pset.Name = "QTO Properties";
+
+                    pset.HasProperties.AddRange(new[] {
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "NAME ABB.";
+                        p.NominalValue = new IfcText(stair.Name);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "FLOOR";
+                        p.NominalValue = new IfcText(stairTemplate.floor);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "GROSS VOLUME";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.volume);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "BOTTOM AREA";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.bottomArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "SIDE AREA";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.sideArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TREAD AREA";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.treadArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "RISER AREA";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.riserArea);
+                    }),
+                        model.Instances.New<IfcPropertySingleValue>(p =>
+                    {
+                        p.Name = "TREAD COUNT";
+                        p.NominalValue = new IfcNumericMeasure(stairTemplate.treadCount);
+                    })
+                    });
+                });
+            });
+
+            stair.PredefinedType = IfcStairTypeEnum.NOTDEFINED;
+
+            IFCMethods.ApplyRepresentationAndPlacement(model, stair, shape, insertPlane);
+
+            return stair;
         }
 
         public static List<IfcCartesianPoint> VerticesToIfcCartesianPoints(IfcStore model, MeshVertexList vertices)
