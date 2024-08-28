@@ -44,7 +44,7 @@ namespace QTO_Tool
 
             nameAbb = parsedLayerName["C1"] + " " + parsedLayerName["C2"];
 
-            var mass_properties = VolumeMassProperties.Compute(geometry.RemoveHoles(0.01));
+            var mass_properties = VolumeMassProperties.Compute(geometry);
             volume = Math.Round(mass_properties.Volume * RunQTO.volumeConversionFactor, 2);
 
             for (int i = 0; i < this.geometry.Faces.Count; i++)
