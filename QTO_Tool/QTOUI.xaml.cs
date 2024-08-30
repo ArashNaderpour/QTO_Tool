@@ -151,6 +151,7 @@ namespace QTO_Tool
                     AngleThresholdSlider.IsEnabled = true;
                     CombineValuesLabel.IsEnabled = true;
                     CombinedValuesToggle.IsEnabled = true;
+                    this.Blockify.IsEnabled = true;
                 }
                 else
                 {
@@ -280,7 +281,7 @@ namespace QTO_Tool
             this.selectedConcreteTemplatesForLayers.Clear();
 
             this.DissipatedConcreteTablePanel.Children.Clear();
-            this.CombinedConcreteTablePanel.Children.Clear();
+            //this.CombinedConcreteTablePanel.Children.Clear();
 
             double angleThreshold = Methods.CalculateAngleThreshold(this.AngleThresholdSlider.Value);
 
@@ -823,18 +824,17 @@ namespace QTO_Tool
                     if (CombinedValuesToggle.IsChecked == true)
                     {
                         this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
-                        this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+                        //this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
                     }
 
                     else
                     {
                         this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
-                        this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
+                        //this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
                     }
 
                     this.ExportExcelButton.IsEnabled = true;
                     this.ConcreteSaveButton.IsEnabled = true;
-                    this.SendToMySql.IsEnabled = true;
                     this.ExportIFC.IsEnabled = true;
 
                     Dispatcher.FromThread(newWindowThread).InvokeShutdown();
@@ -988,23 +988,24 @@ namespace QTO_Tool
 
         private void Export_Excel_Clicked(object sender, RoutedEventArgs e)
         {
-            ExcelMethods.ExportExcel(this.DissipatedConcreteTablePanel, this.CombinedConcreteTablePanel, this.layerPropertyColumnHeaders);
+            ExcelMethods.ExportExcel(this.DissipatedConcreteTablePanel, this.layerPropertyColumnHeaders);
         }
 
         private void Combined_Values_Toggle_Clicked(object sender, RoutedEventArgs e)
         {
-            if (this.DissipatedConcreteTablePanel.Visibility == Visibility.Collapsed)
-            {
-                this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
+            MessageBox.Show("Not Implemented!");
+            //if (this.DissipatedConcreteTablePanel.Visibility == Visibility.Collapsed)
+            //{
+            //    this.DissipatedConcreteTablePanel.Visibility = Visibility.Visible;
 
-                this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
+            //    //this.CombinedConcreteTablePanel.Visibility = Visibility.Collapsed;
+            //}
+            //else
+            //{
+            //    //this.CombinedConcreteTablePanel.Visibility = Visibility.Visible;
 
-                this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
-            }
+            //    this.DissipatedConcreteTablePanel.Visibility = Visibility.Collapsed;
+            //}
         }
 
         void OnSelectObjects(object sender, RhinoObjectSelectionEventArgs args)
@@ -1015,17 +1016,17 @@ namespace QTO_Tool
                 {
                     ToggleButton dissipatedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.DissipatedConcreteTablePanel, obj.Id.ToString()));
 
-                    ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
+                    //ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
 
                     if (dissipatedSelectToggleButton != null)
                     {
                         dissipatedSelectToggleButton.IsChecked = true;
                     }
 
-                    if (combinedSelectToggleButton != null)
-                    {
-                        combinedSelectToggleButton.IsChecked = true;
-                    }
+                    //if (combinedSelectToggleButton != null)
+                    //{
+                    //    combinedSelectToggleButton.IsChecked = true;
+                    //}
                 }
             }
         }
@@ -1039,17 +1040,17 @@ namespace QTO_Tool
                 {
                     ToggleButton dissipatedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.DissipatedConcreteTablePanel, obj.Id.ToString()));
 
-                    ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
+                    //ToggleButton combinedSelectToggleButton = (ToggleButton)(Methods.GetByUid(this.CombinedConcreteTablePanel, obj.Id.ToString()));
 
                     if (dissipatedSelectToggleButton != null)
                     {
                         dissipatedSelectToggleButton.IsChecked = false;
                     }
 
-                    if (combinedSelectToggleButton != null)
-                    {
-                        combinedSelectToggleButton.IsChecked = false;
-                    }
+                    //if (combinedSelectToggleButton != null)
+                    //{
+                    //    combinedSelectToggleButton.IsChecked = false;
+                    //}
                 }
             }
         }
@@ -1076,64 +1077,67 @@ namespace QTO_Tool
                     }
                 }
 
-                foreach (UIElement expander in this.CombinedConcreteTablePanel.Children)
-                {
-                    contentGrid = (Grid)(((Expander)expander).Content);
+                //foreach (UIElement expander in this.CombinedConcreteTablePanel.Children)
+                //{
+                //    contentGrid = (Grid)(((Expander)expander).Content);
 
-                    foreach (UIElement element in contentGrid.Children)
-                    {
-                        elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
+                //    foreach (UIElement element in contentGrid.Children)
+                //    {
+                //        elementType = (element.GetType().ToString().Split('.')).Last().ToLower();
 
-                        if (elementType == "togglebutton")
-                        {
-                            ((ToggleButton)element).IsChecked = false;
-                        }
-                    }
-                }
+                //        if (elementType == "togglebutton")
+                //        {
+                //            ((ToggleButton)element).IsChecked = false;
+                //        }
+                //    }
+                //}
             }
         }
 
         //------------------------------------SQL------------------------------------
 
-        private void Send_To_MySql(object sender, RoutedEventArgs e)
+        //private void Send_To_MySql(object sender, RoutedEventArgs e)
+        //{
+        //    string connStr = @"server=172.18.30.54;userid=TurnerUser;password=VDCTurner2021";
+
+        //    MySqlConnection conn = null;
+
+        //    try
+        //    {
+        //        string mySqlTableName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", "")).Replace('-', '_');
+
+        //        if (mySqlTableName == string.Empty)
+        //        {
+        //            throw new ArgumentException("Project name has to be selected.", "mySqlProjectName");
+        //        }
+
+        //        string mySqlProjectName = "concrete_" + mySqlTableName;
+
+        //        conn = new MySqlConnection(connStr);
+        //        conn.Open();
+
+        //        MySqlMethods.CreateMySqlDatabase(mySqlProjectName, conn);
+
+        //        MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlTableName, this.DissipatedConcreteTablePanel, conn);
+
+        //        MessageBox.Show("Successful!");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.ToString());
+        //    }
+        //    finally
+        //    {
+        //        if (conn != null)
+        //        {
+        //            conn.Close();
+        //        }
+        //    }
+        //}
+
+        private void Blockify_Clicked(object sender, RoutedEventArgs e)
         {
-            string connStr = @"server=172.18.30.54;userid=TurnerUser;password=VDCTurner2021";
-
-            MySqlConnection conn = null;
-
-            try
-            {
-                string mySqlTableName = Interaction.InputBox("Please enter project's name.", "MYSQL", RunQTO.doc.Name.Replace(".3dm", "")).Replace('-', '_');
-
-                if (mySqlTableName == string.Empty)
-                {
-                    throw new ArgumentException("Project name has to be selected.", "mySqlProjectName");
-                }
-
-                string mySqlProjectName = "concrete_" + mySqlTableName;
-
-                conn = new MySqlConnection(connStr);
-                conn.Open();
-
-                MySqlMethods.CreateMySqlDatabase(mySqlProjectName, conn);
-
-                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlTableName, this.DissipatedConcreteTablePanel, conn);
-
-                MySqlMethods.CreateMySqlTable(mySqlProjectName, mySqlTableName + "_ProjectBased", this.CombinedConcreteTablePanel, conn);
-
-                MessageBox.Show("Successful!");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            finally
-            {
-                if (conn != null)
-                {
-                    conn.Close();
-                }
-            }
+            Methods.Blockify();
         }
 
         private void Export_IFC_Clicked(object sender, RoutedEventArgs e)

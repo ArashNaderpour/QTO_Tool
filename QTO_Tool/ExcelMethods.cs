@@ -14,7 +14,7 @@ namespace QTO_Tool
     {
         public static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
-        public static void ExportExcel(StackPanel layerBasedConcreteTable, StackPanel projectBasedConcreteTable, List<string> layerPropertyColumnHeaders)
+        public static void ExportExcel(StackPanel layerBasedConcreteTable, List<string> layerPropertyColumnHeaders)
         {
             System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             saveFileDialog.Filter = "Excel |*.xlsx";

@@ -223,11 +223,11 @@
                                         Background="#98AD80" 
                                         Click="Export_Excel_Clicked"/>
 
-                                <Button Name="SendToMySql" Content="MYSQL" 
+                                <Button Name="Blockify" Content="BLOCKIFY" 
                                 Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" 
                                 IsEnabled="False" Margin="10 15 35 0" FontSize="26" 
                                  Height ="60" VerticalAlignment="Stretch" 
-                                    Background="#52a0d1" Click="Send_To_MySql"/>
+                                    Background="#52a0d1" Click="Blockify_Clicked"/>
 
                                 <Button Name="ExportIFC" Content="IFC" 
                                 Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" 
@@ -242,8 +242,8 @@
                         <StackPanel Name="DissipatedConcreteTablePanel" Orientation="Vertical"
                                     Visibility="Collapsed" Margin="10 0 10 10"/>
 
-                        <StackPanel Name="CombinedConcreteTablePanel" Orientation="Vertical"
-                                    Visibility="Collapsed" Margin="10 0 10 10"/>
+                        <!--<StackPanel Name="CombinedConcreteTablePanel" Orientation="Vertical"
+                                    Visibility="Collapsed" Margin="10 0 10 10"/>-->
                     </StackPanel>
 
                 </ScrollViewer>

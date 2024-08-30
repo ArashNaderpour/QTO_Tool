@@ -10,6 +10,7 @@ using Rhino.DocObjects;
 using Rhino.Collections;
 using Rhino.DocObjects.Custom;
 using Newtonsoft.Json;
+using System.Security.Cryptography.X509Certificates;
 
 namespace QTO_Tool
 {
@@ -455,6 +456,70 @@ namespace QTO_Tool
             }
 
             return result;
+        }
+
+        public static void Blockify()
+        {
+            int objectIndex = 0;
+
+            foreach (RhinoObject obj in RunQTO.doc.Objects)
+            {
+                if (!(obj is  InstanceObject))
+                {
+                    ObjectAttributes mainObjectAttributes = obj.Attributes;
+                    Layer layer = RunQTO.doc.Layers.FindIndex(mainObjectAttributes.LayerIndex);
+
+                    mainObjectAttributes.ColorSource = ObjectColorSource.ColorFromLayer;
+                    mainObjectAttributes.ObjectColor = layer.Color;
+
+                    string blockObjectName = LayerParentsPath(layer) + layer.Name + "_" + objectIndex.ToString();
+
+                    // Duplicate the original geometry
+                    GeometryBase geom = obj.Geometry.Duplicate();
+
+                    // Calculate the center of the geometry's bounding box
+                    BoundingBox bbox = geom.GetBoundingBox(true);
+                    Point3d bboxCenter = bbox.Center;
+
+                    // Create a block definition using the bounding box center as the base point
+                    int blockDefIndex = RunQTO.doc.InstanceDefinitions.Add(blockObjectName, "Block containing one object", bboxCenter, new List<GeometryBase> { geom }, new List<ObjectAttributes> { mainObjectAttributes });
+
+                    // Place the block instance at the original location
+                    if (blockDefIndex != -1) // Check if the block was created successfully
+                    {
+                        // Calculate the transformation to move the block instance back to its original position
+                        Transform placeBack = Transform.Translation(bboxCenter - Point3d.Origin);
+                        RunQTO.doc.Objects.AddInstanceObject(blockDefIndex, placeBack, mainObjectAttributes);
+                    }
+
+                    // Delete the original object
+                    RunQTO.doc.Objects.Delete(obj, true);
+
+                    objectIndex++;
+                }
+            }
+
+            RunQTO.doc.Views.Redraw();
+        }
+
+        private static string LayerParentsPath(Layer layer)
+        {
+            Guid parentLayerId = layer.ParentLayerId;
+            if (parentLayerId == Guid.Empty)
+            {
+                return ""; // Base case: no parent
+            }
+
+            Layer parentLayer = RhinoDoc.ActiveDoc.Layers.FindId(parentLayerId);
+            if (parentLayer == null)
+            {
+                return "";
+            }
+
+            string layerParentsPath = LayerParentsPath(parentLayer);
+            return string.IsNullOrEmpty(layerParentsPath)
+                ? parentLayer.Name + "_"
+                : layerParentsPath + parentLayer.Name + "_";
         }
     }
 }
