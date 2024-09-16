@@ -541,9 +541,15 @@ namespace QTO_Tool
                 }
             }
 
-            Brep newBrep = brep.RemoveHoles(brepInnerLoopsToRemoveIndices, RunQTO.doc.ModelAbsoluteTolerance);
+            if (brepInnerLoopsToRemoveIndices.Count > 0)
+            {
+                Brep newBrep = brep.RemoveHoles(brepInnerLoopsToRemoveIndices, RunQTO.doc.ModelAbsoluteTolerance);
 
-            return newBrep.GetVolume();
+                return newBrep.GetVolume();
+            }
+            else {
+                return brep.GetVolume();
+            }
         }
 
         private static string LayerParentsPath(Layer layer)
