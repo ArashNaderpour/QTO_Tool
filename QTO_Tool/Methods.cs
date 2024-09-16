@@ -464,7 +464,7 @@ namespace QTO_Tool
 
             foreach (RhinoObject obj in RunQTO.doc.Objects)
             {
-                if (!(obj is  InstanceObject))
+                if (!(obj is InstanceObject))
                 {
                     ObjectAttributes mainObjectAttributes = obj.Attributes;
                     Layer layer = RunQTO.doc.Layers.FindIndex(mainObjectAttributes.LayerIndex);
@@ -500,6 +500,50 @@ namespace QTO_Tool
             }
 
             RunQTO.doc.Views.Redraw();
+        }
+
+        public static double CalculateGrossVolume(Brep brep)
+        {
+            List<BrepLoop> brepInnerLoopsToRemove = new List<BrepLoop>();
+            List<ComponentIndex> brepInnerLoopsToRemoveIndices = new List<ComponentIndex>();
+
+            foreach (BrepLoop loop in brep.Loops)
+            {
+                if (loop.LoopType == BrepLoopType.Inner)
+                {
+
+                    Curve innerLoopCurve = loop.To3dCurve();
+
+                    Brep innerLoopBrep = Brep.CreatePlanarBreps(innerLoopCurve, RunQTO.doc.ModelAbsoluteTolerance)[0];
+                    Surface innerLoopSurface = innerLoopBrep.Surfaces[0];
+
+                    Point3d centroid = innerLoopSurface.PointAt(innerLoopSurface.Domain(0).Mid, innerLoopSurface.Domain(1).Mid);
+
+                    Vector3d normal = innerLoopSurface.NormalAt(innerLoopSurface.Domain(0).Mid, innerLoopSurface.Domain(1).Mid);
+                    normal.Unitize();
+
+                    // Create a line representing the ray for the intersection test
+                    Line normalLine_1 = new Line(centroid, normal * 1000);
+                    Line normalLine_2 = new Line(centroid, normal * -1000);
+
+                    LineCurve normalCurve = new List<LineCurve> { new LineCurve(normalLine_1), new LineCurve(normalLine_2) }[0];
+
+                    Curve[] overlapCurves;
+                    Point3d[] intersectionPoints;
+                    bool intersect = Rhino.Geometry.Intersect.Intersection.CurveBrep(normalCurve, brep, RunQTO.doc.ModelAbsoluteTolerance, out overlapCurves, out intersectionPoints);
+
+                    if (intersect && intersectionPoints.Length == 0)
+                    {
+                        // If there is an intersection, mark this inner loop for removal
+                        brepInnerLoopsToRemove.Add(loop);
+                        brepInnerLoopsToRemoveIndices.Add(loop.ComponentIndex());
+                    }
+                }
+            }
+
+            Brep newBrep = brep.RemoveHoles(brepInnerLoopsToRemoveIndices, RunQTO.doc.ModelAbsoluteTolerance);
+
+            return newBrep.GetVolume();
         }
 
         private static string LayerParentsPath(Layer layer)
