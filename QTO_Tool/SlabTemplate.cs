@@ -75,7 +75,7 @@ namespace QTO_Tool
 
             this.edgeArea = EdgeArea(geometry);
 
-            this.PerimeterAndOpeningPerimeter(topBrepFaces);
+            this.PerimeterAndOpeningPerimeter(this.topBrepFaces);
         }
 
         double TopArea(Brep brep, double angleThreshold)
@@ -209,70 +209,52 @@ namespace QTO_Tool
 
         void PerimeterAndOpeningPerimeter(List<Brep> breps)
         {
-            Brep joinedBrep = Brep.JoinBreps(breps, RunQTO.doc.ModelAbsoluteTolerance)[0];
+            List<Brep> projectedBreps = new List<Brep>();
 
-            joinedBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
+            // Create the XY plane
+            Plane xyPlane = Plane.WorldXY;
 
-            Curve[] brepBoundaryCurves = Curve.JoinCurves(joinedBrep.DuplicateNakedEdgeCurves(true, true));
-            //List<Curve> projectedBrepBoundaryCurves = new List<Curve>();
+            // Define the projection direction (in this case, along the Z axis)
+            Vector3d projectionDirection = new Vector3d(0, 0, -1); // or use (0, 0, 1) depending on desired direction
 
-            List<double> projectedBrepBoundaryCurveAreas = new List<double>();
-            List<double> projectedBrepBoundaryCurveLengths = new List<double>();
+            // Get the transformation that projects geometry along the specified direction onto the plane
+            Transform projectionTransform = Transform.ProjectAlong(xyPlane, projectionDirection);
 
-            for (int i = 0; i < brepBoundaryCurves.Length; i++)
+            // Iterate through each brep and apply the projection transform
+            foreach (Brep brep in breps)
             {
-                if (brepBoundaryCurves[i].IsClosed)
-                {
-                    Curve projectedCurve = Curve.ProjectToPlane(brepBoundaryCurves[i], Plane.WorldXY);
-                    var areaProps = AreaMassProperties.Compute(projectedCurve);
+                // Duplicate the brep to avoid modifying the original
+                Brep projectedBrep = brep.DuplicateBrep();
 
-                    //projectedBrepBoundaryCurves.Add(projectedCurve);
-                    projectedBrepBoundaryCurveAreas.Add(areaProps.Area);
-                    projectedBrepBoundaryCurveLengths.Add(projectedCurve.GetLength());
+                // Apply the projection transform
+                projectedBrep.Transform(projectionTransform);
+
+                // Add the projected brep to the result list
+                projectedBreps.Add(projectedBrep);
+            }
+
+            Brep joinedBrep = Brep.JoinBreps(projectedBreps, 0.01)[0];
+
+            joinedBrep.MergeCoplanarFaces(0.01);
+
+            this.openingPerimeter = 0;
+
+            foreach (BrepLoop loop in joinedBrep.Loops)
+            {
+                if (loop.LoopType == BrepLoopType.Inner)
+                {
+
+                    Curve innerLoopCurve = loop.To3dCurve();
+                    this.openingPerimeter += innerLoopCurve.GetLength();
+                }
+                else
+                {
+                    this.perimeter = Math.Round(joinedBrep.Faces[0].OuterLoop.To3dCurve().GetLength(), 2);
                 }
             }
 
-            List<int> indexOrder = projectedBrepBoundaryCurveAreas
-                .Select((value, index) => new { Value = value, Index = index })
-                .OrderBy(item => item.Value)
-                .Select(item => item.Index)
-                .ToList();
-
-            List<double> sortedProjectedBrepBoundaryCurveAreas = indexOrder.Select(index => projectedBrepBoundaryCurveAreas[index]).ToList();
-            //List<Curve> sortedProjectedBrepBoundaryCurves = indexOrder.Select(index => projectedBrepBoundaryCurves[index]).ToList();
-            List<double> sortedProjectedBrepBoundaryCurveLengths = indexOrder.Select(index => projectedBrepBoundaryCurveLengths[index]).ToList();
-
-            this.perimeter = Math.Round(sortedProjectedBrepBoundaryCurveLengths.Last(), 2);
-
-            sortedProjectedBrepBoundaryCurveLengths.RemoveAt(sortedProjectedBrepBoundaryCurveLengths.Count - 1);
-            this.openingPerimeter = Math.Round(sortedProjectedBrepBoundaryCurveLengths.Sum(), 2);
+            this.openingPerimeter = Math.Round(this.openingPerimeter, 2);
         }
-
-        //double OpeningPerimeter(List<Brep> breps)
-        //{
-        //    double result = 0;
-
-        //    if (brepBoundaryCurveLengths.Count == 1)
-        //    {
-        //        result = Math.Round(result, 2);
-
-        //        return result;
-        //    }
-
-        //    else
-        //    {
-        //        foreach (double curveLength in brepBoundaryCurveLengths)
-        //        {
-        //            if (curveLength != brepBoundaryCurveLengths.Max())
-        //            {
-        //                result += curveLength;
-        //            }
-        //        }
-        //        result = Math.Round(result, 2);
-
-        //        return result;
-        //    }
-        //}
 
         public void UpdateNetVolumeAndBottomAreaWithBeams()
         {

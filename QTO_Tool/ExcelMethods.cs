@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
 
 namespace QTO_Tool
 {
@@ -88,18 +89,18 @@ namespace QTO_Tool
                 File.WriteAllBytes(tempExcelTemplate, Resources.template);
 
                 Dictionary<string, string> dataColumns = new Dictionary<string, string>();
-             
+
                 projectSheetHeaders.InsertRange(2, _layerPropertyColumnHeaders);
-              
+
                 excel.DisplayAlerts = false;
                 Excel.Workbook workBook = (Excel.Workbook)(excel.Workbooks._Open(tempExcelTemplate, System.Reflection.Missing.Value,
                     System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
                     System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
                     System.Reflection.Missing.Value, System.Reflection.Missing.Value, System.Reflection.Missing.Value,
                     System.Reflection.Missing.Value, System.Reflection.Missing.Value));
-                
+
                 Excel.Sheets sheets = workBook.Worksheets;
-                
+
                 Excel.Worksheet summarySheet = (Excel.Worksheet)sheets.get_Item(1);
                 Excel.Worksheet projectSheet = (Excel.Worksheet)sheets.get_Item(2);
 
@@ -108,12 +109,13 @@ namespace QTO_Tool
                 Excel.ListObject summaryTable = summarySheet.ListObjects[1];
                 Excel.ListObject projectTable = projectSheet.ListObjects[1];
 
-                projectTable.Resize(projectSheet.Range["A1", ExcelMethods.alphabet[projectSheetHeaders.Count - 1] + projectRowCount.ToString()]);
+                string excelColumn = GetExcelColumnName(projectSheetHeaders.Count);
+                projectTable.Resize(projectSheet.Range["A1", excelColumn + projectRowCount.ToString()]);
 
                 List<string> uniqueNameAbbs = new List<string>();
 
                 int layerCount = 0;
-                
+
                 foreach (UIElement container in ConcreteTable.Children)
                 {
                     int colCount = 1;
@@ -150,9 +152,9 @@ namespace QTO_Tool
                             colCount++;
                         }
                     }
-                    
+
                     Expander expander = (Expander)container;
-                    
+
                     Grid contentGrid = (Grid)expander.Content;
 
                     for (int i = 0; i < contentGrid.ColumnDefinitions.Count - 1; i++)
@@ -167,7 +169,7 @@ namespace QTO_Tool
                         {
                             UIElement element = contentGrid.Children.Cast<UIElement>().
                                 FirstOrDefault(e => Grid.GetColumn(e) == i && Grid.GetRow(e) == j);
-                            
+
                             if (element != null)
                             {
                                 string value = ((TextBlock)element).Text;
@@ -396,6 +398,21 @@ namespace QTO_Tool
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        public static string GetExcelColumnName(int columnIndex)
+        {
+            const int alphabetSize = 26;
+            string columnName = String.Empty;
+
+            // Loop to handle multi-letter columns (e.g., AA, AB)
+            while (columnIndex > 0)
+            {
+                columnIndex--; // Adjust for 0-based index
+                columnName = (char)('A' + columnIndex % alphabetSize) + columnName;
+                columnIndex /= alphabetSize;
+            }
+            return columnName;
         }
     }
 }

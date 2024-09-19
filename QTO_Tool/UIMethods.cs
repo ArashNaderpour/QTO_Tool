@@ -17,7 +17,6 @@ namespace QTO_Tool
 
             layerPropertyColumnHeaders.Add("C1");
             layerPropertyColumnHeaders.Add("C2");
-            //layerPropertyColumnHeaders.Add("C3");
 
             foreach (Rhino.DocObjects.Layer layer in RunQTO.doc.Layers)
             {
@@ -25,10 +24,13 @@ namespace QTO_Tool
                 {
                     if (!String.IsNullOrWhiteSpace(layer.Name))
                     {
-                        if (layer.Name.Split('_').Length > layerPropertyColumnHeaders.Count)
+                        int layerNameValueLength = layer.Name.Split('_').Length;
+                        if (layerNameValueLength > layerPropertyColumnHeaders.Count)
                         {
-                            layerPropertyColumnHeaders.Add("C" + 
-                                (layerPropertyColumnHeaders.Count + (layer.Name.Split('_').Length - layerPropertyColumnHeaders.Count)).ToString());
+                            for (int i = layerPropertyColumnHeaders.Count; i < layerNameValueLength; i++)
+                            {
+                                layerPropertyColumnHeaders.Add("C" + (i+1));
+                            }
                         }
 
                         //Dynamically adding Rows to the Grid
