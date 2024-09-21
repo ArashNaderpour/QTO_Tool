@@ -237,7 +237,7 @@ namespace QTO_Tool
 
         void SidesAndEndAndOpeingArea()
         {
-            Plane projectPlane = new Plane(new Point3d(0, 0, this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
+            Rhino.Geometry.Plane projectPlane = new Rhino.Geometry.Plane(new Point3d(0, 0, this.upfacingFaceElevations.Max()), Vector3d.ZAxis);
             List<Curve> boundaries = new List<Curve>();
 
             Polyline mergedBoundaryPolyline = new Polyline();
@@ -260,7 +260,7 @@ namespace QTO_Tool
             double u, v;
             Point3d center;
 
-            Plane frame;
+            Rhino.Geometry.Plane frame;
 
             double dotProduct;
 
@@ -279,13 +279,28 @@ namespace QTO_Tool
 
             if (this.topFaces.Count > 1)
             {
+                //for (int i = 0; i < this.topFaces.Count; i++)
+                //{
+                //    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
+                //    boundaries.Add(curveBoundary);
+                //}
+
+                //tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+                List<Brep> projectedBreps = new List<Brep>();
+                Transform projectionTransform = Transform.ProjectAlong(Rhino.Geometry.Plane.WorldXY, Rhino.Geometry.Vector3d.ZAxis);
                 for (int i = 0; i < this.topFaces.Count; i++)
                 {
-                    Curve curveBoundary = Curve.ProjectToPlane(Curve.JoinCurves(this.topFaces[i].Edges)[0], projectPlane);
-                    boundaries.Add(curveBoundary);
-                }
+                    Brep projectedBrep = this.topFaces[i].DuplicateBrep();
 
-                tempMergedBoundaries = Curve.CreateBooleanUnion(boundaries, RunQTO.doc.ModelAbsoluteTolerance);
+                    projectedBrep.Transform(projectionTransform);
+
+                    projectedBreps.Add(projectedBrep);
+                }
+                Brep joinedBrep = Brep.JoinBreps(projectedBreps, RunQTO.doc.ModelAbsoluteTolerance)[0];
+
+                joinedBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
+
+                tempMergedBoundaries = Curve.JoinCurves(joinedBrep.Edges);
             }
             else
             {
@@ -338,38 +353,18 @@ namespace QTO_Tool
 
                 if (mergedBoundarySegments.Length == 4)
                 {
-                    Curve[] longestSegments = new Curve[2];
-                    double[] longestSegmentsLengths = { double.MinValue, double.MinValue };
+                    List<Tuple<Curve, double>> mergedBoundarySegmentsSorted = mergedBoundarySegments
+                        .Select(segment => new Tuple<Curve, double>(segment, segment.GetLength()))
+                        .OrderByDescending(cl => cl.Item2)
+                        .ToList();
 
-                    foreach (Curve curve in mergedBoundarySegments)
-                    {
-                        if (curve != null)
-                        {
-                            double length = curve.GetLength();
+                    curveParameter = mergedBoundarySegmentsSorted[0].Item1.Domain.Mid;
 
-                            if (length > longestSegmentsLengths[0])
-                            {
-                                longestSegmentsLengths[1] = longestSegmentsLengths[0];
-                                longestSegments[1] = longestSegments[0];
+                    Point3d pointOnCurve0 = mergedBoundarySegmentsSorted[0].Item1.PointAt(curveParameter);
 
-                                longestSegmentsLengths[0] = length;
-                                longestSegments[0] = curve;
-                            }
-                            else if (length > longestSegmentsLengths[1])
-                            {
-                                longestSegmentsLengths[1] = length;
-                                longestSegments[1] = curve;
-                            }
-                        }
-                    }
+                    mergedBoundarySegmentsSorted[1].Item1.ClosestPoint(pointOnCurve0, out curveParameter);
 
-                    curveParameter = longestSegments[0].Domain.Mid;
-
-                    Point3d pointOnCurve0 = longestSegments[0].PointAt(curveParameter);
-
-                    longestSegments[1].ClosestPoint(pointOnCurve0, out curveParameter);
-
-                    Point3d pointOnCurve1 = longestSegments[1].PointAt(curveParameter);
+                    Point3d pointOnCurve1 = mergedBoundarySegmentsSorted[1].Item1.PointAt(curveParameter);
 
                     wallThickness = Math.Round(pointOnCurve0.DistanceTo(pointOnCurve1), 2);
 
@@ -379,7 +374,7 @@ namespace QTO_Tool
 
                     Point3d offsetDirectionPoint = pointOnCurve0 + offsetDirection;
 
-                    joinedProjectedCenterLine = longestSegments[1].Offset(offsetDirectionPoint,
+                    joinedProjectedCenterLine = mergedBoundarySegmentsSorted[1].Item1.Offset(offsetDirectionPoint,
                       new Vector3d(0, 0, 1), wallThickness / 2, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
                 }
                 else
@@ -431,7 +426,7 @@ namespace QTO_Tool
 
                         double sampleWallThickness;
 
-                        if (mergedBoundary.Contains(midIntersectionPoint1, Plane.WorldXY, RunQTO.doc.ModelAbsoluteTolerance) == PointContainment.Inside)
+                        if (mergedBoundary.Contains(midIntersectionPoint1, Rhino.Geometry.Plane.WorldXY, RunQTO.doc.ModelAbsoluteTolerance) == PointContainment.Inside)
                         {
                             sampleWallThickness = Math.Round(samplePoint.DistanceTo(closestIntersectionPoint1), 2);
                         }
@@ -449,8 +444,8 @@ namespace QTO_Tool
                         .First()
                         .Key;
 
-                    Curve curveOffset1 = mergedBoundary.Offset(Plane.WorldXY, wallThickness * 0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
-                    Curve curveOffset2 = mergedBoundary.Offset(Plane.WorldXY, wallThickness * -0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                    Curve curveOffset1 = mergedBoundary.Offset(Rhino.Geometry.Plane.WorldXY, wallThickness * 0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
+                    Curve curveOffset2 = mergedBoundary.Offset(Rhino.Geometry.Plane.WorldXY, wallThickness * -0.45, RunQTO.doc.ModelAbsoluteTolerance, CurveOffsetCornerStyle.Sharp)[0];
 
                     Curve mergedBoundaryOffset;
 

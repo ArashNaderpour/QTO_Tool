@@ -352,7 +352,7 @@ namespace QTO_Tool
                                             }
                                         }
                                     }
-                                    catch
+                                    catch (Exception ex)
                                     {
                                         badGeometryCount++;
                                         Methods.HighlightBadGeometry(rhobj);

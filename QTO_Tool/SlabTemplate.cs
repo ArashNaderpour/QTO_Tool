@@ -211,31 +211,24 @@ namespace QTO_Tool
         {
             List<Brep> projectedBreps = new List<Brep>();
 
-            // Create the XY plane
             Plane xyPlane = Plane.WorldXY;
 
-            // Define the projection direction (in this case, along the Z axis)
-            Vector3d projectionDirection = new Vector3d(0, 0, -1); // or use (0, 0, 1) depending on desired direction
+            Vector3d projectionDirection = new Vector3d(0, 0, -1);
 
-            // Get the transformation that projects geometry along the specified direction onto the plane
             Transform projectionTransform = Transform.ProjectAlong(xyPlane, projectionDirection);
 
-            // Iterate through each brep and apply the projection transform
             foreach (Brep brep in breps)
             {
-                // Duplicate the brep to avoid modifying the original
                 Brep projectedBrep = brep.DuplicateBrep();
 
-                // Apply the projection transform
                 projectedBrep.Transform(projectionTransform);
 
-                // Add the projected brep to the result list
                 projectedBreps.Add(projectedBrep);
             }
 
-            Brep joinedBrep = Brep.JoinBreps(projectedBreps, 0.01)[0];
+            Brep joinedBrep = Brep.JoinBreps(projectedBreps, RunQTO.doc.ModelAbsoluteTolerance)[0];
 
-            joinedBrep.MergeCoplanarFaces(0.01);
+            joinedBrep.MergeCoplanarFaces(RunQTO.doc.ModelAbsoluteTolerance);
 
             this.openingPerimeter = 0;
 
