@@ -350,7 +350,7 @@ namespace QTO_Tool
 
             else
             {
-                Curve mergedBoundary = tempMergedBoundaries[0];
+                Curve mergedBoundary = tempMergedBoundaries[0].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
                 Curve[] mergedBoundarySegments = mergedBoundary.DuplicateSegments();
 
                 if (mergedBoundarySegments.Length == 4)
