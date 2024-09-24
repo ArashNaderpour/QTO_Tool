@@ -517,7 +517,9 @@ namespace QTO_Tool
                     Brep innerLoopBrep = Brep.CreatePlanarBreps(innerLoopCurve, RunQTO.doc.ModelAbsoluteTolerance)[0];
                     Surface innerLoopSurface = innerLoopBrep.Surfaces[0];
 
-                    Point3d centroid = innerLoopSurface.PointAt(innerLoopSurface.Domain(0).Mid, innerLoopSurface.Domain(1).Mid);
+                    Point3d centroid = innerLoopSurface.PointAt(
+                        innerLoopSurface.Domain(0).Min + (innerLoopSurface.Domain(0).Max - innerLoopSurface.Domain(0).Min) * 0.02,
+                        innerLoopSurface.Domain(1).Min + (innerLoopSurface.Domain(1).Max - innerLoopSurface.Domain(1).Min) * 0.02);
 
                     Vector3d normal = innerLoopSurface.NormalAt(innerLoopSurface.Domain(0).Mid, innerLoopSurface.Domain(1).Mid);
                     normal.Unitize();
