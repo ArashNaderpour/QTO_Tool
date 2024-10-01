@@ -413,7 +413,13 @@ namespace QTO_Tool
 
             else
             {
-                Curve mergedBoundary = tempMergedBoundaries[0].Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                Curve mergedBoundary = tempMergedBoundaries[0];
+
+                if (mergedBoundary.Degree == 1)
+                {
+                    mergedBoundary = mergedBoundary.Simplify(CurveSimplifyOptions.All, RunQTO.doc.ModelAbsoluteTolerance, RunQTO.doc.ModelAngleToleranceRadians);
+                }
+
                 Curve[] mergedBoundarySegments = mergedBoundary.DuplicateSegments();
 
                 if (mergedBoundarySegments.Length == 4)
