@@ -387,9 +387,9 @@ namespace QTO_Tool
                 {
                     List<double> sampleWallThicknesses = new List<double>();
 
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 9; i++)
                     {
-                        double randomCurveParameter = Methods.random.NextDouble() * (mergedBoundary.Domain.Max - mergedBoundary.Domain.Min) + mergedBoundary.Domain.Min;
+                        double randomCurveParameter = (i * 0.1) * (mergedBoundary.Domain.Max - mergedBoundary.Domain.Min) + mergedBoundary.Domain.Min;
 
                         Point3d samplePoint = mergedBoundary.PointAt(randomCurveParameter);
                         Vector3d perpendicularDirection = Vector3d.CrossProduct(mergedBoundary.TangentAt(randomCurveParameter), Vector3d.ZAxis);
@@ -443,6 +443,8 @@ namespace QTO_Tool
 
                         sampleWallThicknesses.Add(sampleWallThickness);
                     }
+
+                    sampleWallThicknesses.Sort();
 
                     wallThickness = sampleWallThicknesses
                         .GroupBy(x => x)
